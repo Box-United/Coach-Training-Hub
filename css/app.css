@@ -1,0 +1,137 @@
+/* Component styles for the Coach Training Hub. Layered on top of colors-and-type.css. */
+
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid var(--line);background:var(--bg);
+}
+.topbar .brand svg{height:20px;width:auto;}
+.topbar .who{display:flex;align-items:center;gap:14px;font-size:13.5px;color:var(--fg-muted);}
+.topbar .signout{cursor:pointer;text-decoration:underline;text-underline-offset:3px;color:var(--fg-faint);}
+.topbar .signout:hover{opacity:.7;}
+
+.btn{
+  font-family:var(--font-body);font-weight:500;font-size:14px;letter-spacing:.03em;
+  padding:13px 22px;border-radius:8px;border:1.5px solid transparent;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  cursor:pointer;user-select:none;text-decoration:none;
+  transition:opacity 120ms var(--ease-out), transform 120ms var(--ease-out);
+}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:var(--bu-blue);color:var(--bu-white);}
+.btn-primary:hover{opacity:.88;}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+.btn-outline{background:transparent;color:var(--fg);border-color:var(--line-strong);}
+.btn-outline:hover{opacity:.7;}
+.btn-ghost{background:transparent;color:var(--bu-blue);padding-left:0;padding-right:0;}
+.btn-block{width:100%;}
+.btn-sm{padding:9px 16px;font-size:13px;}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+.field .lbl{font-family:var(--font-body);font-weight:500;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-muted);}
+.input{
+  font-family:var(--font-body);font-size:15px;padding:13px 15px;
+  background:var(--bu-white);border:1.5px solid rgba(0,28,51,.18);
+  color:var(--bu-navy);border-radius:8px;outline:none;width:100%;
+}
+.input:focus{border-color:var(--bu-blue);box-shadow:var(--focus-ring);}
+.help{font-size:12.5px;color:var(--fg-faint);}
+.error{font-size:12.5px;color:#ff8a75;}
+
+.badge{
+  font-family:var(--font-display);text-transform:uppercase;font-weight:400;
+  font-size:10.5px;letter-spacing:.12em;padding:5px 9px;border-radius:4px;line-height:1;
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:none;
+}
+.badge-locked{background:transparent;color:var(--fg-faint);border:1px solid var(--line-strong);}
+.badge-progress{background:var(--bu-blue);color:var(--bu-white);}
+.badge-complete{background:transparent;color:var(--bu-blue);border:1px solid var(--bu-blue);}
+
+.icon{width:14px;height:14px;flex:none;}
+.icon path,.icon rect,.icon polyline{stroke:currentColor;stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ---------- login (index.html, signed out) ---------- */
+.loginhero{
+  min-height:100vh;background:var(--bu-navy);color:var(--bu-stone);
+  display:flex;align-items:center;justify-content:center;padding:48px 24px;
+}
+.loginhero .panel{width:100%;max-width:380px;display:flex;flex-direction:column;gap:24px;align-items:center;text-align:center;}
+.loginhero .wordmark{height:24px;}
+.loginhero h2{font-size:clamp(26px,5vw,38px);color:var(--bu-stone);}
+.loginhero .editorial{color:rgba(247,245,237,.86);font-size:17px;}
+.loginhero form{width:100%;display:flex;flex-direction:column;gap:14px;text-align:left;}
+.loginhero .field .lbl{color:rgba(247,245,237,.7);}
+.loginhero .foot{font-size:12.5px;color:rgba(247,245,237,.5);}
+
+/* ---------- module list (index.html, signed in) ---------- */
+.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0 22px;}
+@media (max-width:640px){.statrow{grid-template-columns:1fr;}}
+.statcard{background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;}
+.statcard .num{font-family:var(--font-display);font-size:32px;color:var(--bu-blue);line-height:1;}
+.statcard .lbl{font-size:12.5px;letter-spacing:.03em;color:var(--fg-muted);}
+
+.progressbar{height:8px;border-radius:999px;background:rgba(247,245,237,.14);overflow:hidden;margin-bottom:8px;}
+.progressbar .fill{height:100%;background:var(--bu-blue);border-radius:999px;}
+.progresscaption{font-size:12px;color:var(--fg-faint);display:flex;justify-content:space-between;margin-bottom:28px;}
+
+.sectiontitle{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.sectiontitle h3{font-size:20px;}
+
+.modgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding-bottom:48px;}
+@media (max-width:640px){.modgrid{grid-template-columns:1fr;}}
+.modcard{background:var(--bg-card);border-radius:16px;border:1px solid var(--line);padding:20px 20px 18px;display:flex;flex-direction:column;gap:12px;min-height:160px;}
+.modcard.is-locked{border-style:dashed;}
+.modcard.is-current{border-color:var(--bu-blue);border-width:1.5px;}
+.modcard .top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.modcard .num{font-family:var(--font-display);font-size:11px;letter-spacing:.1em;color:var(--fg-faint);}
+.modcard .title{font-family:var(--font-serif);font-size:19px;line-height:1.15;}
+.modcard.is-locked .title{color:var(--fg-faint);}
+.modcard .desc{font-size:13.5px;color:var(--fg-muted);line-height:1.45;}
+.modcard .bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:10px;}
+.modcard .score{font-size:12.5px;color:var(--fg-muted);}
+.modcard .lockrow{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--fg-faint);}
+
+/* ---------- module.html ---------- */
+.lessonhead{display:flex;flex-direction:column;gap:10px;margin:24px 0 4px;}
+.crumb{font-size:12.5px;color:var(--fg-faint);text-decoration:underline;text-underline-offset:3px;width:fit-content;cursor:pointer;}
+.lessonhead h2{font-size:clamp(24px,3vw,32px);}
+.lessonhead .editorial{font-size:16px;color:var(--fg-muted);max-width:60ch;}
+
+.videowrap{margin:18px 0 6px;border-radius:14px;overflow:hidden;border:1.5px solid rgba(247,245,237,.3);background:var(--bu-navy);}
+#player{aspect-ratio:16/9;width:100%;}
+.videocap{padding:12px 2px 24px;font-size:12.5px;color:var(--fg-faint);max-width:64ch;}
+
+.quizcard{margin:0 0 48px;background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 24px;}
+.quizhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+.qcounter{font-size:12.5px;color:var(--fg-muted);}
+.stem{font-size:18px;line-height:1.4;font-weight:400;margin-bottom:16px;}
+.options{display:flex;flex-direction:column;gap:10px;}
+.option{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:10px;border:1.5px solid var(--line);cursor:pointer;}
+.option:hover{border-color:var(--line-strong);}
+.option input{accent-color:var(--bu-blue);width:17px;height:17px;flex:none;}
+.option label{font-size:14.5px;cursor:pointer;flex:1;}
+.option.is-checked{border-color:var(--bu-blue);background:rgba(0,128,242,.14);}
+.qactions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line);}
+
+.result .banner{border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.result .banner.pass{background:var(--bu-blue);color:var(--bu-white);}
+.result .banner.fail{background:transparent;border:1.5px solid var(--fg-faint);color:var(--fg);}
+.result .banner .score{font-family:var(--font-display);font-size:24px;line-height:1;}
+.result .banner .label{font-size:13px;letter-spacing:.03em;}
+.reviewitem{padding:14px 0;border-top:1px solid var(--line);}
+.reviewitem:first-of-type{border-top:none;}
+.reviewitem .q{font-size:14px;margin-bottom:6px;}
+.reviewitem .a{font-size:13px;color:var(--fg-muted);}
+.reviewitem .a.wrong{color:#ff8a75;}
+.reviewitem .a.right{color:var(--bu-blue);}
+.resultactions{display:flex;justify-content:flex-end;gap:10px;}
+
+/* ---------- admin.html ---------- */
+.admintable{width:100%;border-collapse:collapse;margin:24px 0 48px;font-size:13.5px;}
+.admintable th,.admintable td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);}
+.admintable th{font-family:var(--font-display);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);}
+.admintable tr:hover td{background:var(--bg-card);}
+.tablewrap{overflow-x:auto;}
+
+.centernote{max-width:520px;margin:80px auto;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;padding:0 24px;}

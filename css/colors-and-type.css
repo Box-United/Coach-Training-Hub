@@ -1,0 +1,64 @@
+/* Box United design tokens. Pulled from the brand's design system.
+   Don't hardcode hexes or font names elsewhere, reference these variables. */
+
+@font-face{font-family:"Anton";src:url("../assets/fonts/Anton-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:"PP Editorial New";src:url("../assets/fonts/PPEditorialNew-Light.ttf") format("truetype");font-weight:300;font-style:normal;font-display:swap;}
+@font-face{font-family:"Cooper BT";src:url("../assets/fonts/CooperBTW03-Light.ttf") format("truetype");font-weight:300;font-style:normal;font-display:swap;}
+@font-face{font-family:"Cooper BT";src:url("../assets/fonts/CooperMediumC BT Regular.otf") format("opentype");font-weight:500;font-style:normal;font-display:swap;}
+
+:root{
+  --bu-blue:#0080f2;
+  --bu-blue-deep:#0064c0;
+  --bu-blue-tint:#cce6fc;
+  --bu-navy:#001c33;
+  --bu-navy-soft:#1a3349;
+  --bu-stone:#f7f5ed;
+  --bu-stone-deep:#ece8d8;
+  --bu-white:#ffffff;
+
+  --bg:var(--bu-navy);
+  --bg-card:var(--bu-navy-soft);
+  --fg:var(--bu-stone);
+  --fg-muted:rgba(247,245,237,.68);
+  --fg-faint:rgba(247,245,237,.42);
+  --line:rgba(247,245,237,.16);
+  --line-strong:rgba(247,245,237,.32);
+  --shadow-card:0 1px 0 rgba(0,0,0,.3), 0 10px 28px -16px rgba(0,0,0,.6);
+  --focus-ring:0 0 0 3px rgba(0,128,242,.35);
+
+  --font-display:"Anton","Oswald","Impact",system-ui,sans-serif;
+  --font-serif:"PP Editorial New","Cormorant Garamond","Times New Roman",serif;
+  --font-body:"Cooper BT",Georgia,"Times New Roman",serif;
+
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-in-out:cubic-bezier(.65,0,.35,1);
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--fg);font-family:var(--font-body);
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img,svg{max-width:100%;display:block;}
+a{color:inherit;}
+button{font:inherit;}
+::selection{background:var(--bu-blue);color:var(--bu-white);}
+:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:6px;}
+
+h1,h2,h3{
+  font-family:var(--font-display);font-weight:400;text-transform:uppercase;
+  letter-spacing:0;line-height:.94;margin:0;text-wrap:balance;color:var(--fg);
+}
+.editorial{
+  font-family:var(--font-serif);font-weight:300;text-transform:none;
+  line-height:1.15;margin:0;color:var(--fg);text-wrap:balance;
+}
+p{margin:0;font-family:var(--font-body);font-weight:300;line-height:1.55;color:var(--fg);}
+.eyebrow{
+  font-family:var(--font-display);font-weight:400;text-transform:uppercase;
+  font-size:11px;letter-spacing:.16em;color:var(--bu-blue);line-height:1;
+}
+.muted{color:var(--fg-muted);}
+.faint{color:var(--fg-faint);}
