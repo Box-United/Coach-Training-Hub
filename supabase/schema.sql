@@ -44,6 +44,14 @@ create policy "Coaches update own row" on public.coaches
 create policy "Admins read all coaches" on public.coaches
   for select using (public.is_admin());
 
+-- RLS above only restricts *which row* a coach can update, not *which
+-- column*. Without this, a coach could set is_admin = true on their own
+-- row by calling the API directly. Column-level GRANT is what actually
+-- stops that: only "name" is writable by a signed-in coach, no matter
+-- what a client sends.
+revoke update on public.coaches from authenticated;
+grant update (name) on public.coaches to authenticated;
+
 -- A coach can only write progress for module 1, or for a module whose
 -- predecessor they've already passed. This is what actually enforces
 -- sequential unlocking, the module-list UI hiding locked modules is
