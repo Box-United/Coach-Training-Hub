@@ -80,6 +80,43 @@ create policy "Coaches update own progress" on public.progress
 create policy "Admins read all progress" on public.progress
   for select using (public.is_admin());
 
+-- A completion record should only ever move forward. Enforcing this in the
+-- database, not the browser, means stale JavaScript or a hand-written API
+-- call cannot wipe out a pass a coach already earned.
+-- auth.uid() is null for direct SQL and service_role, so an admin can still
+-- reset someone deliberately from the SQL editor.
+create function public.protect_progress_record()
+returns trigger
+language plpgsql
+security definer
+as $$
+begin
+  if auth.uid() is null or public.is_admin() then
+    return new;
+  end if;
+
+  if old.passed and not new.passed then
+    new.passed := true;
+    new.completed_at := old.completed_at;
+  end if;
+
+  if old.quiz_score is not null
+     and (new.quiz_score is null or new.quiz_score < old.quiz_score) then
+    new.quiz_score := old.quiz_score;
+  end if;
+
+  if new.video_furthest_seconds < old.video_furthest_seconds then
+    new.video_furthest_seconds := old.video_furthest_seconds;
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger progress_only_moves_forward
+  before update on public.progress
+  for each row execute procedure public.protect_progress_record();
+
 -- Creates a coaches row automatically the first time someone signs in.
 create function public.handle_new_user()
 returns trigger
