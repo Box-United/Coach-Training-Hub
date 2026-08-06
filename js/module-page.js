@@ -26,7 +26,14 @@ function getModuleIdFromUrl() {
 
   const myRow = progressRows.find((r) => r.module_id === moduleId) || null;
   const startFurthest = myRow ? myRow.video_furthest_seconds : 0;
-  const attemptsSoFar = myRow ? myRow.quiz_attempts : 0;
+
+  // Mutable across retakes within a single page load. Reading these once and
+  // deriving from them on every submit would keep rewriting the same attempt
+  // count, and would let a failed retake erase an earlier pass.
+  let attempts = myRow ? myRow.quiz_attempts : 0;
+  let everPassed = myRow ? myRow.passed : false;
+  let bestScore = myRow && myRow.quiz_score !== null ? myRow.quiz_score : null;
+  let firstCompletedAt = myRow ? myRow.completed_at : null;
 
   document.getElementById("app").innerHTML = `
     <div class="topbar">
@@ -64,11 +71,17 @@ function getModuleIdFromUrl() {
 
   if (mod.quiz.length) {
     renderQuiz(document.getElementById("quizcard"), mod.quiz, mod.passThreshold, async ({ pct, passed }) => {
+      attempts += 1;
+      if (passed && !firstCompletedAt) firstCompletedAt = new Date().toISOString();
+      everPassed = everPassed || passed;
+      // Keep the best score, so a passed module never shows a failing score.
+      if (bestScore === null || pct > bestScore) bestScore = pct;
+
       await upsertProgress(session.user.id, moduleId, {
-        quiz_score: pct,
-        quiz_attempts: attemptsSoFar + 1,
-        passed,
-        completed_at: passed ? new Date().toISOString() : null
+        quiz_score: bestScore,
+        quiz_attempts: attempts,
+        passed: everPassed,
+        completed_at: firstCompletedAt
       });
     });
   }

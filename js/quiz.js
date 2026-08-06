@@ -51,7 +51,7 @@ function renderQuiz(container, quiz, passThreshold, onSubmit) {
     });
   }
 
-  function submit() {
+  async function submit() {
     let correct = 0;
     const missed = [];
     quiz.forEach((q, i) => {
@@ -81,8 +81,10 @@ function renderQuiz(container, quiz, passThreshold, onSubmit) {
           `).join("")
         : '<div class="reviewitem"><div class="a right">Clean sweep, all correct.</div></div>'
       }
+      <div class="help" id="saveState">Saving your result...</div>
       <div class="resultactions">
         <button class="btn btn-outline" id="retakeBtn">Retake Quiz</button>
+        ${passed ? '<a class="btn btn-primary" href="index.html">Back to Modules</a>' : ""}
       </div>
     `;
     resultEl.querySelector("#retakeBtn").addEventListener("click", () => {
@@ -92,7 +94,17 @@ function renderQuiz(container, quiz, passThreshold, onSubmit) {
       form.style.display = "block";
       renderQuestion();
     });
-    onSubmit({ pct, passed, missed });
+
+    // Tell the coach plainly whether the result actually saved. Without this,
+    // a failed write still shows "Passed" and the progress silently vanishes.
+    const saveState = resultEl.querySelector("#saveState");
+    try {
+      await onSubmit({ pct, passed, missed });
+      saveState.textContent = "Result saved.";
+    } catch (err) {
+      saveState.className = "error";
+      saveState.textContent = "We could not save this result, so it was not recorded. Check your connection and take the quiz again.";
+    }
   }
 
   renderQuestion();
