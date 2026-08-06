@@ -37,12 +37,16 @@ function renderLoggedOut() {
     e.preventDefault();
     const email = document.getElementById("email").value;
     const msg = document.getElementById("loginMsg");
+    msg.className = "foot";
     msg.textContent = "Sending...";
     try {
       await sendMagicLink(email);
       msg.textContent = "Check your email for a sign-in link.";
     } catch (err) {
-      msg.textContent = "Something went wrong, try again.";
+      // Show what Supabase actually said, a generic message here hid a
+      // rate-limit rejection and made a failed send look successful.
+      msg.className = "error";
+      msg.textContent = err.message || "We could not send the link, try again.";
     }
   });
 }

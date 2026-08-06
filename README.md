@@ -35,6 +35,14 @@ Then visit the printed local address.
    update public.coaches set is_admin = true where email = 'you@boxunited.org';
    ```
 
+## Email: set up custom SMTP before real coaches use this
+
+Supabase's built-in email service is for testing only and allows just a few auth emails per hour project-wide. Past that, sign-in requests fail with `429 email rate limit exceeded` and coaches get no link. With a full roster signing in, you will hit this immediately.
+
+Before launch, go to **Project Settings -> Authentication -> SMTP Settings** and connect a real sender (Resend, SendGrid, Postmark, Mailgun, or Google Workspace SMTP all work). Use a Box United address as the sender so the link does not look like spam.
+
+Until that is configured, expect to wait out the rate limit between test sign-ins.
+
 ## Adding a module
 
 Everything about a module lives in one place: `js/modules-data.js`. To fill one in:
