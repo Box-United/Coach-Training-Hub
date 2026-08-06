@@ -46,6 +46,10 @@ Everything about a module lives in one place: `js/modules-data.js`. To fill one 
 
 Modules unlock in the order they appear in that array, a coach must pass one before the next becomes available.
 
+### Important: bump the version after any edit
+
+Browsers cache CSS and JS aggressively. After changing **any** file in `js/` or `css/`, including `modules-data.js`, open `index.html`, `module.html`, and `admin.html` and increment every `?v=` number by one (they should all match). Skip this and coaches will keep seeing the old quiz questions or the old video, with no clue anything changed.
+
 ## Publishing to GitHub Pages
 
 1. Push this repo to GitHub (already done if you're reading this from the repo).
