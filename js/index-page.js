@@ -1,16 +1,6 @@
-function computeModuleStatus(modules, progressRows) {
-  const byModule = {};
-  progressRows.forEach((row) => { byModule[row.module_id] = row; });
-
-  let unlocked = true;
-  return modules.map((mod) => {
-    const row = byModule[mod.id];
-    const passed = !!(row && row.passed);
-    const status = passed ? "complete" : unlocked ? "current" : "locked";
-    if (!passed) unlocked = false;
-    return { module: mod, row, status };
-  });
-}
+// The home page: signed out it is the magic-link form, signed in it is the
+// welcome and the season's key dates. The modules themselves live on the
+// training page (js/training-page.js).
 
 function renderLoggedOut() {
   document.getElementById("app").innerHTML = `
@@ -51,75 +41,47 @@ function renderLoggedOut() {
   });
 }
 
-async function renderLoggedIn(session) {
-  const progressRows = await getMyProgress();
-  const statuses = computeModuleStatus(MODULES, progressRows);
-  const completeCount = statuses.filter((s) => s.status === "complete").length;
-  const scores = progressRows.filter((r) => r.quiz_score !== null).map((r) => r.quiz_score);
-  const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
-  const pct = Math.round((completeCount / MODULES.length) * 100);
-
+function renderHome(session) {
   document.getElementById("app").innerHTML = `
-    <div class="topbar">
-      <div class="brand"><img src="assets/logos/box_united_stone.svg" alt="Box United" style="height:20px;width:auto;"></div>
-      <div class="who">
-        <span>${session.user.email}</span>
-        <span class="signout" id="signoutBtn">Sign out</span>
-      </div>
-    </div>
+    ${topbarHtml(session.user.email, "home")}
     <div class="wrap">
-      <div class="statrow">
-        <div class="statcard"><div class="num">${completeCount} / ${MODULES.length}</div><div class="lbl">Modules complete</div></div>
-        <div class="statcard"><div class="num">${avgScore === null ? "—" : avgScore + "%"}</div><div class="lbl">Average quiz score</div></div>
+      <div class="infocard">
+        <div class="eyebrow">${SEASON_INFO.seasonLabel} season</div>
+        <h2>${SEASON_INFO.welcome.heading}</h2>
+        ${SEASON_INFO.welcome.body.map((para) => `<p class="editorial">${para}</p>`).join("")}
+        <p style="margin-top:18px;"><a class="btn btn-primary" href="training.html">Go to your training</a></p>
       </div>
-      <div class="progressbar"><div class="fill" style="width:${pct}%"></div></div>
-      <div class="progresscaption"><span>${pct}% of training complete</span><span>${MODULES.length - completeCount} modules to go</span></div>
-      <div class="sectiontitle"><h3>Your Training Path</h3><span class="muted" style="font-size:12.5px">Modules unlock in order</span></div>
-      <div class="modgrid">
-        ${statuses.map(({ module, row, status }) => moduleCardHtml(module, row, status)).join("")}
+
+      <div class="sectiontitle">
+        <h3>Key Dates</h3>
       </div>
+      <ol class="datelist">
+        ${SEASON_INFO.keyDates.map((d) => `
+          <li class="dateitem">
+            <div class="datewhen">${d.label}</div>
+            <div class="datewhat">
+              <div class="datetitle">${d.title}</div>
+              ${d.detail ? `<div class="datedetail">${d.detail}</div>` : ""}
+              ${d.link ? `<a class="datelink" href="${escapeAttr(d.link.url)}" target="_blank" rel="noopener noreferrer">${d.link.label || "Open"} &rarr;</a>` : ""}
+            </div>
+          </li>
+        `).join("")}
+      </ol>
     </div>
   `;
   document.getElementById("signoutBtn").addEventListener("click", signOut);
 }
 
-function moduleCardHtml(mod, row, status) {
-  const num = `Module ${String(mod.id).padStart(2, "0")}`;
-  if (status === "locked") {
-    return `
-      <div class="modcard is-locked">
-        <div class="top"><span class="num">${num}</span><span class="badge badge-locked">Locked</span></div>
-        <div class="title">${mod.title}</div>
-        <p class="desc">${mod.description}</p>
-        <div class="bottom"><span class="lockrow">Complete the module above first</span></div>
-      </div>`;
-  }
-  if (status === "complete") {
-    return `
-      <div class="modcard">
-        <div class="top"><span class="num">${num}</span><span class="badge badge-complete">Complete</span></div>
-        <div class="title">${mod.title}</div>
-        <p class="desc">${mod.description}</p>
-        <div class="bottom"><span class="score">Passed &middot; ${row.quiz_score}%</span><a class="btn btn-ghost" style="padding:0;font-size:13px;" href="module.html?id=${mod.id}">Review &rarr;</a></div>
-      </div>`;
-  }
-  return `
-    <div class="modcard is-current">
-      <div class="top"><span class="num">${num}</span><span class="badge badge-progress">Up Next</span></div>
-      <div class="title">${mod.title}</div>
-      <p class="desc">${mod.description}</p>
-      <div class="bottom"><a class="btn btn-primary btn-sm" href="module.html?id=${mod.id}">Start Module</a></div>
-    </div>`;
-}
-
 (async function init() {
   const session = await getCurrentSession();
   if (session) {
-    renderLoggedIn(session);
+    renderHome(session);
   } else {
     renderLoggedOut();
   }
+  // The magic link lands here, so the page has to redraw once the session
+  // arrives rather than leaving the sign-in form on screen.
   supabaseClient.auth.onAuthStateChange((_event, newSession) => {
-    if (newSession) renderLoggedIn(newSession);
+    if (newSession) renderHome(newSession);
   });
 })();

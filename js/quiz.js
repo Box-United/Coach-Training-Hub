@@ -84,7 +84,7 @@ function renderQuiz(container, quiz, passThreshold, onSubmit) {
       <div class="help" id="saveState">Saving your result...</div>
       <div class="resultactions">
         <button class="btn btn-outline" id="retakeBtn">Retake Quiz</button>
-        ${passed ? '<a class="btn btn-primary" href="index.html">Back to Modules</a>' : ""}
+        ${passed ? '<a class="btn btn-primary" href="training.html">Back to Training</a>' : ""}
       </div>
     `;
     resultEl.querySelector("#retakeBtn").addEventListener("click", () => {

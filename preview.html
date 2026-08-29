@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview — Box United Coach Training Hub</title>
+<link rel="stylesheet" href="css/colors-and-type.css?v=13">
+<link rel="stylesheet" href="css/app.css?v=13">
+</head>
+<body>
+
+<!--
+  A LOCAL PREVIEW HARNESS, NOT PART OF THE SITE.
+
+  It loads the real page scripts and the real stylesheet, but replaces
+  everything that talks to Supabase with made-up data, so the pages can be
+  looked at without signing in and without the database migrations having run.
+
+  Nothing here reads or writes anything real: there is no Supabase client on
+  this page at all. Delete this file before going live, or leave it, it cannot
+  reach any actual data either way.
+-->
+
+<div class="previewbar">
+  <strong>Preview</strong>
+  <span>Sample data, signed in as an admin.</span>
+  <a href="preview.html?page=home">Home</a>
+  <a href="preview.html?page=training">Training</a>
+  <a href="preview.html?page=admin">Admin</a>
+  <a href="preview.html?page=module&amp;id=1">Module 1</a>
+  <a href="preview.html?page=module&amp;id=6">Module 6</a>
+  <a href="preview.html?page=module&amp;id=9">Module 9</a>
+</div>
+
+<div id="app"></div>
+
+<!-- The real shared pieces, unchanged. -->
+<script src="js/modules-data.js?v=13"></script>
+<script src="js/season-info.js?v=13"></script>
+<script src="js/util.js?v=13"></script>
+<script src="js/nav.js?v=13"></script>
+<script src="js/quiz.js?v=13"></script>
+<script src="js/video-player.js?v=13"></script>
+<!-- Loaded for checkFileAgainstRules. The stubs below are declared after it,
+     so they replace the three functions in here that would hit Supabase. -->
+<script src="js/uploads.js?v=13"></script>
+
+<script>
+// ---- stand-ins for everything that would hit Supabase -------------------
+
+const PREVIEW_COACH_ID = "00000000-0000-0000-0000-000000000001";
+const PREVIEW_SESSION = { user: { id: PREVIEW_COACH_ID, email: "alexandra@boxunited.org" } };
+
+async function getCurrentSession() { return PREVIEW_SESSION; }
+async function getMyCoachRow() { return { id: PREVIEW_COACH_ID, email: PREVIEW_SESSION.user.email, is_admin: true }; }
+async function getCurrentSeason() { return 2026; }
+async function getSeasonsWithProgress() { return [2026, 2025]; }
+function signOut() { alert("Sign out does nothing in the preview."); }
+
+// One module passed, one document waiting on review, the rest untouched.
+const PREVIEW_PROGRESS = [
+  { coach_id: PREVIEW_COACH_ID, module_id: 1, season: 2026, quiz_score: 100, quiz_attempts: 1,
+    passed: true, completed_at: "2026-08-20T14:02:00Z", video_furthest_seconds: 136,
+    video_progress: { 0: 136 }, document_path: null, document_status: "none", document_uploaded_at: null },
+  { coach_id: PREVIEW_COACH_ID, module_id: 2, season: 2026, quiz_score: null, quiz_attempts: 0,
+    passed: false, completed_at: null, video_furthest_seconds: 0,
+    video_progress: {}, document_path: null, document_status: "none", document_uploaded_at: null }
+];
+
+async function getMyProgress() { return PREVIEW_PROGRESS; }
+async function upsertProgress() { /* preview writes nothing */ }
+
+async function getAllProgressForAdmin() {
+  return [
+    { id: PREVIEW_COACH_ID, email: "alexandra@boxunited.org", name: "Alexandra", progress: PREVIEW_PROGRESS },
+    { id: "c2", email: "sample.coach@example.org", name: "Sample Coach", progress: [
+      { coach_id: "c2", module_id: 1, season: 2026, quiz_score: 67, quiz_attempts: 2, passed: false,
+        completed_at: null, video_furthest_seconds: 136, document_status: "none", document_path: null },
+      { coach_id: "c2", module_id: 3, season: 2026, quiz_score: null, quiz_attempts: 0, passed: false,
+        completed_at: null, video_furthest_seconds: 0, document_status: "pending",
+        document_path: "c2/2026/module-3/ramp.png", document_uploaded_at: "2026-08-26T09:15:00Z" }
+    ]},
+    { id: "c3", email: "another.coach@example.org", name: "", progress: [
+      { coach_id: "c3", module_id: 9, season: 2026, quiz_score: null, quiz_attempts: 0, passed: true,
+        completed_at: "2026-08-25T12:00:00Z", video_furthest_seconds: 0, document_status: "approved",
+        document_path: "c3/2026/module-9/safesport.pdf", document_uploaded_at: "2026-08-24T10:00:00Z" }
+    ]},
+    { id: "c4", email: "not.started@example.org", name: "", progress: [] }
+  ];
+}
+
+async function getDocumentUrl() { alert("In the preview there is no real file to open."); throw new Error("preview"); }
+async function reviewModuleDocument() { alert("Approve and reject do nothing in the preview."); }
+async function uploadModuleDocument() { throw new Error("Uploading does nothing in the preview."); }
+
+// ---- load whichever page was asked for ----------------------------------
+
+const PAGE_SCRIPTS = {
+  home: "js/index-page.js",
+  training: "js/training-page.js",
+  module: "js/module-page.js",
+  admin: "js/admin-page.js"
+};
+
+const page = new URLSearchParams(location.search).get("page") || "home";
+const scriptSrc = PAGE_SCRIPTS[page];
+
+if (!scriptSrc) {
+  document.getElementById("app").innerHTML =
+    '<div class="centernote"><h2>Unknown preview page</h2><p>Use the links above.</p></div>';
+} else {
+  const tag = document.createElement("script");
+  tag.src = scriptSrc + "?v=13";
+  document.body.appendChild(tag);
+}
+</script>
+</body>
+</html>

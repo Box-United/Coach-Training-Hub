@@ -4,13 +4,47 @@
 // To add a module: copy an entry, give it the next `id`, paste your YouTube
 // unlisted video ID, and write questions with `correctIndex` pointing at the
 // right option (0-based). `passThreshold` is the percentage needed to pass.
+//
+// Video: a module can have one video or several. Both of these work:
+//
+//   youtubeId: "abc123"                       one video, shorthand
+//   videos: [                                 several, played top to bottom
+//     { youtubeId: "abc123", title: "Part 1 - The Mission" },
+//     { youtubeId: "def456", title: "Part 2 - The Gym Rules" }
+//   ]
+//
+// With several videos there is no gate between them, a coach can start any of
+// them in any order. The quiz stays locked until every video on the module has
+// been watched through to the end.
+//
+// Upload: a module can also require a document, for training that happens
+// somewhere else (SafeSport, setting up a Ramp account). Add an `upload` block
+// and the module page shows an upload control:
+//
+//   upload: {
+//     prompt: "Upload your certificate.",   shown above the file picker
+//     accept: ".pdf,.png,.jpg,.jpeg",       file types the picker allows
+//     maxSizeMb: 10,                        rejected above this size
+//     linkUrl: "https://...",               optional, link out to the training
+//     linkLabel: "Start the training"
+//   }
+//
+// Uploading lets a coach move on to the next module straight away, but the
+// module only counts as complete once an admin approves the document on
+// admin.html. A module can have an upload, a video, and a quiz, or any mix.
 
 const MODULES = [
   {
     id: 1,
     title: "Welcome to Box United, Our Why",
     description: "The mission, the gym rules, and what makes Box United different.",
-    youtubeId: "PASTE_YOUTUBE_UNLISTED_ID_HERE",
+    videos: [
+      { youtubeId: "nMWrlm9056g", title: "Part 1" }
+      // To add a second video, uncomment the line below and paste its ID.
+      // The quiz stays locked until every video listed here is watched to the
+      // end, so do not leave an entry in with a placeholder ID in it.
+      // , { youtubeId: "", title: "Part 2" }
+    ],
     passThreshold: 80,
     quiz: [
       {
@@ -47,72 +81,86 @@ const MODULES = [
   },
   {
     id: 2,
-    title: "Creating a Safe, Structured Gym",
-    description: "Setting the floor, the schedule, and the standard before class starts.",
+    title: "Agreement and Pay",
+    description: "What your agreement covers, how hours are logged, and when you get paid.",
     youtubeId: "",
     passThreshold: 80,
     quiz: []
   },
   {
     id: 3,
-    title: "Coaching Stance, Guard & Footwork",
-    description: "The fundamentals every fighter builds on, and how to correct them fast.",
+    title: "Ramp Set Up",
+    description: "Setting up your Ramp payment account, and sending us proof it is done.",
     youtubeId: "",
     passThreshold: 80,
-    quiz: []
+    quiz: [],
+    upload: {
+      prompt: "Upload a screenshot of your finished Ramp account setup, or a PDF from your school admin confirming they will be paying you.",
+      accept: ".pdf,.png,.jpg,.jpeg",
+      maxSizeMb: 10,
+      linkUrl: "",
+      linkLabel: ""
+    }
   },
   {
     id: 4,
-    title: "Safe Sparring & Spotting",
-    description: "Protocols for pads, partner drills, and knowing when to step in.",
+    title: "Child Protection Policy",
+    description: "Keeping every girl safe, what the policy asks of you, and when to escalate.",
     youtubeId: "",
     passThreshold: 80,
     quiz: []
   },
   {
     id: 5,
-    title: "Building the Fighter's Mindset",
-    description: "Give her the mental tools to reset after a tough round, in the gym and in life.",
+    title: "Behavior Management",
+    description: "Holding the standard without losing the room, and what to do when it slips.",
     youtubeId: "",
     passThreshold: 80,
     quiz: []
   },
   {
     id: 6,
-    title: "Confidence Cues That Land",
-    description: "What to say instead of \"good job,\" and why the wording matters.",
-    youtubeId: "",
+    title: "Attendance System, Charity Rescue",
+    description: "Taking attendance in Charity Rescue, and what to record each session.",
+    youtubeId: "qaB8wG07aik",
     passThreshold: 80,
     quiz: []
   },
   {
     id: 7,
-    title: "Handling Big Emotions in the Gym",
-    description: "Reading frustration early, and de-escalating without softening the standard.",
+    title: "2026-27 Schedule",
+    description: "Term dates, session times, and how the year runs.",
     youtubeId: "",
     passThreshold: 80,
     quiz: []
   },
   {
     id: 8,
-    title: "Nutrition & Recovery Basics",
-    description: "Simple, age-appropriate fueling and rest guidance for young athletes.",
+    title: "Equipment",
+    description: "The kit, how to look after it, and what to check before every session.",
     youtubeId: "",
     passThreshold: 80,
     quiz: []
   },
   {
     id: 9,
-    title: "Talking With Parents & Guardians",
-    description: "Framing progress in a way that builds trust, not just updates.",
+    title: "SafeSport Training",
+    description: "Complete SafeSport training, then upload your certificate here.",
     youtubeId: "",
     passThreshold: 80,
-    quiz: []
+    quiz: [],
+    upload: {
+      prompt: "Upload your SafeSport certificate once you have finished the training.",
+      accept: ".pdf,.png,.jpg,.jpeg",
+      maxSizeMb: 10,
+      linkUrl: "PASTE_SAFESPORT_LINK_HERE",
+      linkLabel: "Start SafeSport Training"
+    }
   },
   {
     id: 10,
-    title: "Season Wrap-Up: Tracking Growth",
-    description: "Closing out the season by measuring growth, not just wins.",
+    title: "Magic Moments in Fight Like a Girl",
+    description: "The moments that keep the girls coming back and enjoying.",
     youtubeId: "",
     passThreshold: 80,
     quiz: []

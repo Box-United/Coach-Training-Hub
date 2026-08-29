@@ -8,6 +8,20 @@
 }
 .topbar .brand svg{height:20px;width:auto;}
 .topbar .who{display:flex;align-items:center;gap:14px;font-size:13.5px;color:var(--fg-muted);}
+.topnav{display:flex;align-items:center;gap:22px;}
+.topnav a{
+  font-size:13.5px;color:var(--fg-muted);text-decoration:none;
+  padding:4px 0;border-bottom:1.5px solid transparent;
+}
+.topnav a:hover{color:var(--fg);}
+.topnav a.is-current{color:var(--fg);border-bottom-color:var(--bu-blue);}
+@media (max-width:640px){
+  .topbar{flex-wrap:wrap;gap:10px 16px;}
+  .topnav{order:3;flex-basis:100%;gap:18px;}
+  /* The address is the first thing worth dropping on a narrow screen, the
+     nav and the sign-out control are not. */
+  .whoemail{display:none;}
+}
 .topbar .signout{cursor:pointer;text-decoration:underline;text-underline-offset:3px;color:var(--fg-faint);}
 .topbar .signout:hover{opacity:.7;}
 
@@ -47,6 +61,9 @@
 .badge-locked{background:transparent;color:var(--fg-faint);border:1px solid var(--line-strong);}
 .badge-progress{background:var(--bu-blue);color:var(--bu-white);}
 .badge-complete{background:transparent;color:var(--bu-blue);border:1px solid var(--bu-blue);}
+/* Uploaded, waiting on an admin. Deliberately not the same as complete: it
+   unlocks the next module but is not a pass. */
+.badge-pending{background:transparent;color:var(--bu-stone-deep);border:1px dashed var(--line-strong);}
 
 .icon{width:14px;height:14px;flex:none;}
 .icon path,.icon rect,.icon polyline{stroke:currentColor;stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;}
@@ -99,7 +116,14 @@
 .lessonhead .editorial{font-size:16px;color:var(--fg-muted);max-width:60ch;}
 
 .videowrap{margin:18px 0 6px;border-radius:14px;overflow:hidden;border:1.5px solid rgba(247,245,237,.3);background:var(--bu-navy);}
-#player{aspect-ratio:16/9;width:100%;}
+/* Matches both the placeholder div and the iframe the YouTube API swaps in
+   over it, which keeps the same id. A module can hold several videos, so
+   these are numbered player-0, player-1, and so on. */
+[id^="player-"]{aspect-ratio:16/9;width:100%;display:block;border:0;}
+.videoblock + .videoblock{margin-top:22px;}
+.videolabel{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:18px;}
+.videostate{font-size:12px;color:var(--fg-faint);white-space:nowrap;}
+.videoblock .videowrap{margin-top:8px;}
 .videocap{padding:12px 2px 24px;font-size:12.5px;color:var(--fg-faint);max-width:64ch;}
 
 .quizcard{margin:0 0 48px;background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 24px;}
@@ -135,3 +159,84 @@
 .tablewrap{overflow-x:auto;}
 
 .centernote{max-width:520px;margin:80px auto;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;padding:0 24px;}
+
+/* ---- document uploads (SafeSport certificate, Ramp account proof) ---- */
+.uploadrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 8px;}
+.uploadrow input[type=file]{
+  flex:1 1 240px;min-width:0;font-size:13px;color:var(--fg-muted);
+  padding:10px 12px;border:1.5px dashed var(--line-strong);border-radius:10px;background:transparent;
+}
+.uploadrow input[type=file]::file-selector-button{
+  font:inherit;font-size:12.5px;margin-right:10px;padding:6px 12px;cursor:pointer;
+  border:1px solid var(--line-strong);border-radius:6px;background:transparent;color:var(--fg);
+}
+.docstate{font-size:12.5px;color:var(--fg-faint);}
+.docstate.is-pending{color:var(--bu-stone-deep);}
+.docstate.is-approved{color:var(--bu-blue);}
+.docstate.is-rejected{color:var(--bu-red,#e5484d);}
+
+/* ---- admin review queue ---- */
+.reviewrow{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:14px 0;border-bottom:1px solid var(--line);
+}
+.reviewrow:last-child{border-bottom:0;}
+.reviewcoach{font-size:14px;}
+.reviewmod{font-size:12.5px;color:var(--fg-faint);margin-top:3px;}
+.reviewactions{display:flex;gap:8px;flex-wrap:wrap;}
+.reviewmsg{flex-basis:100%;margin:0;}
+.reviewmsg:empty{display:none;}
+
+/* Season picker on the admin page. Narrow, so it reads as a control on the
+   heading row rather than as a form field. */
+.seasonpick{width:auto;min-width:170px;padding-right:34px;cursor:pointer;}
+
+/* ---- coach info: welcome and key dates, above the modules ---- */
+.infocard{
+  /* The bottom margin carries the whole gap to the Key Dates heading that
+     follows, because .sectiontitle has no top margin of its own and is
+     shared with the training and admin pages. */
+  margin:28px 0 40px;padding:26px;border-radius:16px;
+  background:var(--bg-card);border:1px solid var(--line);
+}
+.infocard h2{font-size:clamp(21px,2.4vw,27px);margin:8px 0 12px;}
+.infocard .editorial{font-size:15.5px;color:var(--fg-muted);max-width:62ch;}
+.infocard .editorial + .editorial{margin-top:10px;}
+
+.datelist{list-style:none;margin:0 0 8px;padding:0;}
+.dateitem{
+  display:flex;gap:18px;align-items:baseline;
+  padding:14px 2px;border-bottom:1px solid var(--line);
+}
+.dateitem:last-child{border-bottom:0;}
+.datewhen{
+  flex:0 0 76px;font-family:var(--font-display);font-size:13px;
+  letter-spacing:.04em;color:var(--bu-blue);white-space:nowrap;
+}
+.datewhat{min-width:0;}
+.datetitle{font-size:15px;line-height:1.35;}
+.datedetail{font-size:13px;color:var(--fg-muted);margin-top:4px;max-width:60ch;}
+.datelink{display:inline-block;font-size:13px;margin-top:7px;color:var(--bu-blue);text-decoration:none;}
+.datelink:hover{text-decoration:underline;text-underline-offset:3px;}
+
+@media (max-width:520px){
+  .dateitem{flex-direction:column;gap:4px;}
+  .datewhen{flex:none;}
+}
+
+/* Shown only to admins, where they are seeing something a coach would not. */
+.adminnote{
+  margin:18px 0;padding:12px 16px;border-radius:10px;font-size:13px;
+  color:var(--fg-muted);background:transparent;
+  border:1px dashed var(--line-strong);
+}
+.adminnote a{color:var(--bu-blue);}
+
+/* preview.html only, never part of the coach-facing site. */
+.previewbar{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:10px 24px;font-size:12.5px;
+  background:var(--bu-blue);color:var(--bu-white);
+}
+.previewbar strong{font-weight:400;letter-spacing:.06em;text-transform:uppercase;font-size:11px;}
+.previewbar a{color:var(--bu-white);text-decoration:underline;text-underline-offset:3px;}

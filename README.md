@@ -25,14 +25,16 @@ Then visit the printed local address.
 ## Supabase setup
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. Open **SQL Editor -> New query**, paste in the entire contents of `supabase/schema.sql`, and run it. That creates the `coaches` and `progress` tables, Row Level Security policies, and the trigger that adds a coach row the first time someone signs in.
+2. Open **SQL Editor -> New query**, paste in the entire contents of `supabase/schema.sql`, and run it. If your project predates these features, also run everything in `supabase/migrations/` in order (`001-multi-video.sql`, then `002-document-uploads.sql`), which brings an existing database up to date. That creates the `coaches` and `progress` tables, Row Level Security policies, and the trigger that adds a coach row the first time someone signs in.
 3. Go to **Authentication -> Providers**, confirm **Email** is enabled, and turn off "Confirm email" if you want the magic link to sign someone in immediately (otherwise they'll get a confirmation step first). Magic link is on by default with the Email provider.
 4. Go to **Authentication -> URL Configuration** and add your GitHub Pages URL (and custom domain, once you have one) to the Redirect URLs list, otherwise the magic link will bounce.
 5. Go to **Project Settings -> API** and copy your Project URL and `anon` `public` key.
 6. Open `js/config.js` and paste those two values in. Never paste the `service_role` key anywhere in this repo, only the `anon` key belongs in client code.
-7. To make yourself an admin (for the CSV export / progress table page), sign in once through the real site first (so your `coaches` row exists), then run in the SQL Editor:
+7. Admins are named in the `admin_emails` table, created by `supabase/migrations/004-admin-emails.sql`. `alexandra@boxunited.org` and `programs@boxunited.org` are in it already, and anyone on that list becomes an admin the first time they sign in, no manual step. To add another:
    ```sql
-   update public.coaches set is_admin = true where email = 'you@boxunited.org';
+   insert into public.admin_emails (email) values ('someone@boxunited.org');
+   -- only needed if they have already signed in at least once:
+   update public.coaches set is_admin = true where lower(email) = 'someone@boxunited.org';
    ```
 
 ## Email: set up custom SMTP before real coaches use this
@@ -43,16 +45,132 @@ Before launch, go to **Project Settings -> Authentication -> SMTP Settings** and
 
 Until that is configured, expect to wait out the rate limit between test sign-ins.
 
+## The pages
+
+| Page | What it is |
+| --- | --- |
+| `index.html` | Signed out, the magic-link sign-in. Signed in, the home page: welcome and the season's key dates. |
+| `training.html` | How far a coach has got, and the module list. |
+| `module.html?id=N` | One module: its videos, its quiz, and any document it asks for. |
+| `admin.html` | Documents waiting on review, and the progress table. Admins only. |
+
+The magic link lands on `index.html`, so that is the page that redraws itself once a session appears. The top bar comes from `js/nav.js` so the navigation cannot drift between pages, and `admin.html` is not linked from it, you reach it by URL or from the note on the training page.
+
+**Admins see more.** For anyone with `is_admin`, the sequential lock and the watch-the-whole-video gate both stand aside, so every module can be opened and reviewed, including ones no coach has unlocked yet. Locked cards on the training page gain a "Preview" link. Both pages say plainly that what is on screen is not what a coach would see.
+
+`preview.html` renders any of these pages with made-up data and no sign-in, for looking at layout before the database is set up. It has no Supabase client on it at all, so it cannot touch anything real. Open it at `preview.html?page=admin`, `?page=training`, `?page=home`, or `?page=module&id=6`.
+
+## The coach home page
+
+Signed-in coaches land on a welcome, the season's key dates, and a button through to their training.
+
+All of that copy lives in `js/season-info.js`: the welcome heading and paragraphs, and the `keyDates` list. Add, remove, or reorder dates freely, the page reads straight from that list. Each date needs an ISO `date`, a short `label` (what the page prints), and a `title`. Optionally it can also carry a `detail`, a `location`, and its own `link`:
+
+```js
+link: { url: "https://calendar.google.com/...", label: "Add to Google Calendar" }
+```
+
+The link shows under that date on the page. Use it for anything tied to one date: a calendar invite, a sign-up, a form. Only Sept 12 has one at the moment, so that is the only date a coach can add to their calendar in one click. Giving the others their own links is just a matter of pasting them in here.
+
+Dates are not automatically cleared when a season rolls over, so `keyDates` needs updating each year alongside the modules.
+
+`js/calendar.js` builds an .ics file covering every key date at once, and is no longer wired to anything. It was dropped in favour of per-date links. Delete it, or add a button back that calls `buildIcs` and `downloadIcs`, if you ever want the all-dates-at-once download again.
+
 ## Adding a module
 
 Everything about a module lives in one place: `js/modules-data.js`. To fill one in:
 
 1. Find its entry in the `MODULES` array.
-2. Set `youtubeId` to the video's ID (the part after `v=` in a YouTube URL). Upload it to YouTube as **unlisted**.
+2. Set `youtubeId` to the video's ID (the part after `v=` in a YouTube URL). Upload it to YouTube as **unlisted**, not Private, Private videos cannot be embedded and will not load for coaches. Check that "Allow embedding" is ticked under Show more.
 3. Add questions to the `quiz` array. Each question needs a `question`, an `options` array, and a `correctIndex` (0 for the first option, 1 for the second, and so on).
 4. Adjust `passThreshold` if 80% shouldn't be the bar for that module.
 
 Modules unlock in the order they appear in that array, a coach must pass one before the next becomes available.
+
+### Modules with more than one video
+
+A module can hold several videos. Swap `youtubeId` for a `videos` array:
+
+```js
+videos: [
+  { youtubeId: "abc123", title: "Part 1 - The Mission" },
+  { youtubeId: "def456", title: "Part 2 - The Gym Rules" }
+],
+```
+
+`title` is optional and only shows when there is more than one video. Both forms work, a module with a single video can keep using plain `youtubeId`.
+
+There is no gate between the videos, a coach can play them in any order. The quiz stays locked until every video on the module has been watched through to the end. Each video's furthest-watched position is tracked separately, so finishing one does not let a coach skip another.
+
+### Modules proved by uploading a document
+
+Some training happens somewhere else: SafeSport certification, setting up a Ramp payment account. Those modules ask for a document instead of a quiz. Add an `upload` block:
+
+```js
+upload: {
+  prompt: "Upload your SafeSport certificate once you have finished the training.",
+  accept: ".pdf,.png,.jpg,.jpeg",
+  maxSizeMb: 10,
+  linkUrl: "https://...",            // optional, links out to the training
+  linkLabel: "Start SafeSport Training"
+}
+```
+
+A module can have an upload, a video, and a quiz, in any combination.
+
+**Uploading and completing are deliberately different things.** When a coach uploads, the module goes to `pending` and they can carry straight on to the next module, so nobody sits blocked waiting on an admin. But it shows as "In review", not "Complete", and it does not count toward their progress bar. Only an admin approving it on `admin.html` sets `passed` and marks it complete.
+
+Rejecting a document blocks the modules after it again, until the coach uploads a replacement.
+
+A coach cannot approve their own document. Row Level Security lets them write their own progress row, so the database triggers in `supabase/schema.sql` downgrade any attempt to set `approved` back to `pending`, on both insert and update. Only `is_admin` accounts can actually approve.
+
+Files go to a private `coach-documents` bucket at `<coach_id>/module-<n>/<timestamp>-<filename>`. That path shape is not cosmetic: the storage policies key on the first segment to decide who can read what. A coach can only read their own files, admins can read all, and nothing is reachable without a short-lived signed URL. The bucket caps size and MIME type server-side, so the browser-side checks are just a friendlier error.
+
+### Training seasons, and the September reset
+
+Coaches redo the whole training every year, so every progress row is stamped with a **season**. A season is named for the year it starts in: season 2026 runs 1 September 2026 to 31 August 2027, which everyone calls "2026-27".
+
+On 1 September a coach simply has no rows for the new season, so they start again from Module 1. **Nothing is deleted.** Last year's records stay on the table and stay queryable, which matters for safeguarding: "was this coach SafeSport certified during the 2026-27 season" needs to be answerable years later, and a reset that deleted rows would destroy exactly that evidence.
+
+There is **no scheduled job**. The current season is derived from today's date by `public.current_season()`, so the rollover happens on its own with nothing to fail at 3am on 1 September.
+
+Two things in that function are worth knowing before you change it:
+
+- **Timezone.** September 1 has to begin somewhere, and it is set to US Central. If Box United is elsewhere, that string is the only place it appears.
+- **The floor.** The hub launched in August 2026, and everything in it belongs to the 2026-27 season rather than a 2025-26 season that never existed here. `greatest(2026, ...)` pins that without a special case, and stops mattering once the date passes it. The practical effect: nothing resets on 1 September 2026, and the first real rollover is 1 September 2027.
+
+Unlocking is per season too, so last year's pass does not open this year's Module 2. A coach cannot write into any season but the running one, enforced by database trigger, so they can neither rewrite history nor pre-pass a year that has not started.
+
+The admin page has a season picker, and the CSV export is named and stamped by season.
+
+### Swapping a video out later
+
+Changing the link is one line in `js/modules-data.js` plus a version bump. But a coach's watched position is stored in the database, and it does not reset itself. Someone who watched twelve minutes of the old video can scrub twelve minutes into the new one, or skip it entirely if the new one is shorter.
+
+The forward-only trigger in `supabase/schema.sql` deliberately refuses to let progress move backward from the browser, so the reset has to come from the Supabase SQL editor, where `auth.uid()` is null and the trigger stands aside.
+
+To make everyone re-watch module 1's videos, leaving their quiz results alone:
+
+```sql
+update public.progress
+set video_furthest_seconds = 0, video_progress = '{}'::jsonb
+where module_id = 1;
+```
+
+If the questions changed too and you want coaches to retake the quiz:
+
+```sql
+update public.progress
+set video_furthest_seconds = 0,
+    video_progress = '{}'::jsonb,
+    passed = false,
+    quiz_score = null,
+    quiz_attempts = 0,
+    completed_at = null
+where module_id = 1;
+```
+
+**Think twice before that second one.** Setting `passed = false` on a module re-locks every module after it, for every coach, until they pass it again. A coach who had finished five modules would be back at the start. If only the video changed and the quiz still tests the same material, reset the video columns and leave `passed` alone.
 
 ### Important: bump the version after any edit
 
