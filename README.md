@@ -43,7 +43,26 @@ Then visit the printed local address.
 
 Supabase's built-in email service is for testing only and allows just a few auth emails per hour project-wide. Past that, sign-in requests fail with `429 email rate limit exceeded` and coaches get no link. With a full roster signing in, you will hit this immediately.
 
-Before launch, go to **Project Settings -> Authentication -> SMTP Settings** and connect a real sender (Resend, SendGrid, Postmark, Mailgun, or Google Workspace SMTP all work). Use a Box United address as the sender so the link does not look like spam.
+Before launch, go to **Project Settings -> Authentication -> SMTP Settings** and connect a real sender. Using Resend:
+
+1. Create a Resend account, then **Domains -> Add Domain**. Use a subdomain such as `send.boxunited.org` rather than the root. Resend recommends this to keep sending reputation separate, and it means you are not editing the SPF record your normal Box United mail depends on.
+2. Add the DNS records Resend shows you (a return-path MX, an SPF TXT, and a DKIM TXT) wherever `boxunited.org` DNS is managed. Verification takes anywhere from a few minutes to a few hours.
+3. **API Keys -> Create API Key**, with sending permission. It is shown once. It is a credential, so it belongs only in the Supabase SMTP form, not in this repo, not in chat, not in a doc.
+4. Fill in Supabase's SMTP settings:
+
+   | Field | Value |
+   | --- | --- |
+   | Host | `smtp.resend.com` |
+   | Port | `465` (implicit SSL/TLS; `587` also works for STARTTLS) |
+   | Username | `resend` |
+   | Password | your Resend API key |
+   | Sender email | an address at the verified domain, e.g. `noreply@send.boxunited.org` |
+   | Sender name | `Box United` |
+
+   The sender address has to be at the domain you verified. Anything else is rejected.
+5. Then go to **Authentication -> Rate Limits** and raise the emails-per-hour limit. It stays low until custom SMTP is connected, and the default afterwards is still well below a full roster signing in at once.
+
+A verified domain is not optional: Resend will not send from a shared or public domain. There is no way to skip step 2 and still email real coaches.
 
 Until that is configured, expect to wait out the rate limit between test sign-ins.
 
