@@ -240,3 +240,23 @@
 }
 .previewbar strong{font-weight:400;letter-spacing:.06em;text-transform:uppercase;font-size:11px;}
 .previewbar a{color:var(--bu-white);text-decoration:underline;text-underline-offset:3px;}
+
+/* Instructions for training that happens on someone else's site. */
+.uploadnote{
+  margin:12px 0;padding:11px 14px;border-radius:9px;font-size:13.5px;
+  color:var(--fg);background:transparent;border:1px solid var(--bu-blue);
+}
+.uploadsteps{margin:14px 0 14px 18px;padding:0;font-size:13.5px;color:var(--fg-muted);}
+.uploadsteps li{margin-bottom:7px;line-height:1.45;}
+.uploadsteps li:last-child{margin-bottom:0;}
+
+.codechip{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  margin:14px 0;padding:11px 14px;border-radius:9px;
+  border:1px dashed var(--line-strong);
+}
+.codelabel{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-faint);}
+.codechip code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:14px;color:var(--fg);word-break:break-all;
+}

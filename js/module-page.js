@@ -145,6 +145,19 @@ function formatDate(iso) {
         ${statusLine}
       </div>
       <p class="help">${up.prompt}</p>
+      ${up.note ? `<p class="uploadnote">${up.note}</p>` : ""}
+      ${up.steps && up.steps.length
+        ? `<ol class="uploadsteps">${up.steps.map((s) => `<li>${s}</li>`).join("")}</ol>`
+        : ""
+      }
+      ${up.code
+        ? `<div class="codechip">
+             <span class="codelabel">${up.code.label || "Code"}</span>
+             <code id="codeValue">${up.code.value}</code>
+             <button class="btn btn-outline btn-sm" id="copyCodeBtn">Copy</button>
+           </div>`
+        : ""
+      }
       ${up.linkUrl
         ? `<p><a class="btn btn-outline btn-sm" href="${escapeAttr(up.linkUrl)}" target="_blank" rel="noopener noreferrer">${up.linkLabel || "Open the training"}</a></p>`
         : ""
@@ -165,6 +178,27 @@ function formatDate(iso) {
         : ""
       }
     `;
+
+    // A twenty-character random key is not something to retype by hand.
+    const copyBtn = card.querySelector("#copyCodeBtn");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(up.code.value);
+          copyBtn.textContent = "Copied";
+          setTimeout(() => { copyBtn.textContent = "Copy"; }, 2000);
+        } catch (err) {
+          // Clipboard access can be refused. Select it instead, so the key is
+          // still one keystroke away rather than a careful retype.
+          const range = document.createRange();
+          range.selectNodeContents(card.querySelector("#codeValue"));
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          copyBtn.textContent = "Press Ctrl+C";
+        }
+      });
+    }
 
     const viewLink = card.querySelector("#docViewLink");
     if (viewLink) {

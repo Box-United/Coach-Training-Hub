@@ -20,7 +20,7 @@ Module 1 is the test case for the whole flow. Nothing else can be properly teste
   4. `supabase/migrations/004-admin-emails.sql` — makes `alexandra@boxunited.org` and `programs@boxunited.org` admins automatically on first sign-in.
 
   Neither is optional now: without 002, Modules 3 and 9 cannot accept uploads at all. Make sure you're in the **Coach Training Hub** project, not **Student Data**.
-- [ ] **SafeSport link** — Module 9 has `PASTE_SAFESPORT_LINK_HERE` in `js/modules-data.js`. Paste the URL coaches should use, including your organisation code if that's part of it.
+- [x] **SafeSport link and instructions** — in, with the enrollment key, the eight steps, and the note that an existing 2026 certificate can be uploaded without redoing the training.
 - [x] **SafeSport renewals** — handled by the annual season reset. Everyone redoes the whole training each September, so certificates never go stale in place.
 - [ ] **Confirm the season timezone.** `public.current_season()` starts September 1 at midnight **US Central**. If Box United runs on a different clock, change the timezone string in `supabase/schema.sql` and migration 003. Only matters at the 2027 rollover, so there's time.
 
@@ -70,6 +70,7 @@ All nine are titled and described in `js/modules-data.js` but have no video and 
 - [ ] Module 3 — Ramp Set Up
 - [ ] Module 4 — Child Protection Policy
 - [ ] Module 5 — Behavior Management
+- [x] Module 9 — SafeSport Training — complete, needs no video or quiz.
 - [~] Module 6 — Attendance System, Charity Rescue — video in (`qaB8wG07aik`, 9m 14s). Still needs quiz questions.
 - [ ] Module 7 — 2026-27 Schedule
 - [ ] Module 8 — Equipment

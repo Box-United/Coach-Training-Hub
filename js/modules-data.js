@@ -22,7 +22,11 @@
 // and the module page shows an upload control:
 //
 //   upload: {
-//     prompt: "Upload your certificate.",   shown above the file picker
+//     prompt: "Upload your certificate.",   lead line above everything else
+//     note: "Already got one? Skip ahead.",  optional, called out before steps
+//     steps: ["Do this", "Then this"],      optional, numbered instructions
+//     code: { label: "Enrollment key",      optional, shown in a copy button
+//             value: "abc123" },
 //     accept: ".pdf,.png,.jpg,.jpeg",       file types the picker allows
 //     maxSizeMb: 10,                        rejected above this size
 //     linkUrl: "https://...",               optional, link out to the training
@@ -145,15 +149,27 @@ const MODULES = [
   {
     id: 9,
     title: "SafeSport Training",
-    description: "Complete SafeSport training, then upload your certificate here.",
+    description: "Complete SafeSport training on their site, about 90 minutes, then upload your certificate here.",
     youtubeId: "",
     passThreshold: 80,
     quiz: [],
     upload: {
-      prompt: "Upload your SafeSport certificate once you have finished the training.",
+      prompt: "SafeSport training happens on SafeSport's own site, not here. It takes about 90 minutes.",
+      note: "Already have a 2026 SafeSport certificate? You do not need to do the training again. Skip straight to uploading it below.",
+      steps: [
+        "Open SafeSport using the button below, then sign up or log in.",
+        "Use a personal email address and your own personal details.",
+        "Set your role to Coach.",
+        "Enter the enrollment key when you are asked for it.",
+        "Your training is already paid for. You should never be asked to pay, and if you are, stop and check with Box United before going further.",
+        "Work through the training, which takes about 90 minutes.",
+        "When you finish, download your certificate of completion from SafeSport.",
+        "Upload that certificate here. Once it has been approved, this module is complete."
+      ],
+      code: { label: "Enrollment key", value: "fj7Pkjsu41mjsd7WeX_X" },
       accept: ".pdf,.png,.jpg,.jpeg",
       maxSizeMb: 10,
-      linkUrl: "PASTE_SAFESPORT_LINK_HERE",
+      linkUrl: "https://safesporttrained.org/?keyname=fj7Pkjsu41mjsd7WeX_X",
       linkLabel: "Start SafeSport Training"
     }
   },
