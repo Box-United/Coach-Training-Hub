@@ -17,26 +17,58 @@ function renderLoggedOut() {
             <label class="lbl" for="email">Email</label>
             <input class="input" id="email" type="email" placeholder="you@boxunited.org" required>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Send My Magic Link</button>
+          <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Send My Magic Link</button>
           <div class="foot" id="loginMsg" style="text-align:center"></div>
         </form>
       </div>
     </div>
   `;
-  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  const form = document.getElementById("loginForm");
+  const btn = document.getElementById("loginBtn");
+  const msg = document.getElementById("loginMsg");
+
+  // Sending is rate limited per project, not per person, so one coach
+  // pressing the button repeatedly can use up everyone's allowance for the
+  // hour. Hold the button down for a minute after a successful send.
+  function holdButton(seconds) {
+    btn.disabled = true;
+    let left = seconds;
+    btn.textContent = `Sent, wait ${left}s`;
+    const tick = setInterval(() => {
+      left -= 1;
+      if (left <= 0) {
+        clearInterval(tick);
+        btn.disabled = false;
+        btn.textContent = "Send My Magic Link";
+        return;
+      }
+      btn.textContent = `Sent, wait ${left}s`;
+    }, 1000);
+  }
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("email").value;
-    const msg = document.getElementById("loginMsg");
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.textContent = "Sending...";
     msg.className = "foot";
-    msg.textContent = "Sending...";
+    msg.textContent = "";
     try {
-      await sendMagicLink(email);
-      msg.textContent = "Check your email for a sign-in link.";
+      await sendMagicLink(document.getElementById("email").value);
+      msg.textContent = "Check your email for a sign-in link. It can take a minute to arrive.";
+      holdButton(60);
     } catch (err) {
       // Show what Supabase actually said, a generic message here hid a
-      // rate-limit rejection and made a failed send look successful.
+      // rate-limit rejection and made a failed send look successful. The
+      // rate limit is the one coaches will actually hit, so name it plainly
+      // rather than leaving them staring at API wording.
+      const text = String((err && err.message) || "");
       msg.className = "error";
-      msg.textContent = err.message || "We could not send the link, try again.";
+      msg.textContent = /rate limit/i.test(text)
+        ? "Too many sign-in emails have been sent from this site in the last hour, which is a limit on our end, not yours. Please wait and try again, or contact Box United."
+        : text || "We could not send the link, try again.";
+      btn.disabled = false;
+      btn.textContent = "Send My Magic Link";
     }
   });
 }
