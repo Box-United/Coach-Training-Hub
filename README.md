@@ -1,5 +1,7 @@
 # Box United — Coach Training Hub
 
+**Live at [box-united.github.io/Coach-Training-Hub](https://box-united.github.io/Coach-Training-Hub/)**, served from `main` by GitHub Pages. Every push to `main` redeploys it.
+
 A static coach training site: magic-link sign-in, a gated video-plus-quiz module for each week of training, and an admin view of who's completed what. Hosted on GitHub Pages, backed by Supabase.
 
 This first version has one module fully wired end to end (Module 1), so the whole flow, sign-in, video, quiz, Supabase write, admin view, can be tested before the remaining nine modules get their real videos and questions.
@@ -27,7 +29,7 @@ Then visit the printed local address.
 1. Create a project at [supabase.com](https://supabase.com).
 2. Open **SQL Editor -> New query**, paste in the entire contents of `supabase/schema.sql`, and run it. If your project predates these features, also run everything in `supabase/migrations/` in order (`001-multi-video.sql`, then `002-document-uploads.sql`), which brings an existing database up to date. That creates the `coaches` and `progress` tables, Row Level Security policies, and the trigger that adds a coach row the first time someone signs in.
 3. Go to **Authentication -> Providers**, confirm **Email** is enabled, and turn off "Confirm email" if you want the magic link to sign someone in immediately (otherwise they'll get a confirmation step first). Magic link is on by default with the Email provider.
-4. Go to **Authentication -> URL Configuration** and add your GitHub Pages URL (and custom domain, once you have one) to the Redirect URLs list, otherwise the magic link will bounce.
+4. Go to **Authentication -> URL Configuration** and add `https://box-united.github.io/Coach-Training-Hub/` (and a custom domain, once there is one) to the Redirect URLs list, otherwise the magic link will bounce.
 5. Go to **Project Settings -> API** and copy your Project URL and `anon` `public` key.
 6. Open `js/config.js` and paste those two values in. Never paste the `service_role` key anywhere in this repo, only the `anon` key belongs in client code.
 7. Admins are named in the `admin_emails` table, created by `supabase/migrations/004-admin-emails.sql`. `alexandra@boxunited.org` and `programs@boxunited.org` are in it already, and anyone on that list becomes an admin the first time they sign in, no manual step. To add another:
@@ -178,9 +180,11 @@ Browsers cache CSS and JS aggressively. After changing **any** file in `js/` or 
 
 ## Publishing to GitHub Pages
 
-1. Push this repo to GitHub (already done if you're reading this from the repo).
-2. In the repo, go to **Settings -> Pages**, set Source to the `main` branch, root folder.
-3. Once it's live, add that URL to Supabase's Redirect URLs (see step 4 above).
+Already done: the site is live at <https://box-united.github.io/Coach-Training-Hub/>, served from `main`. Pushing to `main` redeploys it, usually within a minute.
+
+1. ~~Push this repo to GitHub.~~
+2. ~~**Settings -> Pages**, Source set to `main`, root folder.~~
+3. **Still to do:** add the live URL to Supabase's Redirect URLs (see step 4 above). Until that is set, the sign-in form on the live site will send links that bounce.
 4. For a custom domain: add a `CNAME` file to the repo root containing just your domain, then point your DNS at GitHub Pages per [GitHub's custom domain docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site). Send me the domain when you've picked one and I'll add the file.
 
 ## What isn't tamperproof

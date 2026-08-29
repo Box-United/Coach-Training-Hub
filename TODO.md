@@ -40,7 +40,7 @@ Module 1's description promises "the mission, the gym rules, and what makes Box 
 - [ ] **Decide about calendar links for the other four dates.** Only Sept 12 has one, so the rest cannot be added to a coach's calendar in one click. Send me the invite links and I'll paste them in, or say the word and I'll put the all-dates download button back.
 - [ ] **`js/calendar.js` is now unused.** It built the .ics for the download button that was removed. Delete it, or keep it if the button might come back. Nothing references it either way.
 - [x] **Admins reaching `admin.html`** — the training page now shows admins a note with a link to it.
-- [ ] **Delete `preview.html` before going live, or don't.** It renders the pages with made-up data for looking at layout without signing in. It has no Supabase client on it so it cannot reach real data, but it will be publicly reachable on GitHub Pages if left in.
+- [ ] **`preview.html` is now publicly reachable** at https://box-united.github.io/Coach-Training-Hub/preview.html. Decide whether to keep it. It renders the pages with made-up data for looking at layout without signing in. It has no Supabase client on it so it cannot reach real data, but it will be publicly reachable on GitHub Pages if left in.
 
 ---
 
@@ -86,8 +86,8 @@ All nine are titled and described in `js/modules-data.js` but have no video and 
 
 - [ ] **Extend magic link expiry to 24 hours.** Supabase Dashboard → Authentication → Providers → Email → **Email OTP Expiration** (in some dashboard versions this lives under Authentication → Emails). Default is 3600 seconds (1 hour). Set it to **86400**, which is 24 hours and also the maximum Supabase permits.
 - [ ] **Custom SMTP — do not skip.** Supabase's built-in email allows only a few auth emails per hour *project-wide*. With a full roster signing in, you'll hit the limit immediately and coaches will get no link at all. Set up Resend / SendGrid / Postmark / Mailgun / Google Workspace under Project Settings → Authentication → SMTP Settings, with a Box United sender address.
-- [ ] **Publish to GitHub Pages** — Settings → Pages → source `main`, root.
-- [ ] **Add the live URL to Supabase Redirect URLs** (Authentication → URL Configuration) or magic links will bounce.
+- [x] **Published to GitHub Pages** — live at https://box-united.github.io/Coach-Training-Hub/, served from `main`. Every push redeploys.
+- [ ] **URGENT: add the live URL to Supabase Redirect URLs.** Authentication → URL Configuration → add `https://box-united.github.io/Coach-Training-Hub/`. The site is live and its sign-in form works, so until this is set, anyone who tries to sign in gets a link that bounces.
 - [ ] **Make yourself an admin** — sign in through the real site once so your `coaches` row exists, then run:
       `update public.coaches set is_admin = true where email = 'you@boxunited.org';`
 - [ ] **Custom domain** (optional) — add a `CNAME` file, point DNS, then add the domain to Supabase Redirect URLs too.
