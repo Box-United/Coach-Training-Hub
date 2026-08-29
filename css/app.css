@@ -161,7 +161,13 @@
 .centernote{max-width:520px;margin:80px auto;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;padding:0 24px;}
 
 /* ---- document uploads (SafeSport certificate, Ramp account proof) ---- */
-.uploadrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 8px;}
+/* The upload is a separate phase from the instructions above it: a coach
+   reads those, leaves for an hour and a half, and comes back to this. The
+   rule makes that a break rather than the next item in a list. */
+.uploadrow{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  margin:24px 0 8px;padding-top:20px;border-top:1px solid var(--line);
+}
 .uploadrow input[type=file]{
   flex:1 1 240px;min-width:0;font-size:13px;color:var(--fg-muted);
   padding:10px 12px;border:1.5px dashed var(--line-strong);border-radius:10px;background:transparent;
@@ -243,16 +249,16 @@
 
 /* Instructions for training that happens on someone else's site. */
 .uploadnote{
-  margin:12px 0;padding:11px 14px;border-radius:9px;font-size:13.5px;
+  margin:14px 0 20px;padding:11px 14px;border-radius:9px;font-size:13.5px;
   color:var(--fg);background:transparent;border:1px solid var(--bu-blue);
 }
-.uploadsteps{margin:14px 0 14px 18px;padding:0;font-size:13.5px;color:var(--fg-muted);}
+.uploadsteps{margin:20px 0 12px 18px;padding:0;font-size:13.5px;color:var(--fg-muted);}
 .uploadsteps li{margin-bottom:7px;line-height:1.45;}
 .uploadsteps li:last-child{margin-bottom:0;}
 
 .codechip{
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-  margin:14px 0;padding:11px 14px;border-radius:9px;
+  margin:12px 0 18px;padding:11px 14px;border-radius:9px;
   border:1px dashed var(--line-strong);
 }
 .codelabel{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-faint);}
