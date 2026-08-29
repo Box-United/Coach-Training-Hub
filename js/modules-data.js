@@ -149,7 +149,7 @@ const MODULES = [
   {
     id: 9,
     title: "SafeSport Training",
-    description: "Complete SafeSport training on their site, about 90 minutes, then upload your certificate here.",
+    description: "Complete SafeSport training on their site, then upload your certificate.",
     youtubeId: "",
     passThreshold: 80,
     quiz: [],

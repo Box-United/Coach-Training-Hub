@@ -110,7 +110,10 @@
 .modcard .lockrow{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--fg-faint);}
 
 /* ---------- module.html ---------- */
-.lessonhead{display:flex;flex-direction:column;gap:10px;margin:24px 0 4px;}
+/* The 4px bottom margin left the heading almost touching whatever followed
+   it, video or upload card. The gap here also sets eyebrow-to-title and
+   title-to-description, since this is a flex column. */
+.lessonhead{display:flex;flex-direction:column;gap:14px;margin:28px 0 32px;}
 .crumb{font-size:12.5px;color:var(--fg-faint);text-decoration:underline;text-underline-offset:3px;width:fit-content;cursor:pointer;}
 .lessonhead h2{font-size:clamp(24px,3vw,32px);}
 .lessonhead .editorial{font-size:16px;color:var(--fg-muted);max-width:60ch;}
