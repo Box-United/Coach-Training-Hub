@@ -160,7 +160,7 @@ const MODULES = [
         "Open SafeSport using the button below, then sign up or log in.",
         "Use a personal email address and your own personal details.",
         "Set your role to Coach.",
-        "Enter the enrollment key when you are asked for it.",
+        "The link carries the enrollment key with it, so it should already be filled in. If you are asked for it, it is shown below.",
         "Your training is already paid for. You should never be asked to pay, and if you are, stop and check with Box United before going further.",
         "Work through the training, which takes about 90 minutes.",
         "When you finish, download your certificate of completion from SafeSport.",
