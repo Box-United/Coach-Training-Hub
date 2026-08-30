@@ -322,13 +322,61 @@ const MODULES = [
     title: "Magic Moments in Fight Like a Girl",
     description: "The moments that keep the girls coming back and enjoying.",
     videos: [
-      { youtubeId: "bwcyXcOpWVs", title: "Part 1" }
-      // To add the second video, uncomment the line below and paste its ID.
-      // The quiz stays locked until every video listed here is watched to the
-      // end, so do not leave an entry in with a placeholder ID in it.
-      // , { youtubeId: "", title: "Part 2" }
+      { youtubeId: "bwcyXcOpWVs", title: "Part 1 — Great Hospitality" },
+      { youtubeId: "lzeC9tVF7eo", title: "Part 2 — Magic Moments" }
     ],
     passThreshold: 80,
-    quiz: []
+    quiz: [
+      {
+        question: "What was the main insight from the hospitality video?",
+        options: [
+          "Big, expensive gestures are what people remember.",
+          "It is almost never the expensive thing. It is the small thing nobody had to do, that shows someone was paying attention.",
+          "Consistency matters more than any individual gesture.",
+          "People remember how a place looks more than how it made them feel."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "How much magic moments money is there, and how is it allocated?",
+        options: [
+          "Two hundred dollars per coach, per year.",
+          "Two hundred dollars per site, per year.",
+          "Two hundred dollars per site, per session.",
+          "Two hundred dollars per site, each month of the season."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "There is a student at your school who is struggling, but she is not in your FLAG group. Can you spend magic moments money on her?",
+        options: [
+          "Yes, as long as you keep the receipt.",
+          "Yes, if she is a student at the same school.",
+          "No. The money is for the girls in your FLAG group.",
+          "Yes, but only up to half of the total."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "You have an idea for a magic moment and you are not sure it is allowed. What does Box United want you to do?",
+        options: [
+          "Skip it, to stay on the safe side.",
+          "Spend it and explain afterwards if anyone asks.",
+          "Ask first. They would rather answer a question than have you sit on a good idea.",
+          "Check with another coach and go with the majority."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "What does Box United ask for in return for the money?",
+        options: [
+          "A budget submitted before you spend anything.",
+          "That you document it. Take the picture and send the story of what you noticed and what you did about it.",
+          "Nothing at all, it is unconditional.",
+          "That anything unspent is returned at the end of the season."
+        ],
+        correctIndex: 1
+      }
+    ]
   }
 ];

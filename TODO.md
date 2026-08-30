@@ -76,7 +76,7 @@ All nine are titled and described in `js/modules-data.js` but have no video and 
 - [ ] Module 7 — 2026-27 Schedule
 - [ ] Module 8 — Equipment
 - [ ] Module 9 — Monitoring and Evaluation
-- [~] Module 10 — Magic Moments in Fight Like a Girl — first video in (`bwcyXcOpWVs`, 13m 54s, the Will Guidara TED talk). Needs a second video and quiz questions.
+- [x] Module 10 — Magic Moments in Fight Like a Girl — both videos in (Guidara TED talk, then the announcement) and five questions across the pair. — first video in (`bwcyXcOpWVs`, 13m 54s, the Will Guidara TED talk). Needs a second video and quiz questions.
 
 - [ ] **Confirm two module descriptions.** Titles are exactly as given, and descriptions are written for all nine. Two are deliberately vague because the topic wasn't clear enough to write honestly:
   - **Module 3, "Ramp Set Up"** — is "ramp" a physical ramp, ramping *up* a new coach or intake, or the RAMP warm-up protocol (Raise, Activate, Mobilise, Potentiate)? Each needs a different description.
