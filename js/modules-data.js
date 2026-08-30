@@ -148,8 +148,57 @@ const MODULES = [
     title: "Child Protection Policy",
     description: "Keeping every girl safe, what the policy asks of you, and when to escalate.",
     youtubeId: "vvCS1KZQVVw",
-    passThreshold: 80,
-    quiz: []
+    passThreshold: 100,
+    quiz: [
+      {
+        question: "A participant tells you that during the program she developed a crush on you, and asks to connect on social media. You are not interested in her romantically. What does the policy require?",
+        options: [
+          "It is fine to connect as long as nothing romantic happens, since you are not interested.",
+          "Decline. A romantic or sexual relationship with a participant is never acceptable, and electronic communication must stay about program activities only.",
+          "Connect privately but keep the conversation appropriate.",
+          "Ask a Box United staffer whether this particular participant is an exception."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Practice has ended and one girl's ride is late. Everyone else has left and your co-coach needs to leave too. What is the right move?",
+        options: [
+          "Wait alone with her until her ride comes.",
+          "Offer her a ride home yourself so she is not waiting.",
+          "Keep another approved adult present until she is picked up, and never be one-on-one or transport her yourself.",
+          "Let her wait outside alone since practice is over."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "A girl says something that makes you suspect she may be abused at home, but you are not sure it is serious and you do not want to get it wrong. What should you do?",
+        options: [
+          "Wait and watch for more evidence before deciding.",
+          "Ask other coaches whether they think it is credible first.",
+          "Report to the Illinois DCFS hotline immediately, then notify Box United. Do not evaluate credibility first.",
+          "Only tell Box United and let staff decide whether to call DCFS."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "True or false: if you report a concern in good faith and it turns out to be unfounded, you could be punished or held liable.",
+        options: [
+          "True — you can be held liable for a wrong report.",
+          "False — Illinois gives good-faith reporters immunity, and Box United prohibits any retaliation for a good-faith report."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Which of these correctly completes the acknowledgment you are agreeing to?",
+        options: [
+          "I will report suspected abuse only if I am certain it happened.",
+          "I have read and understood the Child Protection Policy, I understand I am a mandated reporter, and I agree to report any suspected child abuse or neglect immediately under Illinois law and Box United procedures.",
+          "I agree to follow the policy only during scheduled sessions.",
+          "I will handle any concerns internally without involving outside authorities."
+        ],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 5,
