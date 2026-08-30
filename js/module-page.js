@@ -56,6 +56,11 @@ function formatDate(iso) {
     isAdmin = false;
   }
 
+  if (mod.comingSoon) {
+    document.getElementById("app").innerHTML = `<div class="centernote"><h2>${mod.title}</h2><p>This module is not part of this season's training. It is coming ${mod.comingSoon}.</p><a class="btn btn-primary" href="training.html">Back to Training</a></div>`;
+    return;
+  }
+
   const progressRows = await getMyProgress();
   const priorModule = MODULES.find((m) => m.id === moduleId - 1);
   const priorRow = priorModule ? progressRows.find((r) => r.module_id === priorModule.id) : null;
@@ -112,7 +117,7 @@ function formatDate(iso) {
       <div class="crumb" id="backLink">&larr; Back to Training</div>
       ${isAdmin ? '<div class="adminnote">Viewing as an admin. Module locks and the watch-the-video gate are off for you, a coach would have to earn their way here.</div>' : ""}
       <div class="lessonhead">
-        <div class="eyebrow">Module ${String(mod.id).padStart(2, "0")} of ${MODULES.length}</div>
+        <div class="eyebrow">Module ${String(mod.id).padStart(2, "0")} of ${MODULES.filter((m) => !m.comingSoon).length}</div>
         <h2>${mod.title}</h2>
         <p class="editorial">${mod.description}</p>
       </div>

@@ -64,6 +64,8 @@
 /* Uploaded, waiting on an admin. Deliberately not the same as complete: it
    unlocks the next module but is not a pass. */
 .badge-pending{background:transparent;color:var(--bu-stone-deep);border:1px dashed var(--line-strong);}
+/* Listed so coaches know it is planned, but not part of this season. */
+.badge-soon{background:transparent;color:var(--fg-faint);border:1px dashed var(--line-strong);}
 
 .icon{width:14px;height:14px;flex:none;}
 .icon path,.icon rect,.icon polyline{stroke:currentColor;stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;}

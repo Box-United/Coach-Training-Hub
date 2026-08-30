@@ -7,6 +7,10 @@ function computeModuleStatus(modules, progressRows) {
 
   let unlocked = true;
   return modules.map((mod) => {
+    // Listed but not built yet. It never blocks what follows it, and a coach
+    // cannot open it, so it sits outside the chain entirely.
+    if (mod.comingSoon) return { module: mod, row: null, status: "soon" };
+
     const row = byModule[mod.id];
     const passed = !!(row && row.passed);
     const awaitingReview = !!(row && row.document_status === "pending");
@@ -30,6 +34,15 @@ function computeModuleStatus(modules, progressRows) {
 
 function moduleCardHtml(mod, row, status, isAdmin) {
   const num = `Module ${String(mod.id).padStart(2, "0")}`;
+  if (status === "soon") {
+    return `
+      <div class="modcard is-locked">
+        <div class="top"><span class="num">${num}</span><span class="badge badge-soon">Coming ${mod.comingSoon}</span></div>
+        <div class="title">${mod.title}</div>
+        <p class="desc">${mod.description}</p>
+        <div class="bottom"><span class="lockrow">Not part of this season's training</span></div>
+      </div>`;
+  }
   if (status === "locked") {
     return `
       <div class="modcard is-locked">
@@ -86,19 +99,22 @@ async function renderTraining(session) {
   const progressRows = await getMyProgress();
   const statuses = computeModuleStatus(MODULES, progressRows);
   const completeCount = statuses.filter((s) => s.status === "complete").length;
+  // A module that has not been built yet is not something a coach can finish,
+  // so counting it would hold everyone below 100 percent forever.
+  const countable = MODULES.filter((m) => !m.comingSoon).length;
   const scores = progressRows.filter((r) => r.quiz_score !== null).map((r) => r.quiz_score);
   const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
-  const pct = Math.round((completeCount / MODULES.length) * 100);
+  const pct = Math.round((completeCount / countable) * 100);
 
   document.getElementById("app").innerHTML = `
     ${topbarHtml(session.user.email, "training")}
     <div class="wrap">
       <div class="statrow">
-        <div class="statcard"><div class="num">${completeCount} / ${MODULES.length}</div><div class="lbl">Modules complete</div></div>
+        <div class="statcard"><div class="num">${completeCount} / ${countable}</div><div class="lbl">Modules complete</div></div>
         <div class="statcard"><div class="num">${avgScore === null ? "—" : avgScore + "%"}</div><div class="lbl">Average quiz score</div></div>
       </div>
       <div class="progressbar"><div class="fill" style="width:${pct}%"></div></div>
-      <div class="progresscaption"><span>${pct}% of training complete</span><span>${MODULES.length - completeCount} modules to go</span></div>
+      <div class="progresscaption"><span>${pct}% of training complete</span><span>${countable - completeCount} modules to go</span></div>
       ${isAdmin ? '<div class="adminnote">Viewing as an admin, so every module is open to preview, including ones a coach has not unlocked. <a href="admin.html">Go to the admin page</a></div>' : ""}
       <div class="sectiontitle"><h3>Your Training Path</h3><span class="muted" style="font-size:12.5px">Modules unlock in order</span></div>
       <div class="modgrid">

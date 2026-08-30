@@ -110,6 +110,12 @@ Everything about a module lives in one place: `js/modules-data.js`. To fill one 
 
 Modules unlock in the order they appear in that array, a coach must pass one before the next becomes available.
 
+### Listing a module before it is built
+
+Give it `comingSoon: "Spring 2027"`. It shows on the training page as planned but cannot be opened, nothing is gated behind it, and it is left out of the completion count so coaches can still reach 100%. Delete that line when the module is ready.
+
+Put a `comingSoon` module **last**. Both `js/module-page.js` and `can_write_module` find the previous module by `id - 1`, so an unfinishable module in the middle would strand everything after it, and would do it inconsistently: the browser treats a missing predecessor as no lock at all and lets a coach in, while the database treats it as no match and refuses to save their progress.
+
 ### Modules with more than one video
 
 A module can hold several videos. Swap `youtubeId` for a `videos` array:

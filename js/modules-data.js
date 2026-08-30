@@ -17,6 +17,11 @@
 // them in any order. The quiz stays locked until every video on the module has
 // been watched through to the end.
 //
+// Coming soon: a module can be listed before it is built by giving it
+// `comingSoon: "Spring 2027"`. It shows on the training page as planned, but
+// nothing is gated behind it and it does not count toward completion, so
+// coaches can still reach 100 percent. Delete the line when it is ready.
+//
 // Note: any module can carry a `note`, a short line shown under the video and
 // above the quiz, for something a coach has to do that the hub itself does
 // not handle:
@@ -209,14 +214,6 @@ const MODULES = [
   },
   {
     id: 5,
-    title: "Behavior Management",
-    description: "Holding the standard without losing the room, and what to do when it slips.",
-    youtubeId: "",
-    passThreshold: 80,
-    quiz: []
-  },
-  {
-    id: 6,
     title: "Attendance System, Charity Rescue",
     description: "Taking attendance in Charity Rescue, and what to record each session.",
     youtubeId: "qaB8wG07aik",
@@ -275,7 +272,7 @@ const MODULES = [
     ]
   },
   {
-    id: 7,
+    id: 6,
     title: "2026-27 Schedule",
     description: "Term dates, session times, and how the year runs.",
     youtubeId: "",
@@ -283,7 +280,7 @@ const MODULES = [
     quiz: []
   },
   {
-    id: 8,
+    id: 7,
     title: "Equipment",
     description: "The kit, how to look after it, and what to check before every session.",
     youtubeId: "",
@@ -291,7 +288,7 @@ const MODULES = [
     quiz: []
   },
   {
-    id: 9,
+    id: 8,
     title: "SafeSport Training",
     description: "Complete SafeSport training on their site, then upload your certificate.",
     youtubeId: "",
@@ -318,7 +315,7 @@ const MODULES = [
     }
   },
   {
-    id: 10,
+    id: 9,
     title: "Magic Moments in Fight Like a Girl",
     description: "The moments that keep the girls coming back and enjoying.",
     videos: [
@@ -388,5 +385,18 @@ const MODULES = [
         correctIndex: 1
       }
     ]
+  },
+  {
+    id: 10,
+    title: "Behavior Management",
+    description: "Holding the standard without losing the room, and what to do when it slips.",
+    // Listed so coaches know it is coming, but not built yet. `comingSoon`
+    // keeps it out of the unlock chain and out of the completion count, so
+    // nobody is blocked by it and nobody is stuck short of 100 percent.
+    // Remove this line when the module is ready.
+    comingSoon: "Spring 2027",
+    youtubeId: "",
+    passThreshold: 80,
+    quiz: []
   }
 ];
