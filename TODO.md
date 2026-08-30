@@ -11,8 +11,9 @@ Status key: **[ ]** not started · **[~]** in progress · **[x]** done
 Module 1 is the test case for the whole flow. Nothing else can be properly tested until it's real.
 
 - [x] **Module 1 video, Part 1** — `nMWrlm9056g`, "Box United Intro: GOA", 2m 16s. Confirmed unlisted, and verified embeddable against the YouTube player API.
-- [ ] **Module 1 video, Part 2** — record and upload as **Unlisted** (not Private, Private can't be embedded). Then paste the ID into the commented-out slot in `js/modules-data.js`.
-- [ ] **Module 1 quiz questions** — the 3 questions currently in `js/modules-data.js` are invented placeholders from when the site was scaffolded. They are not based on either video and must not go live as-is.
+- [ ] **Module 1 video, Part 2 — now blocking.** Most of Module 1's questions come from the coach onboarding transcript, which is that video. Part 1 is the 2m16s GOA intro and does not cover the pillars, the season structure, the deliverables or the contact address. Until Part 2 is up, coaches are asked about a video they have not been shown.
+- [ ] ~~Module 1 video, Part 2~~ — record and upload as **Unlisted** (not Private, Private can't be embedded). Then paste the ID into the commented-out slot in `js/modules-data.js`.
+- [x] **Module 1 quiz questions** — seven questions written from the coach onboarding transcript, replacing the scaffolding placeholders.
 - [ ] **Run the database migrations** — in Supabase → SQL Editor → Run, in this order:
   1. `supabase/migrations/001-multi-video.sql` — per-video progress column.
   2. `supabase/migrations/002-document-uploads.sql` — document columns, the `coach-documents` storage bucket, and its policies.

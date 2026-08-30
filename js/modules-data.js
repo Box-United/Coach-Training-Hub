@@ -63,32 +63,72 @@ const MODULES = [
     passThreshold: 80,
     quiz: [
       {
-        question: "What is Box United's core belief about the girls it trains?",
+        question: "Roughly what share of girls drop out of sports by age 14, and what is the number one reason given?",
         options: [
-          "They need to be protected from competition.",
-          "They are capable of far more than the world often expects from them.",
-          "They should focus on boxing skills only, not leadership.",
-          "They will naturally build confidence without any coaching."
+          "About 25 percent, mostly because of the cost of taking part.",
+          "About 45 percent, roughly twice the rate of boys, and the top reason is low body confidence.",
+          "About 45 percent, and the top reason is injuries.",
+          "About 60 percent, and the top reason is a lack of time."
         ],
         correctIndex: 1
       },
       {
-        question: "What does Box United mean by \"Strong, not soft\"?",
+        question: "What sits at the core of Fight Like a Girl?",
         options: [
-          "Coaches should be harsh and unforgiving.",
-          "Girls who show emotion are not fighting hard enough.",
-          "Discipline and welcome are not opposites, both belong in the gym.",
-          "Only physical strength matters in training."
+          "Boxing skill, with social-emotional learning added where there is time.",
+          "Social-emotional learning, with boxing used as a warm-up.",
+          "Boxing and social-emotional well-being together, not one or the other.",
+          "Preparing girls for competitive boxing."
         ],
         correctIndex: 2
       },
       {
-        question: "A new girl seems nervous on her first day. What's the on-brand move?",
+        question: "What are the three pillars that show up in every single session?",
         options: [
-          "Let her sit out until she asks to join in.",
-          "Welcome her in, and hold her to the same standard as everyone else.",
-          "Pair her only with the most experienced boxer in the room.",
-          "Tell her boxing might not be for her if she's nervous."
+          "Strength, speed, and endurance.",
+          "Self-confidence, healthy habits, and growth mindset.",
+          "Discipline, respect, and teamwork.",
+          "Boxing, nutrition, and recovery."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Box United wants every lesson to be inspirational and thought-provoking. What else does it have to be?",
+        options: [
+          "Different from the week before, so it never repeats.",
+          "Focused mainly on boxing technique.",
+          "Connected to a takeaway a student can actually use.",
+          "Finished inside the session, with nothing carried over."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "How is the programming year structured?",
+        options: [
+          "Ten weeks, once a year.",
+          "Ten weeks per season, two seasons a year.",
+          "Twenty weeks running straight through.",
+          "It varies from site to site."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Two things are required from you every season and are named as deliverables in your contract. What are they?",
+        options: [
+          "Weekly lesson plans and an end-of-season report.",
+          "Daily attendance and your survey and assessment results, both through Charity Rescue.",
+          "Photos from each session and a final showcase.",
+          "A monthly newsletter and a site visit write-up."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "You have a question in the middle of the season. Where should it go?",
+        options: [
+          "To whichever member of the Box United team you know best.",
+          "To programs@boxunited.org, so it does not get lost.",
+          "Into the coach group chat.",
+          "Save it for the next time somebody visits your site."
         ],
         correctIndex: 1
       }
