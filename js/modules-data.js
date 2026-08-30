@@ -328,17 +328,17 @@ const MODULES = [
     passThreshold: 80,
     quiz: [
       {
-        question: "What was the main insight from the hospitality video?",
+        question: "In the hospitality video, four guests were heading to the airport having eaten at the city's best restaurants, but had never tried a New York street hot dog. What did the restaurant do?",
         options: [
-          "Big, expensive gestures are what people remember.",
-          "It is almost never the expensive thing. It is the small thing nobody had to do, that shows someone was paying attention.",
-          "Consistency matters more than any individual gesture.",
-          "People remember how a place looks more than how it made them feel."
+          "Comped them a bottle of vintage champagne and a bucket of caviar.",
+          "Ran out to a street cart, bought a two-dollar hot dog, and served it plated as a course before their final dish.",
+          "Gave them a tour of the kitchen and a signed cookbook.",
+          "Sent them to the airport with a packed picnic."
         ],
         correctIndex: 1
       },
       {
-        question: "How much magic moments money is there, and how is it allocated?",
+        question: "How much magic moments money does your site get, and how often?",
         options: [
           "Two hundred dollars per coach, per year.",
           "Two hundred dollars per site, per year.",
@@ -348,22 +348,32 @@ const MODULES = [
         correctIndex: 1
       },
       {
-        question: "There is a student at your school who is struggling, but she is not in your FLAG group. Can you spend magic moments money on her?",
+        question: "Which of these could you spend the magic moments money on?",
+        options: [
+          "New gloves for yourself, since yours wore out coaching.",
+          "Hygiene products for a girl who is hesitant to come to a session without them.",
+          "A dinner for the coaching staff at the end of the season.",
+          "A gift for a student at your school who is not in the FLAG group."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "A student at your school is struggling, but she is not in your FLAG group. Can you spend magic moments money on her?",
         options: [
           "Yes, as long as you keep the receipt.",
-          "Yes, if she is a student at the same school.",
+          "Yes, if she is at the same school.",
           "No. The money is for the girls in your FLAG group.",
-          "Yes, but only up to half of the total."
+          "Yes, up to half of the total."
         ],
         correctIndex: 2
       },
       {
-        question: "You have an idea for a magic moment and you are not sure it is allowed. What does Box United want you to do?",
+        question: "You have an idea and you are not sure it counts. What are you asked to do?",
         options: [
           "Skip it, to stay on the safe side.",
           "Spend it and explain afterwards if anyone asks.",
-          "Ask first. They would rather answer a question than have you sit on a good idea.",
-          "Check with another coach and go with the majority."
+          "Ask first. Box United would rather answer a question than have you sit on a good idea.",
+          "Check with another coach and go with whatever they say."
         ],
         correctIndex: 2
       },
@@ -371,7 +381,7 @@ const MODULES = [
         question: "What does Box United ask for in return for the money?",
         options: [
           "A budget submitted before you spend anything.",
-          "That you document it. Take the picture and send the story of what you noticed and what you did about it.",
+          "That you keep your receipts, take the picture, and send the story of what you noticed and what you did about it.",
           "Nothing at all, it is unconditional.",
           "That anything unspent is returned at the end of the season."
         ],
