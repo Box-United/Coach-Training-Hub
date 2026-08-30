@@ -127,7 +127,10 @@
 .videolabel{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:18px;}
 .videostate{font-size:12px;color:var(--fg-faint);white-space:nowrap;}
 .videoblock .videowrap{margin-top:8px;}
-.videocap{padding:12px 2px 24px;font-size:12.5px;color:var(--fg-faint);max-width:64ch;}
+/* Runs the full width of the video above it. It had max-width:64ch, but ch
+   scales with the element's own font size, and at 12.5px that came out around
+   430px under a 952px video, which read as a stray narrow paragraph. */
+.videocap{margin:18px 0 0;padding:0 2px 24px;font-size:12.5px;color:var(--fg-faint);}
 
 .quizcard{margin:0 0 48px;background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 24px;}
 .quizhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
