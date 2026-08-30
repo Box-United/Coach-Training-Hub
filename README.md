@@ -75,7 +75,7 @@ Until that is configured, expect to wait out the rate limit between test sign-in
 | `module.html?id=N` | One module: its videos, its quiz, and any document it asks for. |
 | `admin.html` | Documents waiting on review, and the progress table. Admins only. |
 
-The magic link lands on `index.html`, so that is the page that redraws itself once a session appears. The top bar comes from `js/nav.js` so the navigation cannot drift between pages, and `admin.html` is not linked from it, you reach it by URL or from the note on the training page.
+The magic link lands on `index.html`, so that is the page that redraws itself once a session appears. The top bar comes from `js/nav.js` so the navigation cannot drift between pages. It carries a link out to Charity Rescue, because attendance and the assessment results are required every season and both are done there rather than here, and `admin.html` is not linked from it, you reach it by URL or from the note on the training page.
 
 **Admins see more.** For anyone with `is_admin`, the sequential lock and the watch-the-whole-video gate both stand aside, so every module can be opened and reviewed, including ones no coach has unlocked yet. Locked cards on the training page gain a "Preview" link. Both pages say plainly that what is on screen is not what a coach would see.
 

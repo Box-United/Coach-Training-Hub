@@ -15,6 +15,9 @@
 }
 .topnav a:hover{color:var(--fg);}
 .topnav a.is-current{color:var(--fg);border-bottom-color:var(--bu-blue);}
+/* Leaves the hub, so it never takes the current-page underline. */
+.topnav a.is-external{color:var(--fg-faint);}
+.topnav a.is-external:hover{color:var(--fg);}
 @media (max-width:640px){
   .topbar{flex-wrap:wrap;gap:10px 16px;}
   .topnav{order:3;flex-basis:100%;gap:18px;}
