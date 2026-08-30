@@ -61,6 +61,14 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 }
 
+// A module can carry a quiz as well as a document. Approving the document
+// completes it only if the quiz has been passed too.
+function quizSatisfiedFor(item) {
+  const mod = item.module;
+  if (!mod || !mod.quiz.length) return true;
+  return item.row.quiz_score !== null && item.row.quiz_score >= mod.passThreshold;
+}
+
 function reviewListHtml(pending) {
   if (!pending.length) {
     return '<p class="help">Nothing waiting on review.</p>';
@@ -70,6 +78,7 @@ function reviewListHtml(pending) {
       <div class="reviewwho">
         <div class="reviewcoach">${item.coach.email}</div>
         <div class="reviewmod">${item.module ? item.module.title : "Module " + item.row.module_id} &middot; uploaded ${formatDate(item.row.document_uploaded_at)}</div>
+        ${quizSatisfiedFor(item) ? "" : '<div class="reviewwarn">Quiz not passed yet, so approving this will not complete the module.</div>'}
       </div>
       <div class="reviewactions">
         <button class="btn btn-outline btn-sm" data-act="view" data-index="${i}">View file</button>
@@ -171,14 +180,15 @@ function reviewListHtml(pending) {
     msg.className = "help reviewmsg";
     msg.textContent = approved ? "Approving..." : "Rejecting...";
     try {
-      await reviewModuleDocument(
-        item.coach.id,
-        item.row.module_id,
-        item.row.season,
+      await reviewModuleDocument({
+        coachId: item.coach.id,
+        moduleId: item.row.module_id,
+        season: item.row.season,
         approved,
-        session.user.id,
-        item.row.completed_at
-      );
+        adminId: session.user.id,
+        completedAt: item.row.completed_at,
+        quizSatisfied: quizSatisfiedFor(item)
+      });
       window.location.reload();
     } catch (err) {
       // Without this an approval that hit an RLS failure would look like it

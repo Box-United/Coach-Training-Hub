@@ -67,7 +67,7 @@ Note: multi-video rendering and the quiz gate are written but unverified in a re
 All nine are titled and described in `js/modules-data.js` but have no video and no questions.
 
 - [ ] Module 2 — Agreement and Pay
-- [ ] Module 3 — Ramp Set Up
+- [~] Module 3 — Ramp Set Up — upload is in. Will also have a video and questions, both still needed.
 - [~] Module 4 — Child Protection Policy — video in (`vvCS1KZQVVw`, 10m 27s). Still needs quiz questions.
 - [ ] Module 5 — Behavior Management
 - [x] Module 9 — SafeSport Training — complete, needs no video or quiz.

@@ -76,6 +76,10 @@ function formatDate(iso) {
   // count, and would let a failed retake erase an earlier pass.
   let attempts = myRow ? myRow.quiz_attempts : 0;
   let everPassed = myRow ? myRow.passed : false;
+  // Passing the quiz and completing the module stopped being the same thing
+  // once a module could also ask for a document. everPassed is the module
+  // being complete, quizPassed is only the quiz part of it.
+  let quizPassed = !!(myRow && myRow.quiz_score !== null && myRow.quiz_score >= mod.passThreshold);
   let bestScore = myRow && myRow.quiz_score !== null ? myRow.quiz_score : null;
   let firstCompletedAt = myRow ? myRow.completed_at : null;
 
@@ -177,6 +181,14 @@ function formatDate(iso) {
         ? '<p class="help">You can carry on to the next module while this is being reviewed. It will not show as complete until it has been approved.</p>'
         : ""
       }
+      ${mod.quiz.length && quizPassed && documentStatus !== "approved"
+        ? '<p class="help">Quiz passed. This module completes once your document has been approved.</p>'
+        : ""
+      }
+      ${mod.quiz.length && !quizPassed && documentStatus === "approved"
+        ? '<p class="help">Document approved. This module completes once you pass the quiz below.</p>'
+        : ""
+      }
     `;
 
     // A twenty-character random key is not something to retype by hand.
@@ -265,7 +277,7 @@ function formatDate(iso) {
   // them back out because they have not re-watched would be a downgrade, and
   // would strand anyone whose video got swapped after they finished it.
   function quizIsUnlocked() {
-    return isAdmin || everPassed || videos.length === 0 || videoComplete.every(Boolean);
+    return isAdmin || everPassed || quizPassed || videos.length === 0 || videoComplete.every(Boolean);
   }
 
   function renderQuizLockedNotice() {
@@ -287,10 +299,18 @@ function formatDate(iso) {
     quizRendered = true;
     renderQuiz(quizcard, mod.quiz, mod.passThreshold, async ({ pct, passed }) => {
       attempts += 1;
-      if (passed && !firstCompletedAt) firstCompletedAt = new Date().toISOString();
-      everPassed = everPassed || passed;
+      quizPassed = quizPassed || passed;
       // Keep the best score, so a passed module never shows a failing score.
       if (bestScore === null || pct > bestScore) bestScore = pct;
+
+      // A module can ask for videos, a quiz, a document, or any mix of them,
+      // and it is complete only when everything it asks for is done. Without
+      // this, passing the quiz on a module that also wants a document would
+      // mark it complete and the document would never be needed.
+      const documentSatisfied = !mod.upload || documentStatus === "approved";
+      const complete = quizPassed && documentSatisfied;
+      if (complete && !firstCompletedAt) firstCompletedAt = new Date().toISOString();
+      everPassed = everPassed || complete;
 
       await upsertProgress(session.user.id, moduleId, {
         quiz_score: bestScore,
@@ -298,6 +318,10 @@ function formatDate(iso) {
         passed: everPassed,
         completed_at: firstCompletedAt
       });
+
+      // The upload card carries the "what is still outstanding" line, so it
+      // has to redraw once the quiz half is done.
+      renderUploadCard();
     });
   }
 

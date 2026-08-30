@@ -65,16 +65,20 @@ async function getDocumentUrl(path, expiresInSeconds) {
 // Called by an admin from admin.html. `passed` is what shows a module as
 // complete, so it moves only here, on a real person's decision, never on the
 // upload itself.
-async function reviewModuleDocument(coachId, moduleId, season, approved, adminId, existingCompletedAt) {
+async function reviewModuleDocument({ coachId, moduleId, season, approved, adminId, completedAt, quizSatisfied }) {
   const now = new Date().toISOString();
+  // Approving the document does not on its own complete a module that also
+  // carries a quiz. Both halves have to be done, and the caller works out
+  // whether the quiz half is, since only the browser has the pass threshold.
+  const complete = approved && quizSatisfied !== false;
   const { error } = await supabaseClient
     .from("progress")
     .update({
       document_status: approved ? "approved" : "rejected",
       document_reviewed_at: now,
       document_reviewed_by: adminId,
-      passed: approved,
-      completed_at: approved ? (existingCompletedAt || now) : null,
+      passed: complete,
+      completed_at: complete ? (completedAt || now) : null,
       updated_at: now
     })
     .eq("coach_id", coachId)

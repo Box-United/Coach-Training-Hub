@@ -137,7 +137,9 @@ upload: {
 }
 ```
 
-A module can have an upload, a video, and a quiz, in any combination.
+A module can have an upload, a video, and a quiz, in any combination, and **it is complete only when every part it asks for is done**. On a module with both a quiz and an upload, passing the quiz does not complete it and neither does approving the document: it needs both. The module page tells the coach which half is outstanding, and the admin review queue warns you when approving a document will not complete the module because the quiz has not been passed.
+
+Because the pass threshold lives in `js/modules-data.js` and not in the database, it is the browser that works out whether the quiz half is satisfied and tells `reviewModuleDocument`. That is the same trust model as the quiz itself, which has always been scored client-side.
 
 **Uploading and completing are deliberately different things.** When a coach uploads, the module goes to `pending` and they can carry straight on to the next module, so nobody sits blocked waiting on an admin. But it shows as "In review", not "Complete", and it does not count toward their progress bar. Only an admin approving it on `admin.html` sets `passed` and marks it complete.
 

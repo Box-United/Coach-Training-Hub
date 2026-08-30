@@ -192,6 +192,7 @@
 .reviewrow:last-child{border-bottom:0;}
 .reviewcoach{font-size:14px;}
 .reviewmod{font-size:12.5px;color:var(--fg-faint);margin-top:3px;}
+.reviewwarn{font-size:12.5px;color:var(--bu-stone-deep);margin-top:4px;}
 .reviewactions{display:flex;gap:8px;flex-wrap:wrap;}
 .reviewmsg{flex-basis:100%;margin:0;}
 .reviewmsg:empty{display:none;}
