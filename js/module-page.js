@@ -95,7 +95,7 @@ function formatDate(iso) {
             ? `<div class="videolabel"><span class="eyebrow">${video.title || "Video " + (i + 1)}</span><span class="videostate" id="videostate-${i}"></span></div>`
             : ""
           }
-          <div class="videowrap"><div id="player-${i}"></div></div>
+          <div class="videowrap" id="videoslot-${i}"></div>
         </div>
       `).join("")
     : (mod.upload
@@ -328,19 +328,45 @@ function formatDate(iso) {
 
   function updateVideoStateLabel(i) {
     const el = document.getElementById(`videostate-${i}`);
-    if (el) el.textContent = videoComplete[i] ? "Watched" : "Not finished";
+    if (!el) return;
+    if (videoComplete[i]) el.textContent = "Watched";
+    else if (!videoUnlocked(i)) el.textContent = "Locked";
+    else el.textContent = "Not finished";
   }
 
-  if (mod.quiz.length && !quizIsUnlocked()) renderQuizLockedNotice();
-  renderQuizIfUnlocked();
+  // Videos on a module run in order: the second does not open until the first
+  // has been watched to the end. Admins see them all at once, the same way
+  // they skip the module lock and the quiz gate.
+  function videoUnlocked(i) {
+    if (isAdmin || i === 0) return true;
+    return videoComplete.slice(0, i).every(Boolean);
+  }
 
-  videos.forEach((video, i) => {
-    updateVideoStateLabel(i);
-    const startFurthest = Number(videoProgress[i]) || 0;
-    createVideoPlayer(`player-${i}`, video.youtubeId, startFurthest, ({ furthest, complete }) => {
+  const playerStarted = videos.map(() => false);
+
+  // A locked video shows a panel instead of a player, and the player is only
+  // built once it opens. Mounting all of them up front would let a coach hit
+  // play on the second video through the browser tools before the first.
+  function renderVideoSlot(i) {
+    const slot = document.getElementById(`videoslot-${i}`);
+    if (!slot || playerStarted[i]) return;
+
+    if (!videoUnlocked(i)) {
+      const previous = videos[i - 1];
+      slot.innerHTML = `<div class="videolocked">Finish ${previous.title || "the previous video"} to unlock this one.</div>`;
+      return;
+    }
+
+    playerStarted[i] = true;
+    slot.innerHTML = `<div id="player-${i}"></div>`;
+    createVideoPlayer(`player-${i}`, videos[i].youtubeId, Number(videoProgress[i]) || 0, ({ furthest, complete }) => {
       const wasComplete = videoComplete[i];
       videoComplete[i] = complete;
-      if (wasComplete !== complete) updateVideoStateLabel(i);
+      if (wasComplete !== complete) {
+        updateVideoStateLabel(i);
+        // Finishing one video is what opens the next.
+        for (let n = i + 1; n < videos.length; n++) renderVideoSlot(n);
+      }
 
       if (Number(videoProgress[i] || 0) !== furthest) {
         videoProgress[i] = furthest;
@@ -357,5 +383,13 @@ function formatDate(iso) {
       if (quizIsUnlocked()) renderQuizIfUnlocked();
       else if (mod.quiz.length) renderQuizLockedNotice();
     }).catch(() => {});
+  }
+
+  if (mod.quiz.length && !quizIsUnlocked()) renderQuizLockedNotice();
+  renderQuizIfUnlocked();
+
+  videos.forEach((video, i) => {
+    updateVideoStateLabel(i);
+    renderVideoSlot(i);
   });
 })();

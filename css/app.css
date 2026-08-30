@@ -124,6 +124,12 @@
    these are numbered player-0, player-1, and so on. */
 [id^="player-"]{aspect-ratio:16/9;width:100%;display:block;border:0;}
 .videoblock + .videoblock{margin-top:22px;}
+/* Stands in for a player that has not opened yet, so it holds the same shape
+   as the video it replaces rather than collapsing the layout. */
+.videolocked{
+  aspect-ratio:16/9;width:100%;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:0 24px;font-size:13.5px;color:var(--fg-faint);
+}
 .videolabel{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:18px;}
 .videostate{font-size:12px;color:var(--fg-faint);white-space:nowrap;}
 .videoblock .videowrap{margin-top:8px;}

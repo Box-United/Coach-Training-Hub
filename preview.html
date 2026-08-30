@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Preview — Box United Coach Training Hub</title>
-<link rel="stylesheet" href="css/colors-and-type.css?v=29">
-<link rel="stylesheet" href="css/app.css?v=29">
+<link rel="stylesheet" href="css/colors-and-type.css?v=32">
+<link rel="stylesheet" href="css/app.css?v=32">
 </head>
 <body>
 
@@ -23,7 +23,7 @@
 
 <div class="previewbar">
   <strong>Preview</strong>
-  <span>Sample data, signed in as an admin.</span>
+  <span id="previewWho"></span>
   <a href="preview.html?page=home">Home</a>
   <a href="preview.html?page=training">Training</a>
   <a href="preview.html?page=admin">Admin</a>
@@ -33,20 +33,21 @@
   <a href="preview.html?page=module&amp;id=6">Module 6</a>
   <a href="preview.html?page=module&amp;id=9">Module 9</a>
   <a href="preview.html?page=module&amp;id=10">Module 10</a>
+  <a id="roleToggle" href="#"></a>
 </div>
 
 <div id="app"></div>
 
 <!-- The real shared pieces, unchanged. -->
-<script src="js/modules-data.js?v=29"></script>
-<script src="js/season-info.js?v=29"></script>
-<script src="js/util.js?v=29"></script>
-<script src="js/nav.js?v=29"></script>
-<script src="js/quiz.js?v=29"></script>
-<script src="js/video-player.js?v=29"></script>
+<script src="js/modules-data.js?v=32"></script>
+<script src="js/season-info.js?v=32"></script>
+<script src="js/util.js?v=32"></script>
+<script src="js/nav.js?v=32"></script>
+<script src="js/quiz.js?v=32"></script>
+<script src="js/video-player.js?v=32"></script>
 <!-- Loaded for checkFileAgainstRules. The stubs below are declared after it,
      so they replace the three functions in here that would hit Supabase. -->
-<script src="js/uploads.js?v=29"></script>
+<script src="js/uploads.js?v=32"></script>
 
 <script>
 // ---- stand-ins for everything that would hit Supabase -------------------
@@ -54,8 +55,12 @@
 const PREVIEW_COACH_ID = "00000000-0000-0000-0000-000000000001";
 const PREVIEW_SESSION = { user: { id: PREVIEW_COACH_ID, email: "alexandra@boxunited.org" } };
 
+// ?as=coach drops admin rights, so the gates an admin skips (module locks,
+// the watch-the-video gate, video ordering) can actually be seen.
+const PREVIEW_IS_ADMIN = new URLSearchParams(location.search).get("as") !== "coach";
+
 async function getCurrentSession() { return PREVIEW_SESSION; }
-async function getMyCoachRow() { return { id: PREVIEW_COACH_ID, email: PREVIEW_SESSION.user.email, is_admin: true }; }
+async function getMyCoachRow() { return { id: PREVIEW_COACH_ID, email: PREVIEW_SESSION.user.email, is_admin: PREVIEW_IS_ADMIN }; }
 async function getCurrentSeason() { return 2026; }
 async function getSeasonsWithProgress() { return [2026, 2025]; }
 function signOut() { alert("Sign out does nothing in the preview."); }
@@ -70,7 +75,21 @@ const PREVIEW_PROGRESS = [
     video_progress: {}, document_path: null, document_status: "none", document_uploaded_at: null }
 ];
 
-async function getMyProgress() { return PREVIEW_PROGRESS; }
+async function getMyProgress() {
+  if (PREVIEW_IS_ADMIN) return PREVIEW_PROGRESS;
+  // As a coach, every earlier module is treated as passed so the module you
+  // asked for is actually reachable. Otherwise the sequential lock hides the
+  // gates inside it, which are the thing worth looking at.
+  const viewing = Number(new URLSearchParams(location.search).get("id")) || 1;
+  const earlier = [];
+  for (let id = 1; id < viewing; id++) {
+    earlier.push({ coach_id: PREVIEW_COACH_ID, module_id: id, season: 2026, quiz_score: 100,
+      quiz_attempts: 1, passed: true, completed_at: "2026-08-20T14:02:00Z",
+      video_furthest_seconds: 0, video_progress: {}, document_path: null,
+      document_status: "approved", document_uploaded_at: null });
+  }
+  return earlier;
+}
 async function upsertProgress() { /* preview writes nothing */ }
 
 async function getAllProgressForAdmin() {
@@ -105,6 +124,23 @@ const PAGE_SCRIPTS = {
   admin: "js/admin-page.js"
 };
 
+(() => {
+  const t = document.getElementById("roleToggle");
+  const p = new URLSearchParams(location.search);
+  if (PREVIEW_IS_ADMIN) { p.set("as", "coach"); t.textContent = "View as coach"; }
+  else { p.delete("as"); t.textContent = "View as admin"; }
+  t.href = "preview.html?" + p.toString();
+})();
+
+document.getElementById("previewWho").textContent = PREVIEW_IS_ADMIN
+  ? "Sample data, signed in as an admin."
+  : "Sample data, signed in as a coach. Gates are on.";
+if (!PREVIEW_IS_ADMIN) {
+  document.querySelectorAll(".previewbar a").forEach((a) => {
+    a.href = a.getAttribute("href") + "&as=coach";
+  });
+}
+
 const page = new URLSearchParams(location.search).get("page") || "home";
 const scriptSrc = PAGE_SCRIPTS[page];
 
@@ -113,7 +149,7 @@ if (!scriptSrc) {
     '<div class="centernote"><h2>Unknown preview page</h2><p>Use the links above.</p></div>';
 } else {
   const tag = document.createElement("script");
-  tag.src = scriptSrc + "?v=29";
+  tag.src = scriptSrc + "?v=32";
   document.body.appendChild(tag);
 }
 </script>

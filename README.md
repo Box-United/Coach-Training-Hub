@@ -81,6 +81,8 @@ The magic link lands on `index.html`, so that is the page that redraws itself on
 
 `preview.html` renders any of these pages with made-up data and no sign-in, for looking at layout before the database is set up. It has no Supabase client on it at all, so it cannot touch anything real. Open it at `preview.html?page=admin`, `?page=training`, `?page=home`, or `?page=module&id=6`.
 
+Add `&as=coach`, or use the View as coach link, to drop admin rights. That matters because an admin skips the module lock, the watch-the-video gate and the video ordering, so those are invisible until you look as a coach. In coach mode every earlier module is treated as passed, so whichever module you asked for is actually reachable.
+
 ## The coach home page
 
 Signed-in coaches land on a welcome, the season's key dates, and a button through to their training.
@@ -121,7 +123,7 @@ videos: [
 
 `title` is optional and only shows when there is more than one video. Both forms work, a module with a single video can keep using plain `youtubeId`.
 
-There is no gate between the videos, a coach can play them in any order. The quiz stays locked until every video on the module has been watched through to the end. Each video's furthest-watched position is tracked separately, so finishing one does not let a coach skip another.
+Videos run in order: the second does not open until the first has been watched to the end, and a locked one shows a panel in place of the player rather than mounting a player a coach could start through the browser tools. The quiz stays locked until every video has been finished. Each video's furthest-watched position is tracked separately, so finishing one does not let a coach skip another.
 
 ### Modules proved by uploading a document
 
