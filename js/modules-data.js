@@ -96,7 +96,7 @@ const MODULES = [
     title: "Ramp Set Up",
     description: "Setting up your Ramp payment account, and sending us proof it is done.",
     youtubeId: "",
-    passThreshold: 80,
+    passThreshold: 100,
     quiz: [
       {
         question: "Where do your bank details belong?",
