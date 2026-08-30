@@ -54,11 +54,8 @@ const MODULES = [
     title: "Welcome to Box United, Our Why",
     description: "The mission, the gym rules, and what makes Box United different.",
     videos: [
-      { youtubeId: "nMWrlm9056g", title: "Part 1" }
-      // To add a second video, uncomment the line below and paste its ID.
-      // The quiz stays locked until every video listed here is watched to the
-      // end, so do not leave an entry in with a placeholder ID in it.
-      // , { youtubeId: "", title: "Part 2" }
+      { youtubeId: "nMWrlm9056g", title: "Part 1 — Who We Are" },
+      { youtubeId: "Y0aNlDOYW3w", title: "Part 2 — Coach Welcome" }
     ],
     passThreshold: 80,
     quiz: [
