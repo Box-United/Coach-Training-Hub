@@ -255,10 +255,14 @@
 .previewbar a{color:var(--bu-white);text-decoration:underline;text-underline-offset:3px;}
 
 /* Instructions for training that happens on someone else's site. */
+/* Something the coach has to do that this site does not handle itself.
+   Shares the callout treatment with .uploadnote. */
+.modulenote,
 .uploadnote{
   margin:14px 0 20px;padding:11px 14px;border-radius:9px;font-size:13.5px;
   color:var(--fg);background:transparent;border:1px solid var(--bu-blue);
 }
+.modulenote{margin:0 0 28px;}
 .uploadsteps{margin:20px 0 12px 18px;padding:0;font-size:13.5px;color:var(--fg-muted);}
 .uploadsteps li{margin-bottom:7px;line-height:1.45;}
 .uploadsteps li:last-child{margin-bottom:0;}

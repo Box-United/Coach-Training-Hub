@@ -17,6 +17,12 @@
 // them in any order. The quiz stays locked until every video on the module has
 // been watched through to the end.
 //
+// Note: any module can carry a `note`, a short line shown under the video and
+// above the quiz, for something a coach has to do that the hub itself does
+// not handle:
+//
+//   note: "You will sign the acknowledgment in the Charity Rescue platform."
+//
 // Upload: a module can also require a document, for training that happens
 // somewhere else (SafeSport, setting up a Ramp account). Add an `upload` block
 // and the module page shows an upload control:
@@ -148,6 +154,7 @@ const MODULES = [
     title: "Child Protection Policy",
     description: "Keeping every girl safe, what the policy asks of you, and when to escalate.",
     youtubeId: "vvCS1KZQVVw",
+    note: "To finish this module you will also sign the Child Protection Policy Acknowledgment. That happens in the Charity Rescue platform, not here.",
     passThreshold: 100,
     quiz: [
       {
@@ -214,7 +221,58 @@ const MODULES = [
     description: "Taking attendance in Charity Rescue, and what to record each session.",
     youtubeId: "qaB8wG07aik",
     passThreshold: 80,
-    quiz: []
+    quiz: [
+      {
+        question: "A family tells you in advance that their daughter will miss Thursday's session. What do you mark her as?",
+        options: [
+          "Absent, since she was not there.",
+          "Excused. An excused absence is left out of the attendance calculation entirely, while a plain absence counts against the rate.",
+          "Present, since she had a good reason.",
+          "Leave it blank so it does not count either way."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "The school closes for weather and you need to call off a session. Which option do you choose?",
+        options: [
+          "Delete, so it is removed cleanly from the calendar.",
+          "Mark as cancelled. It keeps the session visible and emails the families of every participant at that site.",
+          "Either one. Both notify families the same way.",
+          "Neither. Message your admin and let them handle it."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "A young person who is not on your roster turns up to a session. What do you do?",
+        options: [
+          "Add them to the roster yourself from the attendance screen.",
+          "Turn them away until an admin has enrolled them.",
+          "Run the session, take their name and their guardian's phone number on paper, and send it to your admin.",
+          "Mark them present as a walk-in and sort the paperwork out later."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "A volunteer arrives who did not sign up for that session. What do you do?",
+        options: [
+          "Send them home, since volunteer spots are booked in advance.",
+          "Message your admin to add them.",
+          "Use the Add walk-in picker in the volunteer section. They are added and marked present.",
+          "Record their hours on paper and submit them later."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "Which of these can you change yourself on a participant's profile?",
+        options: [
+          "Their site and their grade.",
+          "Their date of birth and their enrollment.",
+          "Their name, their guardian's phone and email, their T-shirt size, and their medical notes.",
+          "Everything on the profile."
+        ],
+        correctIndex: 2
+      }
+    ]
   },
   {
     id: 7,

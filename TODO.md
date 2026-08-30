@@ -69,10 +69,10 @@ All nine are titled and described in `js/modules-data.js` but have no video and 
 - [ ] Module 2 — Agreement and Pay
 - [~] Module 3 — Ramp Set Up — upload is in. Will also have a video and questions, both still needed.
 - [x] Module 4 — Child Protection Policy — video (`vvCS1KZQVVw`, 10m 27s) and all five knowledge checks from the script, set to require 100%.
-- [ ] **Does Module 4 need the signed acknowledgment as an upload?** Scene 8 of the script says "To complete this module, you will sign the Child Protection Policy Acknowledgment." Nothing in the hub collects that today, so a coach can pass the quiz without signing anything. Adding an upload to Module 4 works the same way as SafeSport and Ramp.
+- [x] **Module 4 acknowledgment** — signed in the Charity Rescue platform, not here. The module page now says so. Note that the hub does not track whether it was actually signed, so Module 4 completes on the quiz alone.
 - [ ] Module 5 — Behavior Management
 - [x] Module 9 — SafeSport Training — complete, needs no video or quiz.
-- [~] Module 6 — Attendance System, Charity Rescue — video in (`qaB8wG07aik`, 9m 14s). Still needs quiz questions.
+- [x] Module 6 — Attendance System, Charity Rescue — video (`qaB8wG07aik`, 9m 14s) and five questions from the staff training script, at the default 80% (4 of 5).
 - [ ] Module 7 — 2026-27 Schedule
 - [ ] Module 8 — Equipment
 - [ ] Module 9 — Monitoring and Evaluation

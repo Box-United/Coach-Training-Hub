@@ -118,6 +118,7 @@ function formatDate(iso) {
       </div>
       ${videosHtml}
       ${hasVideos ? '<p class="videocap">Scrubbing ahead of where you\'ve watched is disabled, we track how far you\'ve gotten, not just where you last paused. This is a good-faith limit, not a tamperproof one.</p>' : ""}
+      ${mod.note ? `<p class="modulenote">${mod.note}</p>` : ""}
       ${mod.upload ? '<div class="quizcard" id="uploadcard"></div>' : ""}
       ${showQuizCard
         ? `<div class="quizcard" id="quizcard">${mod.quiz.length ? "" : '<p class="help">This module\'s quiz hasn\'t been written yet, add questions in js/modules-data.js.</p>'}</div>`
