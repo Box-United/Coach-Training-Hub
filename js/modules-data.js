@@ -106,6 +106,33 @@ const MODULES = [
           "Written on a direct deposit sheet provided by Box United."
         ],
         correctIndex: 1
+      },
+      {
+        question: "Which parts of the Ramp setup guide do you actually have to finish?",
+        options: [
+          "All of it, including inviting team members and your company profile.",
+          "Payment details and tax details. The rest is optional.",
+          "Just payment details. Tax details can wait until April."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Who checks your tax details before your 1099 is generated?",
+        options: [
+          "Box United's finance team reviews them first.",
+          "Ramp's support team verifies them.",
+          "Nobody. The form is built from exactly what you entered."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "Which email address should your Ramp account use?",
+        options: [
+          "Your school or team address, so it stays official.",
+          "A personal address you will still have next year.",
+          "It does not matter, support can always look you up."
+        ],
+        correctIndex: 1
       }
     ],
     upload: {
