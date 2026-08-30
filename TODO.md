@@ -68,14 +68,14 @@ All nine are titled and described in `js/modules-data.js` but have no video and 
 
 - [ ] Module 2 — Agreement and Pay
 - [ ] Module 3 — Ramp Set Up
-- [ ] Module 4 — Child Protection Policy
+- [~] Module 4 — Child Protection Policy — video in (`vvCS1KZQVVw`, 10m 27s). Still needs quiz questions.
 - [ ] Module 5 — Behavior Management
 - [x] Module 9 — SafeSport Training — complete, needs no video or quiz.
 - [~] Module 6 — Attendance System, Charity Rescue — video in (`qaB8wG07aik`, 9m 14s). Still needs quiz questions.
 - [ ] Module 7 — 2026-27 Schedule
 - [ ] Module 8 — Equipment
 - [ ] Module 9 — Monitoring and Evaluation
-- [ ] Module 10 — Magic Moments in Fight Like a Girl
+- [~] Module 10 — Magic Moments in Fight Like a Girl — first video in (`bwcyXcOpWVs`, 13m 54s, the Will Guidara TED talk). Needs a second video and quiz questions.
 
 - [ ] **Confirm two module descriptions.** Titles are exactly as given, and descriptions are written for all nine. Two are deliberately vague because the topic wasn't clear enough to write honestly:
   - **Module 3, "Ramp Set Up"** — is "ramp" a physical ramp, ramping *up* a new coach or intake, or the RAMP warm-up protocol (Raise, Activate, Mobilise, Potentiate)? Each needs a different description.

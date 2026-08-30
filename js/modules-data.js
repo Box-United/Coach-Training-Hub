@@ -110,7 +110,7 @@ const MODULES = [
     id: 4,
     title: "Child Protection Policy",
     description: "Keeping every girl safe, what the policy asks of you, and when to escalate.",
-    youtubeId: "",
+    youtubeId: "vvCS1KZQVVw",
     passThreshold: 80,
     quiz: []
   },
@@ -177,7 +177,13 @@ const MODULES = [
     id: 10,
     title: "Magic Moments in Fight Like a Girl",
     description: "The moments that keep the girls coming back and enjoying.",
-    youtubeId: "",
+    videos: [
+      { youtubeId: "bwcyXcOpWVs", title: "Part 1" }
+      // To add the second video, uncomment the line below and paste its ID.
+      // The quiz stays locked until every video listed here is watched to the
+      // end, so do not leave an entry in with a placeholder ID in it.
+      // , { youtubeId: "", title: "Part 2" }
+    ],
     passThreshold: 80,
     quiz: []
   }

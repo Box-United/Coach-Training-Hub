@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Preview — Box United Coach Training Hub</title>
-<link rel="stylesheet" href="css/colors-and-type.css?v=18">
-<link rel="stylesheet" href="css/app.css?v=18">
+<link rel="stylesheet" href="css/colors-and-type.css?v=19">
+<link rel="stylesheet" href="css/app.css?v=19">
 </head>
 <body>
 
@@ -28,22 +28,24 @@
   <a href="preview.html?page=training">Training</a>
   <a href="preview.html?page=admin">Admin</a>
   <a href="preview.html?page=module&amp;id=1">Module 1</a>
+  <a href="preview.html?page=module&amp;id=4">Module 4</a>
   <a href="preview.html?page=module&amp;id=6">Module 6</a>
   <a href="preview.html?page=module&amp;id=9">Module 9</a>
+  <a href="preview.html?page=module&amp;id=10">Module 10</a>
 </div>
 
 <div id="app"></div>
 
 <!-- The real shared pieces, unchanged. -->
-<script src="js/modules-data.js?v=18"></script>
-<script src="js/season-info.js?v=18"></script>
-<script src="js/util.js?v=18"></script>
-<script src="js/nav.js?v=18"></script>
-<script src="js/quiz.js?v=18"></script>
-<script src="js/video-player.js?v=18"></script>
+<script src="js/modules-data.js?v=19"></script>
+<script src="js/season-info.js?v=19"></script>
+<script src="js/util.js?v=19"></script>
+<script src="js/nav.js?v=19"></script>
+<script src="js/quiz.js?v=19"></script>
+<script src="js/video-player.js?v=19"></script>
 <!-- Loaded for checkFileAgainstRules. The stubs below are declared after it,
      so they replace the three functions in here that would hit Supabase. -->
-<script src="js/uploads.js?v=18"></script>
+<script src="js/uploads.js?v=19"></script>
 
 <script>
 // ---- stand-ins for everything that would hit Supabase -------------------
@@ -110,7 +112,7 @@ if (!scriptSrc) {
     '<div class="centernote"><h2>Unknown preview page</h2><p>Use the links above.</p></div>';
 } else {
   const tag = document.createElement("script");
-  tag.src = scriptSrc + "?v=18";
+  tag.src = scriptSrc + "?v=19";
   document.body.appendChild(tag);
 }
 </script>
