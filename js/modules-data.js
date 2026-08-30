@@ -97,7 +97,17 @@ const MODULES = [
     description: "Setting up your Ramp payment account, and sending us proof it is done.",
     youtubeId: "",
     passThreshold: 80,
-    quiz: [],
+    quiz: [
+      {
+        question: "Where do your bank details belong?",
+        options: [
+          "In an email to your program lead.",
+          "In Ramp, under Vendor Profile → Payment Details.",
+          "Written on a direct deposit sheet provided by Box United."
+        ],
+        correctIndex: 1
+      }
+    ],
     upload: {
       prompt: "Upload a screenshot of your finished Ramp account setup, or a PDF from your school admin confirming they will be paying you.",
       accept: ".pdf,.png,.jpg,.jpeg",
