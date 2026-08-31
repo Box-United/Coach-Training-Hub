@@ -1,9 +1,8 @@
-// The welcome and the key dates a coach sees before they start the modules.
-// All of this copy lives here, nowhere else.
+// The welcome, the season calendar, and the key dates a coach sees before
+// they start the modules. All of this copy lives here, nowhere else.
 //
-// `date` is ISO so the calendar file can use it directly, `label` is what the
-// page prints. Add, remove, or reorder freely, the page and the .ics download
-// both read straight from this list.
+// `date` is ISO, `label` is what the page prints. Add, remove, or reorder
+// freely, the page reads straight from this list.
 //
 // A date can also carry its own `link`, for anything a coach needs to open for
 // that specific date, a sign-up, a meeting, a calendar invite:
@@ -21,32 +20,40 @@ const SEASON_INFO = {
     ]
   },
 
-  calendarName: "Box United 2026-27 Key Dates",
+  // The month grid on the home page. Days are shaded by which range they fall
+  // in, checked in this order: training, then noSession, then sessions. So a
+  // day inside the training window stays marked as training even though the
+  // session range has not started yet.
+  calendar: {
+    heading: "Fall Season 2026",
+    summary: "Ten sessions, the week of Sept 14 through the week of Nov 16.",
+    footnote: "No session the week of Nov 23. Thanksgiving break.",
+    months: ["2026-09", "2026-10", "2026-11"],
+    training: { from: "2026-09-01", to: "2026-09-13", label: "Coach training, Sept 1 to Sept 13" },
+    sessions: { from: "2026-09-14", to: "2026-11-21", label: "Session week" },
+    noSession: [
+      { from: "2026-11-22", to: "2026-11-28", label: "No session" }
+    ]
+  },
 
   keyDates: [
     {
       date: "2026-09-01",
       label: "Sept 1",
-      title: "Virtual coach training opens",
-      detail: "Work through it in your own time. Due by September 14."
-    },
-    {
-      date: "2026-09-05",
-      label: "Sept 5",
-      title: "Hard deadline to add a school",
-      detail: "The last day a school can be added for the fall season."
+      title: "Fall virtual training opens",
+      detail: "Work through it in your own time. It needs to be finished before the in-person training on September 12."
     },
     {
       date: "2026-09-11",
-      label: "Sept 11",
-      title: "Last day for equipment drop-off",
-      detail: "The window is September 8 to 11. September 7 is Labor Day."
+      label: "Sept 8-11",
+      title: "Equipment arrives at your site",
+      detail: "It turns up on its own, nothing for you to arrange. If you would rather collect it yourself, you can pick it up at coach training instead."
     },
     {
       date: "2026-09-12",
       label: "Sept 12",
-      title: "In-person coach training",
-      detail: "At Chicago Youth Boxing Club.",
+      title: "Fall in-person coach training",
+      detail: "10am to 1pm at Chicago Youth Boxing Club. Required, no exceptions.",
       location: "Chicago Youth Boxing Club",
       link: {
         url: "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=NWJpM2pxMjNzNDFibDlhaHV0YjEwbG1kczUgY19hZWQ3YjZmNWVhNWNmNGNmMDhjYmI2NDExOGFhMTc3ZmEyNWZiN2M5MDNlMTYxYjFmODBjZmIxMGE5ZWQ4ZDNjQGc&tmsrc=c_aed7b6f5ea5cf4cf08cbb64118aa177fa25fb7c903e161b1f80cfb10a9ed8d3c%40group.calendar.google.com",
@@ -56,8 +63,25 @@ const SEASON_INFO = {
     {
       date: "2026-09-14",
       label: "Sept 14",
-      title: "Virtual training due, programming begins",
-      detail: "Your virtual coach training must be finished, and the first week of programming starts."
+      title: "Fall session 1",
+      detail: "The first week of programming."
+    },
+    {
+      date: "2026-11-16",
+      label: "Nov 16",
+      title: "Fall session 10",
+      detail: "The last week of the fall season."
+    },
+    {
+      date: "2026-11-23",
+      label: "Nov 23",
+      title: "No session, Thanksgiving break",
+      detail: "This week is already accounted for in your ten sessions."
+    },
+    {
+      date: "2026-12-01",
+      label: "Dec 1",
+      title: "Payday, fall season"
     }
   ]
 };

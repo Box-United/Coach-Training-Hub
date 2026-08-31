@@ -1,82 +1,83 @@
-// Builds an .ics file for the season's key dates so a coach can add them all
-// at once. Generated in the browser and downloaded straight to their machine,
-// nothing is sent anywhere and no calendar account is involved, which is why
-// this works the same in Google Calendar, Apple Calendar, and Outlook.
+// The season calendar on the home page: a month grid per month, with the
+// weeks that have sessions shaded.
+//
+// This file previously built an .ics download for the key dates. That button
+// was removed in favour of per-date links, so the code went with it. It is in
+// the git history if the all-dates-at-once download is ever wanted back.
 
-// RFC 5545 treats backslash, semicolon and comma as special inside TEXT
-// values, and newlines have to be written as a literal \n. An unescaped comma
-// in a title is enough to corrupt the rest of the line.
-function icsEscape(text) {
-  return String(text)
-    .replace(/\\/g, "\\\\")
-    .replace(/;/g, "\\;")
-    .replace(/,/g, "\\,")
-    .replace(/\r?\n/g, "\\n");
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+// Dates are handled as plain YYYY-MM-DD strings and compared as strings.
+// Parsing them into Date objects would drag the viewer's timezone in, and a
+// coach in a different zone would see the shading slip by a day.
+function isoFor(year, month, day) {
+  return year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
 }
 
-// Lines are limited to 75 octets, continued with a leading space. Plenty of
-// clients cope without this, some quietly drop the overflow.
-function icsFoldLine(line) {
-  if (line.length <= 75) return line;
-  const parts = [line.slice(0, 75)];
-  let rest = line.slice(75);
-  while (rest.length > 74) {
-    parts.push(" " + rest.slice(0, 74));
-    rest = rest.slice(74);
+function withinRange(iso, range) {
+  return !!range && iso >= range.from && iso <= range.to;
+}
+
+// Checked in this order on purpose: a day inside the training window stays
+// marked as training rather than falling through to the session shading.
+function dayStateFor(iso, cal) {
+  if (withinRange(iso, cal.training)) return "is-training";
+  if ((cal.noSession || []).some((r) => withinRange(iso, r))) return "is-nosession";
+  if (withinRange(iso, cal.sessions)) return "is-session";
+  return "";
+}
+
+function monthGridHtml(yearMonth, cal) {
+  const [year, month] = yearMonth.split("-").map(Number);
+  // Day 0 of the next month is the last day of this one.
+  const daysInMonth = new Date(year, month, 0).getDate();
+  // Which weekday the 1st lands on, 0 = Sunday. Built from a local Date with
+  // no time component, which is safe because only the weekday is read.
+  const leadingBlanks = new Date(year, month - 1, 1).getDay();
+
+  const cells = [];
+  for (let i = 0; i < leadingBlanks; i++) cells.push('<div class="calday is-blank"></div>');
+  for (let day = 1; day <= daysInMonth; day++) {
+    const state = dayStateFor(isoFor(year, month, day), cal);
+    cells.push(`<div class="calday ${state}">${day}</div>`);
   }
-  if (rest.length) parts.push(" " + rest);
-  return parts.join("\r\n");
+
+  return `
+    <div class="calmonth">
+      <div class="calmonthname">${MONTH_NAMES[month - 1]} ${year}</div>
+      <div class="calgrid">
+        ${["S", "M", "T", "W", "T", "F", "S"].map((d) => `<div class="caldow">${d}</div>`).join("")}
+        ${cells.join("")}
+      </div>
+    </div>
+  `;
 }
 
-function toIcsDate(isoDate) {
-  return String(isoDate).replace(/-/g, "");
-}
+function seasonCalendarHtml(cal) {
+  if (!cal || !cal.months || !cal.months.length) return "";
 
-// All-day events are half open: DTEND is the morning after. Without this a
-// one-day event shows as zero length, or vanishes entirely in some clients.
-function icsNextDay(isoDate) {
-  const d = new Date(isoDate + "T00:00:00Z");
-  d.setUTCDate(d.getUTCDate() + 1);
-  return toIcsDate(d.toISOString().slice(0, 10));
-}
+  const legend = [
+    { cls: "is-session", label: (cal.sessions && cal.sessions.label) || "Session week" },
+    { cls: "is-nosession", label: (cal.noSession && cal.noSession[0] && cal.noSession[0].label) || "No session" },
+    { cls: "is-training", label: (cal.training && cal.training.label) || "Coach training" }
+  ].filter((item) => item.label);
 
-function buildIcs(calendarName, events) {
-  const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  const lines = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//Box United//Coach Training Hub//EN",
-    "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH",
-    "X-WR-CALNAME:" + icsEscape(calendarName)
-  ];
-
-  events.forEach((ev, i) => {
-    lines.push("BEGIN:VEVENT");
-    // Stable per date and position, so re-importing updates the same entry
-    // rather than stacking duplicates on a coach's calendar.
-    lines.push(`UID:boxunited-${toIcsDate(ev.date)}-${i}@boxunited.org`);
-    lines.push("DTSTAMP:" + stamp);
-    lines.push("DTSTART;VALUE=DATE:" + toIcsDate(ev.date));
-    lines.push("DTEND;VALUE=DATE:" + icsNextDay(ev.date));
-    lines.push("SUMMARY:" + icsEscape(ev.title));
-    if (ev.detail) lines.push("DESCRIPTION:" + icsEscape(ev.detail));
-    if (ev.location) lines.push("LOCATION:" + icsEscape(ev.location));
-    if (ev.link && ev.link.url) lines.push("URL:" + icsEscape(ev.link.url));
-    lines.push("END:VEVENT");
-  });
-
-  lines.push("END:VCALENDAR");
-  // CRLF throughout, which the spec requires and some clients enforce.
-  return lines.map(icsFoldLine).join("\r\n") + "\r\n";
-}
-
-function downloadIcs(filename, contents) {
-  const blob = new Blob([contents], { type: "text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+  return `
+    <div class="calwrap">
+      <div class="calhead">
+        <h3>${cal.heading}</h3>
+        ${cal.summary ? `<p class="calsummary">${cal.summary}</p>` : ""}
+      </div>
+      <div class="callegend">
+        ${legend.map((item) => `<span class="callegenditem"><i class="calswatch ${item.cls}"></i>${item.label}</span>`).join("")}
+      </div>
+      <div class="calmonths">
+        ${cal.months.map((m) => monthGridHtml(m, cal)).join("")}
+      </div>
+      ${cal.footnote ? `<p class="calfootnote">${cal.footnote}</p>` : ""}
+    </div>
+  `;
 }

@@ -84,6 +84,8 @@ function renderHome(session) {
         <p style="margin-top:18px;"><a class="btn btn-primary" href="training.html">Go to your training</a></p>
       </div>
 
+      ${seasonCalendarHtml(SEASON_INFO.calendar)}
+
       <div class="sectiontitle">
         <h3>Key Dates</h3>
       </div>
