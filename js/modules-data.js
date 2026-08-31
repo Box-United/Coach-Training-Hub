@@ -312,17 +312,119 @@ const MODULES = [
     id: 6,
     title: "2026-27 Schedule",
     description: "Term dates, session times, and how the year runs.",
-    youtubeId: "",
+    youtubeId: "MqW9l5pXYlM",
     passThreshold: 80,
-    quiz: []
+    quiz: [
+      {
+        question: "When do the two seasons pay out?",
+        options: [
+          "At the end of each season's final week.",
+          "Fall pays out December 1st, spring pays out May 1st.",
+          "Monthly across the season.",
+          "Fall pays out November 16th, spring pays out April 5th."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Is the in-person coach training optional if you have coached before?",
+        options: [
+          "Yes, returning coaches can skip it.",
+          "Only the fall one is required.",
+          "No. Both in-person trainings are required, no exceptions.",
+          "It is required only if your site is new this year."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "A session needs to move to a different day. Where do you make that change?",
+        options: [
+          "Email programs@boxunited.org and ask them to move it.",
+          "In Charity Rescue, which is what keeps attendance and the messages families get accurate.",
+          "Tell your school office and note it for later.",
+          "Write it down and report it at the end of the season."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Your site meets once a week and runs into several school holidays, so your season will finish later than the general window. What should you do?",
+        options: [
+          "Drop sessions so the season still ends on time.",
+          "Run two sessions some weeks to catch back up.",
+          "Let it run long and add the extra weeks into Charity Rescue. Finishing all ten sessions is the goal, not hitting an exact date.",
+          "Ask Box United to extend the window for your site."
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "What has to be finished before you attend the fall in-person training?",
+        options: [
+          "Your first two sessions with participants.",
+          "Your virtual training.",
+          "Your equipment inventory.",
+          "Nothing, the in-person training comes first."
+        ],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 7,
     title: "Equipment",
     description: "The kit, how to look after it, and what to check before every session.",
-    youtubeId: "",
+    youtubeId: "2e8OAbL1Hug",
     passThreshold: 80,
-    quiz: []
+    quiz: [
+      {
+        question: "At the end of the season, what do participants keep for good?",
+        options: [
+          "All of their personal gear, including their gloves.",
+          "Their journals, their handwraps, and anything sent as a gift.",
+          "Only their journals.",
+          "Nothing. Everything is collected."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Is the equipment yours to keep?",
+        options: [
+          "Yes, every site keeps its equipment.",
+          "It is on loan for the season and collected in May, unless your site has joined Boxing Gym in a Box, in which case it is permanently yours.",
+          "It is on loan and collected at the end of every term.",
+          "It depends on how much of it is left at the end."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "You want to check exactly what your site was given, and how many. Where is the real record?",
+        options: [
+          "The equipment guide video.",
+          "Charity Rescue, which lists everything signed out to your site down to the quantity.",
+          "The curriculum book.",
+          "Ask another coach at your site."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "You run out of handwraps halfway through the season. What do you do?",
+        options: [
+          "Wait for the May collection and raise it then.",
+          "Email programs@boxunited.org and more will be sent out, usually within a day or two.",
+          "Buy replacements yourself and claim the cost back.",
+          "Use your magic moments money to replace them."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "How does your equipment reach you?",
+        options: [
+          "You collect it from the Box United office before the season.",
+          "It arrives at your site the week before fall programming, or you can pick it up at fall coach training instead.",
+          "It is shipped once your first session has been recorded.",
+          "Each coach orders what they need."
+        ],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 8,

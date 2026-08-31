@@ -72,8 +72,8 @@ All nine are titled and described in `js/modules-data.js` but have no video and 
 - [x] **Module 4 acknowledgment** — signed in the Charity Rescue platform, not here. The module page now says so. Note that the hub does not track whether it was actually signed, so Module 4 completes on the quiz alone.
 - [x] Module 9 — SafeSport Training — complete, needs no video or quiz.
 - [x] Module 6 — Attendance System, Charity Rescue — video (`qaB8wG07aik`, 9m 14s) and five questions from the staff training script, at the default 80% (4 of 5).
-- [ ] Module 6 — 2026-27 Schedule
-- [ ] Module 7 — Equipment
+- [x] Module 6 — 2026-27 Schedule — video (`MqW9l5pXYlM`, 2m 23s) and five questions.
+- [x] Module 7 — Equipment — video (`2e8OAbL1Hug`, 2m 9s) and five questions.
 - [ ] Module 10 — Behavior Management — listed as coming Spring 2027. It sits last, blocks nothing, and is excluded from the completion count, so coaches can still reach 100%. Delete the `comingSoon` line in `js/modules-data.js` when it is built.
 - [ ] Module 9 — Monitoring and Evaluation
 - [x] Module 10 — Magic Moments in Fight Like a Girl — both videos in (Guidara TED talk, then the announcement) and five questions across the pair. — first video in (`bwcyXcOpWVs`, 13m 54s, the Will Guidara TED talk). Needs a second video and quiz questions.
