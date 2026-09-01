@@ -2,6 +2,16 @@
 // welcome and the season's key dates. The modules themselves live on the
 // training page (js/training-page.js).
 
+// Everything in this site links to "./" rather than index.html, but somebody
+// arriving from a bookmark or an old link can still land on /index.html.
+// Tidy the address bar rather than redirecting: replaceState leaves no extra
+// history entry, so Back still goes where the coach expects.
+(function tidyUrl() {
+  if (!location.pathname.endsWith("/index.html")) return;
+  const clean = location.pathname.slice(0, -"index.html".length) + location.search + location.hash;
+  history.replaceState(null, "", clean);
+})();
+
 function renderLoggedOut() {
   document.getElementById("app").innerHTML = `
     <div class="loginhero">
