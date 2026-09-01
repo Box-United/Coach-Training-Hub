@@ -102,7 +102,9 @@ Signed-in coaches land on a welcome, the season's key dates, and a button throug
 
 The home page also shows a month grid for the season, built by `js/calendar.js` from the `calendar` block in `js/season-info.js`. Days are shaded by which range they fall in, checked in order: `training`, then `noSession`, then `sessions`, so a day inside the training window stays marked as training rather than falling through. Dates are compared as plain `YYYY-MM-DD` strings rather than parsed into `Date` objects, because parsing drags the viewer's timezone in and the shading would slip by a day for anyone outside Central.
 
-All of the copy lives in `js/season-info.js`: the welcome heading and paragraphs, the `calendar` block, and the `keyDates` list. Add, remove, or reorder dates freely, the page reads straight from that list. Each date needs an ISO `date`, a short `label` (what the page prints), and a `title`. Optionally it can also carry a `detail`, a `location`, and its own `link`:
+All of the copy lives in `js/season-info.js`: the welcome heading and paragraphs, the `calendar` block, the `keyDates` list, and a `resources` list.
+
+`resources` is for things a coach needs occasionally rather than weekly, and shows below the key dates. Each entry takes a `label`, a `url`, and an optional `detail`. Charity Rescue and Ramp are in the top bar instead, because those are used constantly. Add, remove, or reorder dates freely, the page reads straight from that list. Each date needs an ISO `date`, a short `label` (what the page prints), and a `title`. Optionally it can also carry a `detail`, a `location`, and its own `link`:
 
 ```js
 link: { url: "https://calendar.google.com/...", label: "Add to Google Calendar" }

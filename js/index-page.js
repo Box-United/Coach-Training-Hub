@@ -94,6 +94,20 @@ function renderHome(session) {
           </li>
         `).join("")}
       </ol>
+
+      ${(SEASON_INFO.resources || []).length ? `
+        <div class="sectiontitle">
+          <h3>Resources</h3>
+        </div>
+        <ul class="resourcelist">
+          ${SEASON_INFO.resources.map((r) => `
+            <li class="resourceitem">
+              <a href="${escapeAttr(r.url)}" target="_blank" rel="noopener noreferrer">${r.label} &#8599;</a>
+              ${r.detail ? `<div class="resourcedetail">${r.detail}</div>` : ""}
+            </li>
+          `).join("")}
+        </ul>
+      ` : ""}
     </div>
   `;
   document.getElementById("signoutBtn").addEventListener("click", signOut);

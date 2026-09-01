@@ -36,6 +36,17 @@ const SEASON_INFO = {
     ]
   },
 
+  // Things a coach might need occasionally, rather than every week. These sit
+  // below the key dates rather than in the top bar, which is reserved for the
+  // two platforms they use constantly.
+  resources: [
+    {
+      label: "Principal Hub",
+      url: "https://boxunited.org/pages/principal-hub",
+      detail: "Flyers and program materials you can print yourself."
+    }
+  ],
+
   keyDates: [
     {
       date: "2026-09-01",
