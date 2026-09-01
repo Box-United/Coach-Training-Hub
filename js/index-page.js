@@ -1,4 +1,4 @@
-// The home page: signed out it is the magic-link form, signed in it is the
+// The home page: signed out it is the sign-in form, signed in it is the
 // welcome and the season's key dates. The modules themselves live on the
 // training page (js/training-page.js).
 
@@ -15,60 +15,43 @@ function renderLoggedOut() {
         <form id="loginForm">
           <div class="field">
             <label class="lbl" for="email">Email</label>
-            <input class="input" id="email" type="email" placeholder="you@boxunited.org" required>
+            <input class="input" id="email" type="email" autocomplete="email" placeholder="you@example.org" required>
           </div>
-          <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Send My Magic Link</button>
+          <div class="field">
+            <label class="lbl" for="codeword">Codeword</label>
+            <input class="input" id="codeword" type="password" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Sign In</button>
           <div class="foot" id="loginMsg" style="text-align:center"></div>
         </form>
       </div>
     </div>
   `;
+
   const form = document.getElementById("loginForm");
   const btn = document.getElementById("loginBtn");
   const msg = document.getElementById("loginMsg");
-
-  // Sending is rate limited per project, not per person, so one coach
-  // pressing the button repeatedly can use up everyone's allowance for the
-  // hour. Hold the button down for a minute after a successful send.
-  function holdButton(seconds) {
-    btn.disabled = true;
-    let left = seconds;
-    btn.textContent = `Sent, wait ${left}s`;
-    const tick = setInterval(() => {
-      left -= 1;
-      if (left <= 0) {
-        clearInterval(tick);
-        btn.disabled = false;
-        btn.textContent = "Send My Magic Link";
-        return;
-      }
-      btn.textContent = `Sent, wait ${left}s`;
-    }, 1000);
-  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (btn.disabled) return;
     btn.disabled = true;
-    btn.textContent = "Sending...";
+    btn.textContent = "Signing in...";
     msg.className = "foot";
     msg.textContent = "";
     try {
-      await sendMagicLink(document.getElementById("email").value);
-      msg.textContent = "Check your email for a sign-in link. It can take a minute to arrive.";
-      holdButton(60);
+      await signIn(
+        document.getElementById("email").value.trim(),
+        document.getElementById("codeword").value
+      );
+      // onAuthStateChange redraws the page once the session lands.
     } catch (err) {
-      // Show what Supabase actually said, a generic message here hid a
-      // rate-limit rejection and made a failed send look successful. The
-      // rate limit is the one coaches will actually hit, so name it plainly
-      // rather than leaving them staring at API wording.
-      const text = String((err && err.message) || "");
+      // Say what actually went wrong. A generic message here would leave a
+      // coach retyping a correct codeword against a mistyped address.
       msg.className = "error";
-      msg.textContent = /rate limit/i.test(text)
-        ? "Too many sign-in emails have been sent from this site in the last hour, which is a limit on our end, not yours. Please wait and try again, or contact Box United."
-        : text || "We could not send the link, try again.";
+      msg.textContent = (err && err.message) || "We could not sign you in, try again.";
       btn.disabled = false;
-      btn.textContent = "Send My Magic Link";
+      btn.textContent = "Sign In";
     }
   });
 }
@@ -113,8 +96,8 @@ function renderHome(session) {
   } else {
     renderLoggedOut();
   }
-  // The magic link lands here, so the page has to redraw once the session
-  // arrives rather than leaving the sign-in form on screen.
+  // Redraw once the session lands, rather than leaving the sign-in form on
+  // screen after a successful sign-in.
   supabaseClient.auth.onAuthStateChange((_event, newSession) => {
     if (newSession) renderHome(newSession);
   });

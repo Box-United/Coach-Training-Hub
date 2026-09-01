@@ -2,7 +2,7 @@
 
 **Live at [box-united.github.io/Coach-Training-Hub](https://box-united.github.io/Coach-Training-Hub/)**, served from `main` by GitHub Pages. Every push to `main` redeploys it.
 
-A static coach training site: magic-link sign-in, a gated video-plus-quiz module for each week of training, and an admin view of who's completed what. Hosted on GitHub Pages, backed by Supabase.
+A static coach training site: shared-codeword sign-in, a gated video-plus-quiz module for each week of training, and an admin view of who's completed what. Hosted on GitHub Pages, backed by Supabase.
 
 This first version has one module fully wired end to end (Module 1), so the whole flow, sign-in, video, quiz, Supabase write, admin view, can be tested before the remaining nine modules get their real videos and questions.
 
@@ -28,11 +28,26 @@ Then visit the printed local address.
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Open **SQL Editor -> New query**, paste in the entire contents of `supabase/schema.sql`, and run it. If your project predates these features, also run everything in `supabase/migrations/` in order (`001-multi-video.sql`, then `002-document-uploads.sql`), which brings an existing database up to date. That creates the `coaches` and `progress` tables, Row Level Security policies, and the trigger that adds a coach row the first time someone signs in.
-3. Go to **Authentication -> Providers**, confirm **Email** is enabled, and turn off "Confirm email" if you want the magic link to sign someone in immediately (otherwise they'll get a confirmation step first). Magic link is on by default with the Email provider.
-4. Go to **Authentication -> URL Configuration** and add `https://box-united.github.io/Coach-Training-Hub/` (and a custom domain, once there is one) to the Redirect URLs list, otherwise the magic link will bounce.
+3. Go to **Authentication -> Providers**, confirm **Email** is enabled, and **turn "Confirm email" off**. Sign-in is email plus a codeword, and a coach signing in for the first time has their account created on the spot. With confirmation on, that sign-up leaves them without a session and they bounce back to the form.
+4. Go to **Authentication -> URL Configuration**. These two fields do different jobs and mixing them up is what sends people to localhost:
+
+   - **Site URL** is the single fallback destination. Supabase uses it whenever a request does not name a redirect, or names one that is not allowed. It ships as `http://localhost:3000`, which is why an unconfigured project bounces sign-ins to a dead local address.
+   - **Redirect URLs** is the allowlist. Anything the site asks for has to match an entry here or it is discarded, and Supabase falls back to the Site URL.
+
+   Set Site URL to `https://programs.boxunited.org`, and add these to Redirect URLs:
+
+   ```
+   https://programs.boxunited.org/**
+   https://box-united.github.io/Coach-Training-Hub/**
+   http://localhost:8123/**
+   ```
+
+   The GitHub Pages entry is worth keeping while DNS settles, and the localhost one lets sign-in work when running the site locally. Codeword sign-in does not send email and so does not redirect at all, but password resets and any future email flow do, so these still need to be right.
 5. Go to **Project Settings -> API** and copy your Project URL and `anon` `public` key.
 6. Open `js/config.js` and paste those two values in. Never paste the `service_role` key anywhere in this repo, only the `anon` key belongs in client code.
-7. Admins are named in the `admin_emails` table, created by `supabase/migrations/004-admin-emails.sql`. `alexandra@boxunited.org` and `programs@boxunited.org` are in it already, and anyone on that list becomes an admin the first time they sign in, no manual step. To add another:
+7. **Create the admin accounts before anyone else signs in.** In **Authentication -> Users -> Add user**, add `alexandra@boxunited.org` and `programs@boxunited.org` with the admin codeword, and tick auto-confirm. This is not optional: a coach signing in for the first time has their account created with whatever codeword they typed, so if an admin address has no account yet, anyone knowing the coach codeword could create it and inherit admin rights over every coach's records and uploaded documents.
+
+8. Admins are named in the `admin_emails` table, created by `supabase/migrations/004-admin-emails.sql`. `alexandra@boxunited.org` and `programs@boxunited.org` are in it already, and anyone on that list becomes an admin the first time they sign in, no manual step. To add another:
    ```sql
    insert into public.admin_emails (email) values ('someone@boxunited.org');
    -- only needed if they have already signed in at least once:
