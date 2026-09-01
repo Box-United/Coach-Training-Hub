@@ -136,7 +136,7 @@ const MODULES = [
     title: "Agreement and Pay",
     description: "What your agreement covers, how hours are logged, and when you get paid.",
     youtubeId: "pcf13lFykBU",
-    note: "Two kinds of coach sign two different agreements. Paid coaches sign a contract with Box United, school-paid coaches sign an MOU. The pay section of the video splits, so follow the part that applies to you.",
+    note: "Two kinds of coach sign two different agreements. Paid coaches sign a contract with Box United, school-paid coaches sign an MOU. The pay section of the video splits, so follow the part that applies to you. Your agreement will be in Charity Rescue for you to sign by September 5.",
     passThreshold: 80,
     quiz: [
       {
@@ -216,6 +216,7 @@ const MODULES = [
     title: "Ramp Set Up",
     description: "Setting up your Ramp payment account, and sending us proof it is done.",
     youtubeId: "Xp1lpQ-Z8gg",
+    note: "Ramp will email you a secure link asking for your payment details. That message is your invite. If you cannot find it, check your spam folder first, then ask us to resend it.",
     passThreshold: 100,
     quiz: [
       {
@@ -268,7 +269,7 @@ const MODULES = [
     title: "Child Protection Policy",
     description: "Keeping every girl safe, what the policy asks of you, and when to escalate.",
     youtubeId: "vvCS1KZQVVw",
-    note: "To finish this module you will also sign the Child Protection Policy Acknowledgment. That happens in the Charity Rescue platform, not here.",
+    note: "The Child Protection Policy Acknowledgment will be in Charity Rescue for you to sign by September 5.",
     passThreshold: 100,
     quiz: [
       {
@@ -326,6 +327,7 @@ const MODULES = [
     title: "Attendance System, Charity Rescue",
     description: "Taking attendance in Charity Rescue, and what to record each session.",
     youtubeId: "qaB8wG07aik",
+    note: "You should receive an email invite to Charity Rescue. Open it and follow the link to set your own password. If it has not arrived, check your spam folder first, then contact programs@boxunited.org.",
     passThreshold: 80,
     quiz: [
       {
