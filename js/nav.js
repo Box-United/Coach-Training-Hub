@@ -7,6 +7,8 @@
 // The caller is responsible for wiring #signoutBtn, since the pages render
 // their own markup around this.
 
+// "./" rather than "index.html" so the address bar shows the folder. The
+// current-page highlight keys off `current`, not the href, so it is unaffected.
 function topbarHtml(email, current) {
   const link = (href, label, key) =>
     `<a href="${href}"${current === key ? ' class="is-current"' : ""}>${label}</a>`;
@@ -15,7 +17,7 @@ function topbarHtml(email, current) {
     <div class="topbar">
       <div class="brand"><img src="assets/logos/box_united_stone.svg" alt="Box United" style="height:20px;width:auto;"></div>
       <nav class="topnav">
-        ${link("index.html", "Home", "home")}
+        ${link("./", "Home", "home")}
         ${link("training.html", "Training", "training")}
         <a class="is-external" href="https://charityrescue.io" target="_blank" rel="noopener noreferrer">Charity Rescue &#8599;</a>
       </nav>

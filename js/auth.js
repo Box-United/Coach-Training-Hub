@@ -44,5 +44,5 @@ async function getCurrentSession() {
 
 async function signOut() {
   await supabaseClient.auth.signOut();
-  window.location.href = "index.html";
+  window.location.href = "./";
 }

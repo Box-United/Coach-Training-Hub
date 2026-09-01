@@ -128,7 +128,7 @@ async function renderTraining(session) {
 (async function init() {
   const session = await getCurrentSession();
   if (!session) {
-    window.location.href = "index.html";
+    window.location.href = "./";
     return;
   }
   renderTraining(session);
