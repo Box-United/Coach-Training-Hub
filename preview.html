@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Preview — Box United Coach Training Hub</title>
-<link rel="stylesheet" href="css/colors-and-type.css?v=44">
-<link rel="stylesheet" href="css/app.css?v=44">
+<link rel="stylesheet" href="css/colors-and-type.css?v=45">
+<link rel="stylesheet" href="css/app.css?v=45">
 </head>
 <body>
 
@@ -34,16 +34,16 @@
 <div id="app"></div>
 
 <!-- The real shared pieces, unchanged. -->
-<script src="js/modules-data.js?v=44"></script>
-<script src="js/season-info.js?v=44"></script>
-<script src="js/calendar.js?v=44"></script>
-<script src="js/util.js?v=44"></script>
-<script src="js/nav.js?v=44"></script>
-<script src="js/quiz.js?v=44"></script>
-<script src="js/video-player.js?v=44"></script>
+<script src="js/modules-data.js?v=45"></script>
+<script src="js/season-info.js?v=45"></script>
+<script src="js/calendar.js?v=45"></script>
+<script src="js/util.js?v=45"></script>
+<script src="js/nav.js?v=45"></script>
+<script src="js/quiz.js?v=45"></script>
+<script src="js/video-player.js?v=45"></script>
 <!-- Loaded for checkFileAgainstRules. The stubs below are declared after it,
      so they replace the three functions in here that would hit Supabase. -->
-<script src="js/uploads.js?v=44"></script>
+<script src="js/uploads.js?v=45"></script>
 
 <script>
 // ---- stand-ins for everything that would hit Supabase -------------------
@@ -139,7 +139,9 @@ document.getElementById("previewWho").textContent = PREVIEW_IS_ADMIN
   ? "Sample data, signed in as an admin."
   : "Sample data, signed in as a coach. Gates are on.";
 if (!PREVIEW_IS_ADMIN) {
-  document.querySelectorAll(".previewbar a").forEach((a) => {
+  // Not the role toggle. Its whole job is to drop as=coach, and appending it
+  // back here is what made "View as admin" keep you in coach mode.
+  document.querySelectorAll(".previewbar a:not(#roleToggle)").forEach((a) => {
     a.href = a.getAttribute("href") + "&as=coach";
   });
 }
@@ -152,7 +154,7 @@ if (!scriptSrc) {
     '<div class="centernote"><h2>Unknown preview page</h2><p>Use the links above.</p></div>';
 } else {
   const tag = document.createElement("script");
-  tag.src = scriptSrc + "?v=44";
+  tag.src = scriptSrc + "?v=45";
   document.body.appendChild(tag);
 }
 </script>
