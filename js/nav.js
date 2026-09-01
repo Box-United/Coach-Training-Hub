@@ -1,7 +1,7 @@
 // The signed-in top bar, shared by every page so the navigation cannot drift
-// apart between them. Charity Rescue is here because attendance and the
-// assessment results are the two things required every season, and they are
-// both done over there rather than in this hub. `current` is "home", "training", or omitted, and marks
+// apart between them. Charity Rescue and Ramp are here because the things
+// coaches are actually held to, attendance, assessments and getting paid, all
+// happen over there rather than in this hub. `current` is "home", "training", or omitted, and marks
 // which link to highlight.
 //
 // The caller is responsible for wiring #signoutBtn, since the pages render
@@ -20,6 +20,7 @@ function topbarHtml(email, current) {
         ${link("./", "Home", "home")}
         ${link("training.html", "Training", "training")}
         <a class="is-external" href="https://charityrescue.io" target="_blank" rel="noopener noreferrer">Charity Rescue &#8599;</a>
+        <a class="is-external" href="https://app.ramp.com/sign-in" target="_blank" rel="noopener noreferrer">Ramp &#8599;</a>
       </nav>
       <div class="who">
         <span class="whoemail">${email}</span>
