@@ -19,6 +19,16 @@ async function signIn(email, codeword) {
   // apart is to try creating it.
   if (!/invalid login credentials/i.test(error.message || "")) throw error;
 
+  // Only the codeword creates an account. Without this a typo becomes that
+  // account's password: the coach gets in today and is locked out tomorrow,
+  // with nothing on screen explaining why.
+  //
+  // Admins never reach here. Their accounts already exist, so the sign-in
+  // above succeeds for them and returns.
+  if (typeof COACH_CODEWORD === "string" && codeword !== COACH_CODEWORD) {
+    throw new Error("That is not the codeword. Check it and try again, or contact programs@boxunited.org.");
+  }
+
   const { error: signUpError } = await supabaseClient.auth.signUp({ email, password: codeword });
 
   if (signUpError) {

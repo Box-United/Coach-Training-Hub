@@ -54,6 +54,18 @@ Then visit the printed local address.
    update public.coaches set is_admin = true where lower(email) = 'someone@boxunited.org';
    ```
 
+## The coach codeword
+
+Sign-in is email plus a codeword. The codeword is the account's Supabase password, so Supabase does the checking.
+
+`COACH_CODEWORD` in `js/config.js` is checked **before** a new account is created. Without that check, a coach who mistypes on their first ever sign-in would have the typo saved as their password: they get in that day and are locked out on their next visit, with nothing explaining why.
+
+That means the coach codeword sits in a public file. Treat it as a gate rather than a secret. What it protects is small: a stranger who found it could watch the training videos and nothing else, because Row Level Security keeps every coach to their own records and admins have a separate codeword on accounts that already exist. It is also going to forty people, so it was never going to stay private.
+
+If you want it airtight, the alternative is to turn off public sign-up in Supabase and create every coach account yourself with the codeword. Then only addresses you have loaded can sign in at all, and nothing needs to live in this file. The cost is maintaining the roster by hand, including mid-season additions.
+
+Rotate the codeword between seasons and update `js/config.js` when you do. The September reset is a natural moment.
+
 ## Email: set up custom SMTP before real coaches use this
 
 Supabase's built-in email service is for testing only and allows just a few auth emails per hour project-wide. Past that, sign-in requests fail with `429 email rate limit exceeded` and coaches get no link. With a full roster signing in, you will hit this immediately.
