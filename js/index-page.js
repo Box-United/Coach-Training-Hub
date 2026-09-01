@@ -97,7 +97,7 @@ function renderHome(session) {
 
       ${(SEASON_INFO.resources || []).length ? `
         <div class="sectiontitle">
-          <h3>Resources</h3>
+          <h3>Recruitment Resources</h3>
         </div>
         <ul class="resourcelist">
           ${SEASON_INFO.resources.map((r) => `
