@@ -66,7 +66,7 @@ Note: multi-video rendering and the quiz gate are written but unverified in a re
 
 All nine are titled and described in `js/modules-data.js` but have no video and no questions.
 
-- [ ] Module 2 — Agreement and Pay
+- [x] Module 2 — Agreement and Pay — video (`pcf13lFykBU`, 8m 21s) and seven questions. Every module now has content.
 - [~] Module 3 — Ramp Set Up — upload is in. Will also have a video and questions, both still needed.
 - [x] Module 4 — Child Protection Policy — video (`vvCS1KZQVVw`, 10m 27s) and all five knowledge checks from the script, set to require 100%.
 - [x] **Module 4 acknowledgment** — signed in the Charity Rescue platform, not here. The module page now says so. Note that the hub does not track whether it was actually signed, so Module 4 completes on the quiz alone.

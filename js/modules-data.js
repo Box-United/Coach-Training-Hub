@@ -135,9 +135,81 @@ const MODULES = [
     id: 2,
     title: "Agreement and Pay",
     description: "What your agreement covers, how hours are logged, and when you get paid.",
-    youtubeId: "",
+    youtubeId: "pcf13lFykBU",
+    note: "Two kinds of coach sign two different agreements. Paid coaches sign a contract with Box United, school-paid coaches sign an MOU. The pay section of the video splits, so follow the part that applies to you.",
     passThreshold: 80,
-    quiz: []
+    quiz: [
+      {
+        question: "You are a paid contract coach. You delivered a great session but forgot to record attendance in Charity Rescue. What is the effect on your pay for that session?",
+        options: [
+          "No effect. You were there, so you will be paid.",
+          "Pay for that session is held until you provide the attendance and Box United verifies it.",
+          "You can text Box United a photo of a paper roster and be paid normally.",
+          "The session is permanently unpaid with no way to fix it."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "A coach who signed the MOU asks Box United when their paycheck is coming. What is the correct answer?",
+        options: [
+          "About two weeks after the season ends, via Ramp.",
+          "Box United does not pay MOU coaches. Their compensation comes from their school under a separate arrangement.",
+          "After they set up direct deposit in Ramp.",
+          "Once their attendance is verified in Charity Rescue."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Which of the following is a non-negotiable that can lead to immediate termination of your agreement?",
+        options: [
+          "Adjusting the pacing of a lesson to fit your group.",
+          "Allowing light sparring between two willing participants.",
+          "Choosing your own warm-up music.",
+          "Rescheduling a session after a school closure."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Fight Like a Girl is non-contact. What boxing is allowed?",
+        options: [
+          "Light sparring, as long as headgear is worn.",
+          "Heavy bags, focus mitts you hold, shadow boxing, and conditioning.",
+          "Partner contact drills, as long as you are supervising.",
+          "Contact work, but only in the final session of the season."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "A school closure means one of your sessions cannot run. What should you do?",
+        options: [
+          "Nothing. Cancelled sessions are simply written off.",
+          "Notify Box United promptly and work with your school to reschedule it.",
+          "Run two sessions the following week to make it up quietly.",
+          "Deduct the session from your own hours."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "What happens to participant data once the program ends?",
+        options: [
+          "It is yours to keep as a record of your work.",
+          "It belongs to Box United. You do not keep copies, and the confidentiality duties continue after your agreement ends.",
+          "You can share it with your school however you like.",
+          "You should delete it from Charity Rescue yourself."
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "If you are a paid contract coach, how and when does payment arrive?",
+        options: [
+          "Weekly, by check from your school.",
+          "A lump sum about two weeks after each season ends, through Ramp, once your attendance has been verified.",
+          "Monthly, through your school's payroll.",
+          "In one payment at the end of the full year."
+        ],
+        correctIndex: 1
+      }
+    ]
   },
   {
     id: 3,
