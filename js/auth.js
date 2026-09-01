@@ -28,11 +28,12 @@ async function signIn(email, codeword) {
     throw signUpError;
   }
 
-  // With "Confirm email" switched on, sign-up succeeds but leaves no session,
-  // so the coach would be bounced back to this form with no explanation.
+  // With "Confirm email" switched on in Supabase, sign-up succeeds but leaves
+  // no session, so the coach lands back on this form having apparently done
+  // nothing wrong. The setting has to be off, see the README.
   const { data } = await supabaseClient.auth.getSession();
   if (!data.session) {
-    throw new Error("Your account was created but needs confirming by email. Contact Box United, this should not happen.");
+    throw new Error("Your account was created, but this site is still being set up and could not sign you in. Please contact programs@boxunited.org.");
   }
 }
 
