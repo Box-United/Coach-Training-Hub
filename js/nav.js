@@ -1,8 +1,10 @@
 // The signed-in top bar, shared by every page so the navigation cannot drift
 // apart between them. Charity Rescue and Ramp are here because the things
 // coaches are actually held to, attendance, assessments and getting paid, all
-// happen over there rather than in this hub. `current` is "home", "training", or omitted, and marks
-// which link to highlight.
+// happen over there rather than in this hub.
+//
+// `current` is "home", "training", or omitted, and marks which link to
+// highlight.
 //
 // The caller is responsible for wiring #signoutBtn, since the pages render
 // their own markup around this.

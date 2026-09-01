@@ -42,7 +42,7 @@ const SEASON_INFO = {
   resources: [
     {
       label: "Principal Hub",
-      url: "https://boxunited.org/pages/principal-hub",
+      url: "https://principals.boxunited.org/",
       detail: "Flyers and program materials you can print yourself."
     }
   ],
