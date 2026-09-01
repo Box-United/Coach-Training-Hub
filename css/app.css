@@ -260,6 +260,268 @@
 }
 .adminnote a{color:var(--bu-blue);}
 
+* Component styles for the Coach Training Hub. Layered on top of colors-and-type.css. */
+
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid var(--line);background:var(--bg);
+}
+.topbar .brand svg{height:20px;width:auto;}
+.topbar .who{display:flex;align-items:center;gap:14px;font-size:13.5px;color:var(--fg-muted);}
+.topnav{display:flex;align-items:center;gap:22px;}
+.topnav a{
+  font-size:13.5px;color:var(--fg-muted);text-decoration:none;
+  padding:4px 0;border-bottom:1.5px solid transparent;
+}
+.topnav a:hover{color:var(--fg);}
+.topnav a.is-current{color:var(--fg);border-bottom-color:var(--bu-blue);}
+/* Leaves the hub, so it never takes the current-page underline. */
+.topnav a.is-external{color:var(--fg-faint);}
+.topnav a.is-external:hover{color:var(--fg);}
+@media (max-width:640px){
+  .topbar{flex-wrap:wrap;gap:10px 16px;}
+  .topnav{order:3;flex-basis:100%;gap:18px;}
+  /* The address is the first thing worth dropping on a narrow screen, the
+     nav and the sign-out control are not. */
+  .whoemail{display:none;}
+}
+.topbar .signout{cursor:pointer;text-decoration:underline;text-underline-offset:3px;color:var(--fg-faint);}
+.topbar .signout:hover{opacity:.7;}
+
+.btn{
+  font-family:var(--font-body);font-weight:500;font-size:14px;letter-spacing:.03em;
+  padding:13px 22px;border-radius:8px;border:1.5px solid transparent;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  cursor:pointer;user-select:none;text-decoration:none;
+  transition:opacity 120ms var(--ease-out), transform 120ms var(--ease-out);
+}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:var(--bu-blue);color:var(--bu-white);}
+.btn-primary:hover{opacity:.88;}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+.btn-outline{background:transparent;color:var(--fg);border-color:var(--line-strong);}
+.btn-outline:hover{opacity:.7;}
+.btn-ghost{background:transparent;color:var(--bu-blue);padding-left:0;padding-right:0;}
+.btn-block{width:100%;}
+.btn-sm{padding:9px 16px;font-size:13px;}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+.field .lbl{font-family:var(--font-body);font-weight:500;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-muted);}
+.input{
+  font-family:var(--font-body);font-size:15px;padding:13px 15px;
+  background:var(--bu-white);border:1.5px solid rgba(0,28,51,.18);
+  color:var(--bu-navy);border-radius:8px;outline:none;width:100%;
+}
+.input:focus{border-color:var(--bu-blue);box-shadow:var(--focus-ring);}
+.help{font-size:12.5px;color:var(--fg-faint);}
+.error{font-size:12.5px;color:#ff8a75;}
+
+.badge{
+  font-family:var(--font-display);text-transform:uppercase;font-weight:400;
+  font-size:10.5px;letter-spacing:.12em;padding:5px 9px;border-radius:4px;line-height:1;
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:none;
+}
+.badge-locked{background:transparent;color:var(--fg-faint);border:1px solid var(--line-strong);}
+.badge-progress{background:var(--bu-blue);color:var(--bu-white);}
+.badge-complete{background:transparent;color:var(--bu-blue);border:1px solid var(--bu-blue);}
+/* Uploaded, waiting on an admin. Deliberately not the same as complete: it
+   unlocks the next module but is not a pass. */
+.badge-pending{background:transparent;color:var(--bu-stone-deep);border:1px dashed var(--line-strong);}
+/* Listed so coaches know it is planned, but not part of this season. */
+.badge-soon{background:transparent;color:var(--fg-faint);border:1px dashed var(--line-strong);}
+
+.icon{width:14px;height:14px;flex:none;}
+.icon path,.icon rect,.icon polyline{stroke:currentColor;stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ---------- login (index.html, signed out) ---------- */
+.loginhero{
+  min-height:100vh;background:var(--bu-navy);color:var(--bu-stone);
+  display:flex;align-items:center;justify-content:center;padding:48px 24px;
+}
+.loginhero .panel{width:100%;max-width:380px;display:flex;flex-direction:column;gap:24px;align-items:center;text-align:center;}
+.loginhero .wordmark{height:24px;}
+.loginhero h2{font-size:clamp(26px,5vw,38px);color:var(--bu-stone);}
+.loginhero .editorial{color:rgba(247,245,237,.86);font-size:17px;}
+.loginhero form{width:100%;display:flex;flex-direction:column;gap:14px;text-align:left;}
+.loginhero .field .lbl{color:rgba(247,245,237,.7);}
+.loginhero .foot{font-size:12.5px;color:rgba(247,245,237,.5);}
+
+/* ---------- module list (index.html, signed in) ---------- */
+.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0 22px;}
+@media (max-width:640px){.statrow{grid-template-columns:1fr;}}
+.statcard{background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;}
+.statcard .num{font-family:var(--font-display);font-size:32px;color:var(--bu-blue);line-height:1;}
+.statcard .lbl{font-size:12.5px;letter-spacing:.03em;color:var(--fg-muted);}
+
+.progressbar{height:8px;border-radius:999px;background:rgba(247,245,237,.14);overflow:hidden;margin-bottom:8px;}
+.progressbar .fill{height:100%;background:var(--bu-blue);border-radius:999px;}
+.progresscaption{font-size:12px;color:var(--fg-faint);display:flex;justify-content:space-between;margin-bottom:28px;}
+
+.sectiontitle{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.sectiontitle h3{font-size:20px;}
+
+.modgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding-bottom:48px;}
+@media (max-width:640px){.modgrid{grid-template-columns:1fr;}}
+.modcard{background:var(--bg-card);border-radius:16px;border:1px solid var(--line);padding:20px 20px 18px;display:flex;flex-direction:column;gap:12px;min-height:160px;}
+.modcard.is-locked{border-style:dashed;}
+.modcard.is-current{border-color:var(--bu-blue);border-width:1.5px;}
+.modcard .top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.modcard .num{font-family:var(--font-display);font-size:11px;letter-spacing:.1em;color:var(--fg-faint);}
+.modcard .title{font-family:var(--font-serif);font-size:19px;line-height:1.15;}
+.modcard.is-locked .title{color:var(--fg-faint);}
+.modcard .desc{font-size:13.5px;color:var(--fg-muted);line-height:1.45;}
+.modcard .bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:10px;}
+.modcard .score{font-size:12.5px;color:var(--fg-muted);}
+.modcard .lockrow{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--fg-faint);}
+
+/* ---------- module.html ---------- */
+/* The 4px bottom margin left the heading almost touching whatever followed
+   it, video or upload card. The gap here also sets eyebrow-to-title and
+   title-to-description, since this is a flex column. */
+.lessonhead{display:flex;flex-direction:column;gap:14px;margin:28px 0 32px;}
+.crumb{font-size:12.5px;color:var(--fg-faint);text-decoration:underline;text-underline-offset:3px;width:fit-content;cursor:pointer;}
+.lessonhead h2{font-size:clamp(24px,3vw,32px);}
+.lessonhead .editorial{font-size:16px;color:var(--fg-muted);max-width:60ch;}
+
+.videowrap{margin:18px 0 6px;border-radius:14px;overflow:hidden;border:1.5px solid rgba(247,245,237,.3);background:var(--bu-navy);}
+/* Matches both the placeholder div and the iframe the YouTube API swaps in
+   over it, which keeps the same id. A module can hold several videos, so
+   these are numbered player-0, player-1, and so on. */
+/* height:auto is load-bearing. The YouTube API writes height="360" onto the
+   iframe as an attribute, and aspect-ratio is ignored when both dimensions are
+   already definite, so without this the video rendered at 2.64:1 instead of
+   16:9, roughly two thirds of its proper height. */
+[id^="player-"]{aspect-ratio:16/9;width:100%;height:auto;display:block;border:0;}
+.videoblock + .videoblock{margin-top:22px;}
+/* Stands in for a player that has not opened yet, so it holds the same shape
+   as the video it replaces rather than collapsing the layout. */
+.videolocked{
+  aspect-ratio:16/9;width:100%;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:0 24px;font-size:13.5px;color:var(--fg-faint);
+}
+.videolabel{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:18px;}
+.videostate{font-size:12px;color:var(--fg-faint);white-space:nowrap;}
+.videoblock .videowrap{margin-top:8px;}
+/* Runs the full width of the video above it. It had max-width:64ch, but ch
+   scales with the element's own font size, and at 12.5px that came out around
+   430px under a 952px video, which read as a stray narrow paragraph. */
+.videocap{margin:18px 0 0;padding:0 2px 24px;font-size:12.5px;color:var(--fg-faint);}
+
+.quizcard{margin:0 0 48px;background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 24px;}
+.quizhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+.qcounter{font-size:12.5px;color:var(--fg-muted);}
+.stem{font-size:18px;line-height:1.4;font-weight:400;margin-bottom:16px;}
+.options{display:flex;flex-direction:column;gap:10px;}
+.option{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:10px;border:1.5px solid var(--line);cursor:pointer;}
+.option:hover{border-color:var(--line-strong);}
+.option input{accent-color:var(--bu-blue);width:17px;height:17px;flex:none;}
+.option label{font-size:14.5px;cursor:pointer;flex:1;}
+.option.is-checked{border-color:var(--bu-blue);background:rgba(0,128,242,.14);}
+.qactions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line);}
+
+.result .banner{border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.result .banner.pass{background:var(--bu-blue);color:var(--bu-white);}
+.result .banner.fail{background:transparent;border:1.5px solid var(--fg-faint);color:var(--fg);}
+.result .banner .score{font-family:var(--font-display);font-size:24px;line-height:1;}
+.result .banner .label{font-size:13px;letter-spacing:.03em;}
+.reviewitem{padding:14px 0;border-top:1px solid var(--line);}
+.reviewitem:first-of-type{border-top:none;}
+.reviewitem .q{font-size:14px;margin-bottom:6px;}
+.reviewitem .a{font-size:13px;color:var(--fg-muted);}
+.reviewitem .a.wrong{color:#ff8a75;}
+.reviewitem .a.right{color:var(--bu-blue);}
+.resultactions{display:flex;justify-content:flex-end;gap:10px;}
+
+/* ---------- admin.html ---------- */
+.admintable{width:100%;border-collapse:collapse;margin:24px 0 48px;font-size:13.5px;}
+.admintable th,.admintable td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);}
+.admintable th{font-family:var(--font-display);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);}
+.admintable tr:hover td{background:var(--bg-card);}
+.tablewrap{overflow-x:auto;}
+
+.centernote{max-width:520px;margin:80px auto;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;padding:0 24px;}
+
+/* ---- document uploads (SafeSport certificate, Ramp account proof) ---- */
+/* The upload is a separate phase from the instructions above it: a coach
+   reads those, leaves for an hour and a half, and comes back to this. The
+   rule makes that a break rather than the next item in a list. */
+.uploadrow{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  margin:24px 0 8px;padding-top:20px;border-top:1px solid var(--line);
+}
+.uploadrow input[type=file]{
+  flex:1 1 240px;min-width:0;font-size:13px;color:var(--fg-muted);
+  padding:10px 12px;border:1.5px dashed var(--line-strong);border-radius:10px;background:transparent;
+}
+.uploadrow input[type=file]::file-selector-button{
+  font:inherit;font-size:12.5px;margin-right:10px;padding:6px 12px;cursor:pointer;
+  border:1px solid var(--line-strong);border-radius:6px;background:transparent;color:var(--fg);
+}
+.docstate{font-size:12.5px;color:var(--fg-faint);}
+.docstate.is-pending{color:var(--bu-stone-deep);}
+.docstate.is-approved{color:var(--bu-blue);}
+.docstate.is-rejected{color:var(--bu-red,#e5484d);}
+
+/* ---- admin review queue ---- */
+.reviewrow{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:14px 0;border-bottom:1px solid var(--line);
+}
+.reviewrow:last-child{border-bottom:0;}
+.reviewcoach{font-size:14px;}
+.reviewmod{font-size:12.5px;color:var(--fg-faint);margin-top:3px;}
+.reviewwarn{font-size:12.5px;color:var(--bu-stone-deep);margin-top:4px;}
+.reviewactions{display:flex;gap:8px;flex-wrap:wrap;}
+.reviewmsg{flex-basis:100%;margin:0;}
+.reviewmsg:empty{display:none;}
+
+/* Season picker on the admin page. Narrow, so it reads as a control on the
+   heading row rather than as a form field. */
+.seasonpick{width:auto;min-width:170px;padding-right:34px;cursor:pointer;}
+
+/* ---- coach info: welcome and key dates, above the modules ---- */
+.infocard{
+  /* The bottom margin carries the whole gap to the Key Dates heading that
+     follows, because .sectiontitle has no top margin of its own and is
+     shared with the training and admin pages. */
+  margin:28px 0 40px;padding:26px;border-radius:16px;
+  background:var(--bg-card);border:1px solid var(--line);
+}
+.infocard h2{font-size:clamp(21px,2.4vw,27px);margin:8px 0 12px;}
+.infocard .editorial{font-size:15.5px;color:var(--fg-muted);max-width:62ch;}
+.infocard .editorial + .editorial{margin-top:10px;}
+
+.datelist{list-style:none;margin:0 0 8px;padding:0;}
+.dateitem{
+  display:flex;gap:18px;align-items:baseline;
+  padding:14px 2px;border-bottom:1px solid var(--line);
+}
+.dateitem:last-child{border-bottom:0;}
+.datewhen{
+  flex:0 0 76px;font-family:var(--font-display);font-size:13px;
+  letter-spacing:.04em;color:var(--bu-blue);white-space:nowrap;
+}
+.datewhat{min-width:0;}
+.datetitle{font-size:15px;line-height:1.35;}
+.datedetail{font-size:13px;color:var(--fg-muted);margin-top:4px;max-width:60ch;}
+.datelink{display:inline-block;font-size:13px;margin-top:7px;color:var(--bu-blue);text-decoration:none;}
+.datelink:hover{text-decoration:underline;text-underline-offset:3px;}
+
+@media (max-width:520px){
+  .dateitem{flex-direction:column;gap:4px;}
+  .datewhen{flex:none;}
+}
+
+/* Shown only to admins, where they are seeing something a coach would not. */
+.adminnote{
+  margin:18px 0;padding:12px 16px;border-radius:10px;font-size:13px;
+  color:var(--fg-muted);background:transparent;
+  border:1px dashed var(--line-strong);
+}
+.adminnote a{color:var(--bu-blue);}
+
 /* preview.html only, never part of the coach-facing site. */
 .previewbar{
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;

@@ -94,9 +94,7 @@ The magic link lands on `index.html`, so that is the page that redraws itself on
 
 **Admins see more.** For anyone with `is_admin`, the sequential lock and the watch-the-whole-video gate both stand aside, so every module can be opened and reviewed, including ones no coach has unlocked yet. Locked cards on the training page gain a "Preview" link. Both pages say plainly that what is on screen is not what a coach would see.
 
-`preview.html` renders any of these pages with made-up data and no sign-in, for looking at layout before the database is set up. It has no Supabase client on it at all, so it cannot touch anything real. Open it at `preview.html?page=admin`, `?page=training`, `?page=home`, or `?page=module&id=6`.
-
-Add `&as=coach`, or use the View as coach link, to drop admin rights. That matters because an admin skips the module lock, the watch-the-video gate and the video ordering, so those are invisible until you look as a coach. In coach mode every earlier module is treated as passed, so whichever module you asked for is actually reachable.
+There used to be a `preview.html` that rendered every page with made-up data and no sign-in, for looking at layout before the database was set up. It was removed once sign-in worked, because it was publicly reachable and no longer needed: an admin can open every module through the real site, and a private window with a test account shows the coach view. It is in the git history if it is ever wanted back.
 
 ## The coach home page
 

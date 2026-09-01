@@ -40,7 +40,7 @@ Module 1's description promises "the mission, the gym rules, and what makes Box 
 - [ ] **Decide about calendar links for the other four dates.** Only Sept 12 has one, so the rest cannot be added to a coach's calendar in one click. Send me the invite links and I'll paste them in, or say the word and I'll put the all-dates download button back.
 - [ ] **`js/calendar.js` is now unused.** It built the .ics for the download button that was removed. Delete it, or keep it if the button might come back. Nothing references it either way.
 - [x] **Admins reaching `admin.html`** — the training page now shows admins a note with a link to it.
-- [ ] **`preview.html` is now publicly reachable** at https://box-united.github.io/Coach-Training-Hub/preview.html. Decide whether to keep it. It renders the pages with made-up data for looking at layout without signing in. It has no Supabase client on it so it cannot reach real data, but it will be publicly reachable on GitHub Pages if left in.
+- [x] **`preview.html` removed** — it was publicly reachable and became redundant once sign-in worked. Recoverable from the git history.
 
 ---
 
