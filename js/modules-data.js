@@ -136,7 +136,7 @@ const MODULES = [
     title: "Agreement and Pay",
     description: "What your agreement covers, how hours are logged, and when you get paid.",
     youtubeId: "pcf13lFykBU",
-    note: "Two kinds of coach sign two different agreements. Paid coaches sign a contract with Box United, school-paid coaches sign an MOU. The pay section of the video splits, so follow the part that applies to you. Your agreement will be in Charity Rescue for you to sign by September 5.",
+    note: "Two kinds of coach sign two different agreements. Paid coaches sign a contract with Box United, school-paid coaches sign an MOU. The pay section of the video splits, so follow the part that applies to you. Your agreement will be in Charity Rescue for you to sign by September 8.",
     passThreshold: 80,
     quiz: [
       {
@@ -269,7 +269,7 @@ const MODULES = [
     title: "Child Protection Policy",
     description: "Keeping every girl safe, what the policy asks of you, and when to escalate.",
     youtubeId: "vvCS1KZQVVw",
-    note: "The Child Protection Policy Acknowledgment will be in Charity Rescue for you to sign by September 5.",
+    note: "The Child Protection Policy Acknowledgment will be in Charity Rescue for you to sign by September 8.",
     passThreshold: 100,
     quiz: [
       {
