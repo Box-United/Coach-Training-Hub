@@ -1,14 +1,37 @@
+// Did this coach clear the module's own quiz threshold? This is deliberately
+// separate from the `passed` column, which stays false until everything else
+// the module asks for, such as a document, is done too.
+function quizPassedForModule(row, mod) {
+  if (!row || !mod || !mod.quiz.length) return false;
+  if (row.quiz_score === null || row.quiz_score === undefined) return false;
+  return row.quiz_score >= mod.passThreshold;
+}
+
 // One label per coach, per module, shared by the table and the CSV export so
-// the two can never drift apart.
-function moduleCellLabel(p) {
+// the two can never drift apart. It needs the module as well as the progress
+// row, because judging a quiz score means knowing that module's threshold.
+function moduleCellLabel(p, mod) {
   if (!p) return "not started";
   // A module proved by uploading a document has no quiz score.
   if (p.passed) {
     return p.quiz_score === null || p.quiz_score === undefined ? "approved" : `passed ${p.quiz_score}%`;
   }
-  if (p.document_status === "pending") return "in review";
+
+  // A module can ask for a quiz and a document. Judge the quiz on its own
+  // threshold rather than on `passed`, which also waits on an admin approving
+  // the document. Without this, a coach who aced the quiz and has simply not
+  // uploaded yet reads as "failed", at the very score they passed with.
+  const quizPassed = quizPassedForModule(p, mod);
+  const quizFailed = p.quiz_attempts > 0 && !quizPassed
+    && p.quiz_score !== null && p.quiz_score !== undefined;
+
+  // A document waiting on review would otherwise hide an unpassed quiz.
+  if (p.document_status === "pending") {
+    return quizFailed ? `in review, quiz failed ${p.quiz_score}%` : "in review";
+  }
   if (p.document_status === "rejected") return "rejected";
-  if (p.quiz_attempts > 0) return `failed ${p.quiz_score}%`;
+  if (quizPassed) return `quiz passed ${p.quiz_score}%, awaiting document`;
+  if (quizFailed) return `failed ${p.quiz_score}%`;
   return "in progress";
 }
 
@@ -17,7 +40,7 @@ function progressToCsv(coaches, season) {
   const rows = coaches.map((c) => {
     const byModule = {};
     (c.progress || []).forEach((p) => { byModule[p.module_id] = p; });
-    const cells = MODULES.map((m) => moduleCellLabel(byModule[m.id]));
+    const cells = MODULES.map((m) => moduleCellLabel(byModule[m.id], m));
     return [seasonLabel(season), c.email, c.name || "", ...cells];
   });
   const escape = (v) => `"${String(v).replace(/"/g, '""')}"`;
@@ -66,7 +89,7 @@ function formatDate(iso) {
 function quizSatisfiedFor(item) {
   const mod = item.module;
   if (!mod || !mod.quiz.length) return true;
-  return item.row.quiz_score !== null && item.row.quiz_score >= mod.passThreshold;
+  return quizPassedForModule(item.row, mod);
 }
 
 function reviewListHtml(pending) {
@@ -205,7 +228,7 @@ function adminRowHtml(coach) {
   const cells = MODULES.map((m) => {
     const p = byModule[m.id];
     if (!p) return '<td class="faint">&mdash;</td>';
-    return `<td class="${p.passed ? "" : "faint"}">${moduleCellLabel(p)}</td>`;
+    return `<td class="${p.passed ? "" : "faint"}">${moduleCellLabel(p, m)}</td>`;
   });
   return `<tr><td>${coach.email}</td>${cells.join("")}</tr>`;
 }
