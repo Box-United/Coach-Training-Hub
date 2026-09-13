@@ -178,6 +178,32 @@ function inPersonSectionHtml(rows) {
     </div>`;
 }
 
+// The screen an admin gets when something did not load. Deliberately does not
+// assume the rest of the site is working: if nav.js is what failed, calling
+// topbarHtml here would throw inside the error handler and blank the page,
+// which is the exact thing this is here to prevent.
+function adminErrorHtml(session, err, lead) {
+  let bar = "";
+  try {
+    bar = topbarHtml(session.user.email);
+  } catch (e) {
+    bar = "";
+  }
+  const message = (err && err.message) || "No error message was given.";
+  return bar + `
+    <div class="centernote">
+      <h2>Could not load the admin page</h2>
+      <p>${lead}</p>
+      <p class="help">${message}</p>
+      <a class="btn btn-primary" href="training.html">Back to Training</a>
+    </div>`;
+}
+
+function wireSignout() {
+  const out = document.getElementById("signoutBtn");
+  if (out) out.addEventListener("click", signOut);
+}
+
 (async function init() {
   const session = await getCurrentSession();
   if (!session) {
@@ -185,7 +211,18 @@ function inPersonSectionHtml(rows) {
     return;
   }
 
-  const me = await getMyCoachRow(session.user.id);
+  // Inside the net too: .single() throws when the row is missing or RLS
+  // refuses it, and that was the last call here that could blank the page.
+  let me;
+  try {
+    me = await getMyCoachRow(session.user.id);
+  } catch (err) {
+    document.getElementById("app").innerHTML = adminErrorHtml(session, err,
+      "We could not look up your account, so there is nothing to show yet.");
+    wireSignout();
+    return;
+  }
+
   if (!me.is_admin) {
     document.getElementById("app").innerHTML = `<div class="centernote"><h2>Not Authorized</h2><p>This page is restricted to Box United admins.</p><a class="btn btn-primary" href="training.html">Back to Training</a></div>`;
     return;
@@ -375,15 +412,9 @@ function inPersonSectionHtml(rows) {
   });
 
   } catch (err) {
-    document.getElementById("app").innerHTML = topbarHtml(session.user.email) + `
-      <div class="centernote">
-        <h2>Could not load the admin page</h2>
-        <p>Something this page needs did not come back from the database, so none of it is showing.</p>
-        <p class="help">${(err && err.message) || "No error message was given."}</p>
-        <a class="btn btn-primary" href="training.html">Back to Training</a>
-      </div>`;
-    const out = document.getElementById("signoutBtn");
-    if (out) out.addEventListener("click", signOut);
+    document.getElementById("app").innerHTML = adminErrorHtml(session, err,
+      "Something this page needs did not come back from the database, so none of it is showing.");
+    wireSignout();
     throw err;
   }
 })();
