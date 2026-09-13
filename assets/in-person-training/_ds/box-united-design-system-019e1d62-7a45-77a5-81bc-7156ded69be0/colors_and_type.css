@@ -1,0 +1,249 @@
+/* ---------------------------------------------------------------
+   Box United — Colors & Type
+   The full design system foundations as CSS variables.
+   --------------------------------------------------------------- */
+
+/* === Webfonts === */
+@import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800;900&display=swap");
+@font-face {
+  font-family: "Anton";
+  src: url("./fonts/Anton-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Editorial New";
+  src: url("./fonts/PPEditorialNew-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cooper BT";
+  src: url("./fonts/CooperBTW03-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cooper BT";
+  src: url("./fonts/CooperMediumCBT-Regular.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* === Tokens === */
+:root {
+  /* ---------- Palette ---------- */
+  /* Primary brand signature — used aggressively on hero surfaces. */
+  --bu-electric-blue: #0080f2;
+  /* Deep grounded brand color — used for typography, dark surfaces, navy product. */
+  --bu-navy: #001c33;
+  /* Warm off-white — paper-tone backgrounds, cream surfaces, soft contrast. */
+  --bu-stone: #f7f5ed;
+  --bu-white: #ffffff;
+  --bu-black: #000000;
+
+  /* Supporting tints derived from the four core values. Use sparingly —
+     the palette is intentionally tight. */
+  --bu-blue-tint:   #cce6fc;  /* 20% blue on white */
+  --bu-blue-deep:   #0064c0;  /* darker hover state for blue surfaces */
+  --bu-navy-soft:   #1a3349;  /* hover / raised on navy */
+  --bu-stone-deep:  #ece8d8;  /* divider on stone */
+  --bu-ink-60:      rgba(0, 28, 51, 0.60); /* navy at 60% — secondary text on stone */
+  --bu-ink-40:      rgba(0, 28, 51, 0.40); /* navy at 40% — tertiary / placeholder */
+
+  /* Semantic foreground / background pairs.
+     Pick a pair, do not mix. */
+  --bg:        var(--bu-stone);
+  --bg-alt:    var(--bu-white);
+  --bg-invert: var(--bu-navy);
+  --bg-accent: var(--bu-electric-blue);
+
+  --fg:        var(--bu-navy);
+  --fg-muted:  var(--bu-ink-60);
+  --fg-faint:  var(--bu-ink-40);
+  --fg-invert: var(--bu-stone);
+  --fg-accent: var(--bu-electric-blue);
+
+  --line:      var(--bu-stone-deep);
+  --line-bold: var(--bu-navy);
+
+  /* ---------- Type families ---------- */
+  /* Headline 1: confident, bold, journalistic. Always UPPERCASE, tight leading, 0 kerning.
+     The org uses League Spartan as their working bold display font (per Canva template). */
+  --font-display: "League Spartan", "Anton", "Oswald", "Impact", system-ui, sans-serif;
+  --font-display-weight: 800;
+  /* Headline 2: feminine, sophisticated. Title case, medium leading. */
+  --font-serif:   "PP Editorial New", "PP Editorial New TRIAL", "Cormorant Garamond", "Times New Roman", serif;
+  /* Body: human, personable. Title case, +10 tracking, medium leading. */
+  --font-body:    "Cooper BT", "Cooper Md BT", "Cooper BT W03", Georgia, "Times New Roman", serif;
+
+  /* ---------- Type scale ---------- */
+  /* Display (Anton — uppercase) */
+  --size-display-xl: clamp(72px, 11vw, 180px);  /* Hero billboards / cover slides */
+  --size-display-lg: clamp(56px, 7vw, 112px);   /* Slide titles */
+  --size-display-md: clamp(40px, 4.5vw, 72px);  /* Section heads */
+  --size-display-sm: 28px;                      /* Eyebrow / nav */
+
+  /* Editorial (PP Editorial — title case) */
+  --size-serif-xl:   clamp(56px, 7vw, 108px);   /* Big quote / statement */
+  --size-serif-lg:   clamp(40px, 5vw, 72px);    /* Editorial title */
+  --size-serif-md:   32px;                      /* Subhead */
+  --size-serif-sm:   22px;                      /* Pull quote */
+
+  /* Body (Cooper) */
+  --size-body-lg:    22px;  /* Lede / intro paragraph */
+  --size-body:       18px;  /* Standard body */
+  --size-body-sm:    16px;  /* Captions */
+  --size-body-xs:    14px;  /* Footnotes / fine print */
+
+  /* ---------- Line heights ---------- */
+  --lh-tight:  0.92;  /* Anton display — packed */
+  --lh-snug:   1.05;  /* Anton smaller */
+  --lh-serif:  1.10;  /* Editorial display */
+  --lh-body:   1.45;  /* Cooper body */
+  --lh-loose:  1.65;  /* Long-form body */
+
+  /* ---------- Tracking ---------- */
+  --tr-display:  0em;       /* Anton: 0 kerning per guidelines */
+  --tr-serif:    0em;       /* Editorial: 0 kerning */
+  --tr-body:     0.01em;    /* Cooper: +10 (≈ 1%) */
+  --tr-eyebrow:  0.08em;    /* All-caps small labels */
+
+  /* ---------- Layout / spacing ---------- */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* ---------- Radii ---------- */
+  /* Square or near-square dominates. Pill radii only on
+     "soft" sticker-y elements — stickers, badges, glove shapes. */
+  --radius-none:  0;
+  --radius-sm:    4px;
+  --radius-md:    8px;
+  --radius-lg:    16px;
+  --radius-pill:  999px;
+
+  /* ---------- Shadow ---------- */
+  /* Brand stays flat. Use sparingly, mostly for stickers and lifted cards. */
+  --shadow-sticker: 0 6px 0 rgba(0, 28, 51, 0.18);    /* sticker offset, hard */
+  --shadow-card:    0 1px 0 rgba(0, 28, 51, 0.08),
+                    0 8px 24px -12px rgba(0, 28, 51, 0.22);
+  --shadow-focus:   0 0 0 3px rgba(0, 128, 242, 0.35);
+
+  /* ---------- Motion ---------- */
+  --ease-out:  cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --dur-fast:  120ms;
+  --dur-base:  200ms;
+  --dur-slow:  360ms;
+
+  /* ---------- Z-index ---------- */
+  --z-nav:     50;
+  --z-overlay: 100;
+  --z-modal:   200;
+  --z-toast:   300;
+}
+
+/* === Semantic element styles === */
+html {
+  font-family: var(--font-body);
+  color: var(--fg);
+  background: var(--bg);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tr-body);
+  color: var(--fg);
+  background: var(--bg);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Display headlines — Anton, uppercase. h1/h2/h3 default to display because
+   the brand leads with bold all-caps. Use .h-editorial to switch to serif. */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: var(--tr-display);
+  line-height: var(--lh-tight);
+  color: var(--fg);
+  margin: 0;
+  text-wrap: balance;
+}
+h1 { font-size: var(--size-display-lg); }
+h2 { font-size: var(--size-display-md); line-height: var(--lh-snug); }
+h3 { font-size: var(--size-display-sm); line-height: var(--lh-snug); }
+
+/* Editorial title — PP Editorial Light, title case, italic optional */
+h4, .h-editorial {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  text-transform: none;
+  letter-spacing: var(--tr-serif);
+  line-height: var(--lh-serif);
+  font-size: var(--size-serif-md);
+  color: var(--fg);
+  margin: 0;
+}
+
+/* Subheads / eyebrows / labels */
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--fg-accent);
+}
+
+p {
+  margin: 0 0 1em 0;
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tr-body);
+  color: var(--fg);
+}
+p.lede {
+  font-size: var(--size-body-lg);
+  line-height: var(--lh-loose);
+}
+small, .caption {
+  font-size: var(--size-body-sm);
+  color: var(--fg-muted);
+}
+
+a {
+  color: var(--fg-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+a:hover { opacity: 0.75; }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: var(--space-6) 0;
+}
+
+::selection { background: var(--bu-electric-blue); color: var(--bu-white); }

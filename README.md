@@ -123,6 +123,14 @@ Resources moved off the home page to `resources.html`, which reads `js/resources
 
 The old `resources` list in `js/season-info.js` is gone. It used to sit below the key dates.
 
+### The in-person training deck
+
+`assets/in-person-training/` is a Claude Design canvas export of the September 12 session, served as an ordinary page: `assets/in-person-training/` opens the slides in the browser with no download. It is self-contained (`support.js`, `deck-stage.js`, and the `_ds/` bundle sit alongside it), so nothing else in the site has to know about it.
+
+**Only the deck's own dependencies were kept.** The export also shipped the handouts as `.dc.html`, a facilitator guide, a print list, a second copy of the curriculum PDF, and several unused images. Those were left out: the handouts are served as PDFs instead, and the rest was either a duplicate or unreferenced, which trimmed roughly 11 MB. If the deck is re-exported, check that every file it references comes across, since the unused ones are easy to drop by mistake.
+
+The handouts are PDFs in `assets/in-person-training/handouts/`, named for what they are rather than by number alone, with the print quantity from each sheet's own header in its `detail` line.
+
 ```js
 link: { url: "https://calendar.google.com/...", label: "Add to Google Calendar" }
 ```
