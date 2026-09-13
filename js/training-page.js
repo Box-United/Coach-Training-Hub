@@ -1,36 +1,6 @@
 // The training page: how far a coach has got, and the modules themselves.
-// The welcome and key dates live on the home page (js/index-page.js).
-
-function computeModuleStatus(modules, progressRows) {
-  const byModule = {};
-  progressRows.forEach((row) => { byModule[row.module_id] = row; });
-
-  let unlocked = true;
-  return modules.map((mod) => {
-    // Listed but not built yet. It never blocks what follows it, and a coach
-    // cannot open it, so it sits outside the chain entirely.
-    if (mod.comingSoon) return { module: mod, row: null, status: "soon" };
-
-    const row = byModule[mod.id];
-    const passed = !!(row && row.passed);
-    const awaitingReview = !!(row && row.document_status === "pending");
-
-    // Mirrors can_write_module in supabase/schema.sql. A document still
-    // waiting on an admin lets a coach carry on with training, but the module
-    // itself is not complete until it has actually been approved. A rejected
-    // document does not open anything, so they go back to being blocked.
-    const opensNext = passed || awaitingReview;
-
-    let status;
-    if (passed) status = "complete";
-    else if (awaitingReview) status = "pending";
-    else if (unlocked) status = "current";
-    else status = "locked";
-
-    if (!opensNext) unlocked = false;
-    return { module: mod, row, status };
-  });
-}
+// The welcome and key dates live on the home page (js/index-page.js), and the
+// unlock rules in js/training-status.js, shared with the curriculum pages.
 
 function moduleCardHtml(mod, row, status, isAdmin) {
   const num = `Module ${String(mod.id).padStart(2, "0")}`;
@@ -101,7 +71,7 @@ async function renderTraining(session) {
   const completeCount = statuses.filter((s) => s.status === "complete").length;
   // A module that has not been built yet is not something a coach can finish,
   // so counting it would hold everyone below 100 percent forever.
-  const countable = MODULES.filter((m) => !m.comingSoon).length;
+  const countable = countableModules(MODULES).length;
   const scores = progressRows.filter((r) => r.quiz_score !== null).map((r) => r.quiz_score);
   const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
   const pct = Math.round((completeCount / countable) * 100);

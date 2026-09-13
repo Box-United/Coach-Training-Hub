@@ -113,4 +113,7 @@ Not bugs, just things to be aware of.
 ## Nice to have, not urgent
 
 - [ ] **Throttle video progress writes.** Currently one database write per second per playing video (~136 writes for the Part 1 intro alone). Harmless at this scale but wasteful; batching to every 5–10 seconds would cut it by an order of magnitude.
-- [ ] **Deferred from the original brief:** the season resource library, the dashboard overview page, and the sidebar navigation explored in `design-mockup.html`.
+- [ ] **Deferred from the original brief:** the dashboard overview page and the sidebar navigation explored in `design-mockup.html`. The season resource library shipped as the weekly curriculum (`curriculum.html`).
+- [ ] **Decide whether the practice plans can be public.** `assets/curriculum/*.pdf` is served by GitHub Pages with no auth, so anyone who guesses the URL can read the season's curriculum without signing in, and committing them writes them into the git history permanently. Either accept it (the same good-faith limit as the unlisted videos) or move them to a Supabase Storage bucket with an RLS policy and signed URLs. See the README.
+- [ ] **Add the remaining curriculum videos.** Week 1's burnout is in. Every week has two slots, `walkthrough` and `burnout`, in `js/curriculum-data.js`. Empty slots are invisible to coaches, so they can be filled in any order. If one video suits every week, put its id on the slot in `CURRICULUM_VIDEO_SLOTS` instead of into all ten weeks.
+- [ ] **Check the split page ranges** in `scripts/split-curriculum.py` against the guide's contents page if the curriculum is ever re-paginated.

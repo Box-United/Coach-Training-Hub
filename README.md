@@ -2,11 +2,11 @@
 
 **Live at [box-united.github.io/Coach-Training-Hub](https://box-united.github.io/Coach-Training-Hub/)**, served from `main` by GitHub Pages. Every push to `main` redeploys it.
 
-A static coach training site: shared-codeword sign-in, a gated video-plus-quiz module for each week of training, and an admin view of who's completed what. Hosted on GitHub Pages, backed by Supabase.
+A static coach training site: shared-codeword sign-in, a gated video-plus-quiz module for each week of training, the season's weekly session plans once that training is done, and an admin view of who's completed what. Hosted on GitHub Pages, backed by Supabase.
 
 This first version has one module fully wired end to end (Module 1), so the whole flow, sign-in, video, quiz, Supabase write, admin view, can be tested before the remaining nine modules get their real videos and questions.
 
-Not built yet, deferred to a follow-up phase: the season resource library, the dashboard overview page, and the sidebar navigation explored in `design-mockup.html`. Those aren't part of the brief's core loop and can be added once this is live.
+The season resource library from the original brief is now the weekly curriculum, see below. Still deferred to a follow-up phase: the dashboard overview page and the sidebar navigation explored in `design-mockup.html`. Those aren't part of the brief's core loop and can be added once this is live.
 
 ## Local preview
 
@@ -100,6 +100,8 @@ Until that is configured, expect to wait out the rate limit between test sign-in
 | `index.html` | Signed out, the magic-link sign-in. Signed in, the home page: welcome and the season's key dates. |
 | `training.html` | How far a coach has got, and the module list. |
 | `module.html?id=N` | One module: its videos, its quiz, and any document it asks for. |
+| `curriculum.html` | The season's ten session weeks. Opens once training is complete. |
+| `week.html?n=N` | One week: its practice plan and what to bring. Videos here are open to every coach, gates or not. |
 | `admin.html` | Documents waiting on review, and the progress table. Admins only. |
 
 The magic link lands on `index.html`, so that is the page that redraws itself once a session appears. The top bar comes from `js/nav.js` so the navigation cannot drift between pages. It carries a link out to Charity Rescue, because attendance and the assessment results are required every season and both are done there rather than here, and `admin.html` is not linked from it, you reach it by URL or from the note on the training page.
@@ -232,9 +234,144 @@ where module_id = 1;
 
 **Think twice before that second one.** Setting `passed = false` on a module re-locks every module after it, for every coach, until they pass it again. A coach who had finished five modules would be back at the start. If only the video changed and the quiz still tests the same material, reset the video columns and leave `passed` alone.
 
+## The weekly curriculum
+
+Separate from training. Training is what a coach does *before* the season; the curriculum is what they run in the gym each week once it has started.
+
+Two gates stand between a coach and a week's plan, and both have to pass:
+
+1. **Their training is complete.** Every countable module passed or approved. A module still `pending` an admin's approval is deliberately not enough: it lets a coach carry on through the remaining modules, but nobody has checked it yet, so it does not hand over the season's curriculum. The locked page says which it is, so a coach waiting on an approval is told to sit tight rather than sent back to hunt for something to do.
+2. **The week has opened.** A week opens `CURRICULUM_RELEASE_LEAD_DAYS` before its session date, currently 14, so coaches get two weeks to read ahead.
+
+Admins skip both, the same as the module lock, so a week can be checked before anyone is let into it. Locked weeks gain a "Preview" link and the week itself says plainly it is not open to coaches yet.
+
+The unlock rules live in `js/training-status.js` and are shared with the training page, so the two cannot disagree about who has finished. `js/curriculum.js` holds the date rules, shared by both curriculum pages.
+
+### The source material
+
+The curriculum is *The Fighter's Mindset, Coach Curriculum Guide, Season One*. The original 63-page PDF is split one practice per week into `assets/curriculum/`, by `scripts/split-curriculum.py`:
+
+| File | Source pages | What it is |
+| --- | --- | --- |
+| `coach-guide.pdf` | 1–12, 63 | How to read a practice plan, assessments, journals, the practice checklist, references |
+| `week-01.pdf` … `week-10.pdf` | 14–60 | One practice each |
+| `scenario-cards.pdf` | 61–62 | Week 7 cut-outs |
+
+Each week's **assessment log travels with the practice it belongs to** (weeks 1, 2, 6 and 10), so a coach printing one file has everything for that session. The scenario cards are a separate file because week 7 needs them printed and cut up rather than read, and `coach-guide.pdf` is linked once under Coach Reference rather than repeated on every week.
+
+To re-split after the guide is revised, drop the new PDF in and run:
+
+```bash
+python scripts/split-curriculum.py "path/to/Box United Curriculum Season 1.pdf"
+```
+
+The page ranges are constants at the top of that script. Check them against the contents page if the guide is re-paginated, the script prints the first line of every file it writes so a bad range is obvious.
+
+### ⚠️ The practice plans are publicly reachable
+
+**This is the one thing to decide before pushing.** The repo is public and served by GitHub Pages, so anything in `assets/` can be fetched by anyone who knows or guesses the URL, for example `programs.boxunited.org/assets/curriculum/week-01.pdf`. The sign-in gate is on the *page*, not on the files behind it, and committing them puts them in the git history permanently, where deleting them later does not take them back out.
+
+The guide is marked © 2026 Box United, All Rights Reserved. That is the same good-faith limit as the unlisted YouTube videos (see "What isn't tamperproof"), and it may well be an acceptable trade for a static site. But it is a real decision, not an oversight.
+
+To close it properly, move the PDFs into a Supabase Storage bucket with a Row Level Security policy that mirrors the training gate, and have `week.html` hand out short-lived signed URLs. That is real enforcement rather than an unguessable path, and is the natural follow-up if the exposure matters.
+
+### Publishing a week
+
+All of the content lives in `js/curriculum-data.js`. **A week goes live the moment it has at least one document** — adding the link *is* the publish step, there is no separate flag. Until then it is listed as coming soon, so coaches can see the shape of the season without being promised a plan that isn't written:
+
+```js
+{
+  week: 3,
+  date: "2026-09-28",                // the Monday that session week starts
+  title: "Goal Setting",
+  theme: "One team goal for the Show Off.",  // the guide's one-line description
+  focus: "Growth mindset",           // which of the three pillars it builds
+  keyPhrase: "Why not me?",          // repeated through the session
+  journal: true,                     // journal week, shows a "bring them" note
+  summary: [                         // paragraphs on the week's page
+    "A paragraph setting up what the session is for."
+  ],
+  materials: ["Mitts & gloves"],     // what the coach brings
+  deliverables: [],                  // what goes to Charity Rescue
+  videos: { walkthrough: "abc123", burnout: "def456" },   // YouTube ids
+  documents: [
+    {
+      label: "Week 3 practice plan",
+      url: "assets/curriculum/week-03.pdf",
+      detail: "Includes the punch count assessment log"   // optional
+    }
+  ]
+}
+```
+
+Only `week`, `date` and `documents` do any work; everything else is copy. `journal: true` marks the five weeks (3, 4, 6, 8, 9) where the Fighter's Mindset journal is part of the practice and, per the guide, is not optional. `survey: true` marks weeks 1 and 10, which use the printed survey instead. Both produce a note on the week's page telling the coach to bring them.
+
+A document `url` can be a path inside this repo, as above, or any full URL: a Google Doc, a Drive PDF, a Canva link. **If you use a link, set its sharing to "anyone with the link can view" first**, or coaches hit a permission wall with no way through and no idea why. Documents open in a new tab.
+
+### What a week's page shows
+
+The sections run in the order a coach actually needs them: **What To Bring**, then **Watch**, then **Session Plan**, then **Submit To Charity Rescue** — prepare, watch, run, hand in.
+
+`materials` is transcribed from each practice's MATERIALS block in the guide. One thing to check: **the guide lists only "Mitts & gloves" for week 2**, even though that week runs the punch count assessment to a 160 BPM song and week 6's materials do list "Speaker · the Week 2 song". That looks like a gap in the guide rather than the hub. It is transcribed as written, so fix it in `js/curriculum-data.js` if the guide is wrong.
+
+`deliverables` is what that week produces for Charity Rescue. Weeks 1, 2, 6 and 10 have one, the rest are empty and the page says so plainly rather than leaving a coach wondering whether they have missed a step:
+
+| Week | Goes to Charity Rescue |
+| --- | --- |
+| 1 | Scanned pre-season surveys (journal pages 5–6), jump rope assessment log |
+| 2 | Punch count assessment log |
+| 6 | Punch count assessment log, midpoint |
+| 10 | Jump rope log, punch count log, scanned end-of-season surveys |
+
+Weeks 1 and 2 were confirmed directly; 6 and 10 are taken from the assessment logs printed in those practices, so check them against how Charity Rescue actually wants them filed.
+
+### Videos
+
+Every week shows the same video slots in the same order, so a coach learns where to look once. The slots are defined in one place, `CURRICULUM_VIDEO_SLOTS` at the top of `js/curriculum-data.js`:
+
+```js
+const CURRICULUM_VIDEO_SLOTS = [
+  { key: "walkthrough", label: "Session walkthrough", hint: "How this week's practice runs, start to finish." },
+  { key: "burnout",     label: "The burnout",         hint: "How to run this week's burnout." }
+];
+```
+
+Adding a slot there adds it to all ten weeks at once. Fill a slot for one week by pasting a YouTube id against its key:
+
+```js
+videos: { walkthrough: "abc123", burnout: "def456" }
+```
+
+A bare id is enough; use `{ youtubeId, title }` if a video needs its own heading instead of the slot label.
+
+**One video on every week.** If a video never changes — a generic burnout explainer, say — put its id on the slot itself rather than into ten weeks:
+
+```js
+{ key: "burnout", label: "The burnout", youtubeId: "def456", hint: "..." }
+```
+
+It then plays on every week that does not name its own, tagged *Season default* so an admin can see where it came from, and any week can still override it.
+
+**Empty slots show to admins only**, holding their place in the layout with a note naming the field to paste into. Coaches see nothing there, so a week with no videos simply has no Watch section rather than two broken-looking boxes.
+
+**Videos are not gated at all.** Two things follow from that, and they are the reason the week pages are built the way they are:
+
+- **No seek-blocking, no tracking.** Unlike module videos nothing is written to the database, because a coach watching a walkthrough is preparing, not proving anything.
+- **Neither gate applies to them.** Any coach can watch any week's videos at any time — weeks that have not opened yet, and before their own training is finished. Only the plan waits.
+
+So a week's page has two shapes. With the plan unlocked it shows everything: What To Bring, Watch, Session Plan, Submit To Charity Rescue. With the plan locked it shows the header, the Watch section, and a line under Session Plan saying why the plan is not there yet — the videos still play. A week with neither an unlocked plan nor a video sends the coach back to the curriculum rather than rendering an empty page.
+
+The curriculum list follows the same rule. A coach still in training now gets the full list of weeks with a banner explaining the plans are locked, rather than being stopped at the door, because they have to be able to reach a video. Cards read "Open →" when the plan is available, "Watch →" when only the videos are, and carry no link when there is nothing to see.
+
+A week with no `title` falls back to "Session week N", so a half-filled entry never breaks the page.
+
+Dates are compared as plain `YYYY-MM-DD` strings, never parsed into `Date` objects, for the same reason as the season calendar: parsing drags the viewer's timezone in and a week would open a day early or late for anyone outside Central.
+
+Like `keyDates`, the weeks are not cleared automatically when a season rolls over. `CURRICULUM` needs its dates and documents updating each year alongside the modules.
+
 ### Important: bump the version after any edit
 
-Browsers cache CSS and JS aggressively. After changing **any** file in `js/` or `css/`, including `modules-data.js`, open `index.html`, `module.html`, and `admin.html` and increment every `?v=` number by one (they should all match). Skip this and coaches will keep seeing the old quiz questions or the old video, with no clue anything changed.
+Browsers cache CSS and JS aggressively. After changing **any** file in `js/` or `css/`, including `modules-data.js`, open every `.html` file in the repo root and increment every `?v=` number by one (they should all match). Skip this and coaches will keep seeing the old quiz questions or the old video, with no clue anything changed.
 
 ## Publishing to GitHub Pages
 

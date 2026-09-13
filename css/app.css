@@ -327,3 +327,63 @@
 .resourceitem a{font-size:15px;color:var(--bu-blue);text-decoration:none;}
 .resourceitem a:hover{text-decoration:underline;text-underline-offset:3px;}
 .resourcedetail{font-size:13px;color:var(--fg-muted);margin-top:4px;max-width:60ch;}
+
+/* ---------- curriculum ---------- */
+/* The week cards reuse .modcard, .badge and .modgrid from the training page,
+   and a week's documents reuse .resourcelist. This is the only piece those
+   did not already cover: the session date under a week's title. */
+.weekwhen{
+  font-family:var(--font-display);font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--fg-faint);margin:-4px 0 0;
+}
+.lessonhead .weekwhen{margin:0;}
+
+/* Focus and key phrase on a week's page, sitting between the header and the
+   summary. Flex-wraps to one item per line on a phone. */
+.weekmeta{display:flex;flex-wrap:wrap;gap:10px 32px;margin:0 0 22px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.weekmetaitem{display:flex;flex-direction:column;gap:4px;font-size:14px;}
+.weekmetaitem .lbl{font-family:var(--font-display);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);}
+
+/* Materials and Charity Rescue deliverables on a week's page. Two columns on
+   a wide screen so a short list does not run down the page, one on a phone. */
+.weeklist{list-style:none;margin:0 0 8px;padding:0;columns:2;column-gap:32px;}
+.weeklist li{
+  break-inside:avoid;padding:9px 0 9px 22px;position:relative;
+  font-size:14.5px;color:var(--fg);line-height:1.4;
+}
+.weeklist li::before{
+  content:"";position:absolute;left:2px;top:15px;width:7px;height:7px;
+  border-radius:2px;background:var(--bu-blue);
+}
+/* Deliverables read as a checklist, the things that leave the gym with you. */
+.weeklist.is-submit li::before{
+  background:transparent;border:1.5px solid var(--bu-blue);border-radius:3px;
+  width:11px;height:11px;left:0;top:13px;
+}
+.weeklist.is-submit{margin-bottom:16px;}
+@media (max-width:720px){ .weeklist{columns:1;} }
+
+/* A curriculum walkthrough. The training pages size their player by id, this
+   is a plain iframe so it needs its own rule. */
+.weekvideo{aspect-ratio:16/9;width:100%;height:auto;display:block;border:0;}
+/* The empty-slot note carries two lines and a field name, so it needs room to
+   breathe where .videolocked alone centres a single short line. */
+.videolocked code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;
+  background:rgba(247,245,237,.08);padding:1px 5px;border-radius:4px;color:var(--bu-stone);
+}
+.videolocked{line-height:1.6;}
+/* .videolocked centres its children as flex items, so multi-line content has
+   to arrive as one child or each line lands in its own column. */
+.videolocked > span{display:block;max-width:46ch;}
+
+/* Explains a locked plan without walling the page off, since the videos below
+   or above it are still open. Stacks on a phone. */
+.lockbanner{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;margin:0 0 28px;font-size:14px;color:var(--fg-muted);line-height:1.5;
+}
+.lockbanner strong{color:var(--fg);font-weight:500;}
+.lockbanner > div{flex:1 1 320px;min-width:0;}
+.lockbanner .btn{flex:none;}
