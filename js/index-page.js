@@ -95,6 +95,34 @@ function renderHome(session) {
         `).join("")}
       </ol>
 
+      ${SEASON_INFO.contacts ? `
+        <div class="sectiontitle">
+          <h3>${SEASON_INFO.contacts.heading}</h3>
+        </div>
+
+        <div class="contactgrid">
+          <div class="contactcard">
+            <a class="contactto" href="mailto:${escapeAttr(SEASON_INFO.contacts.general.email)}">${SEASON_INFO.contacts.general.email}</a>
+            <p class="contactlead">${SEASON_INFO.contacts.general.lead}</p>
+            <ul class="contactcovers">
+              ${SEASON_INFO.contacts.general.covers.map((c) => `<li>${c}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="contactcard">
+            <a class="contactto" href="mailto:${escapeAttr(SEASON_INFO.contacts.incidents.email)}">${SEASON_INFO.contacts.incidents.email}</a>
+            <p class="contactlead">${SEASON_INFO.contacts.incidents.lead}</p>
+          </div>
+        </div>
+
+        <div class="urgentcard">
+          <div class="eyebrow">Suspected abuse or neglect</div>
+          <a class="urgentphone" href="${escapeAttr(SEASON_INFO.contacts.urgent.phoneHref)}">${SEASON_INFO.contacts.urgent.phone}</a>
+          <div class="urgentwho">${SEASON_INFO.contacts.urgent.label}${SEASON_INFO.contacts.urgent.alsoKnownAs ? ` &middot; ${SEASON_INFO.contacts.urgent.alsoKnownAs}` : ""}</div>
+          <p class="urgentlead">${SEASON_INFO.contacts.urgent.lead}</p>
+          <p class="urgentafter">${SEASON_INFO.contacts.urgent.after}</p>
+        </div>
+      ` : ""}
+
       <p class="prose" style="margin-bottom:48px;">
         Flyers, handouts, and training documents are on the
         <a class="datelink" style="display:inline;" href="resources.html">resources page</a>.

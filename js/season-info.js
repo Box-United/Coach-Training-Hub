@@ -39,6 +39,41 @@ const SEASON_INFO = {
     ]
   },
 
+  // Who a coach contacts, and for what. The DCFS line is a legal reporting
+  // duty rather than a Box United process: a coach is a mandated reporter
+  // under Illinois law, calling DCFS comes first, and telling Box United does
+  // not replace it. Both have to happen. Check any edit here against the
+  // Child Protection Policy, see the FAQ in js/faq-data.js.
+  contacts: {
+    heading: "Who To Contact",
+
+    general: {
+      email: "programs@boxunited.org",
+      lead: "Everything program. If you are not sure who to ask, ask here.",
+      covers: [
+        "Curriculum and lessons",
+        "Scheduling and cancellations",
+        "Equipment and space",
+        "Benchmarks and gear sizing",
+        "Attendance and assessment logs"
+      ]
+    },
+
+    incidents: {
+      email: "admin@boxunited.org",
+      lead: "Incidents. Report anything that happens on your watch here."
+    },
+
+    urgent: {
+      label: "Illinois DCFS Hotline",
+      phone: "1-800-252-2873",
+      phoneHref: "tel:+18002522873",
+      alsoKnownAs: "1-800-25-ABUSE",
+      lead: "If you have reasonable cause to suspect abuse or neglect, call DCFS. Every Box United coach is a mandated reporter under Illinois law, and the line is open 24 hours.",
+      after: "Then tell Box United at admin@boxunited.org the same day. Telling Box United does not replace reporting to DCFS, both have to happen."
+    }
+  },
+
   keyDates: [
     {
       date: "2026-09-01",

@@ -248,6 +248,65 @@
 /* The line under a resources heading, explaining what the group is for. */
 .groupblurb{font-size:13.5px;color:var(--fg-faint);margin:-6px 0 14px;max-width:68ch;}
 
+/* Who to contact, on the home page. Two ordinary cards, then the DCFS line
+   set apart: it is a legal reporting duty rather than a Box United inbox, and
+   a coach scanning the page in a hurry has to be able to find it. */
+.contactgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px;}
+.contactcard{background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:20px;}
+.contactto{
+  font-family:var(--font-display);font-size:15px;letter-spacing:.01em;
+  color:var(--bu-blue);text-decoration:none;word-break:break-word;
+}
+.contactto:hover{text-decoration:underline;text-underline-offset:3px;}
+.contactlead{font-size:14px;color:var(--fg-muted);margin-top:8px;line-height:1.5;}
+.contactcovers{list-style:none;margin:12px 0 0;padding:0;}
+.contactcovers li{
+  font-size:13.5px;color:var(--fg);padding:5px 0 5px 18px;position:relative;line-height:1.4;
+}
+.contactcovers li::before{
+  content:"";position:absolute;left:2px;top:12px;width:6px;height:6px;
+  border-radius:2px;background:var(--bu-blue);
+}
+
+.urgentcard{
+  border:1.5px solid var(--bu-blue);border-radius:16px;padding:22px 24px;
+  margin-bottom:48px;background:rgba(0,128,242,.07);
+}
+.urgentphone{
+  display:inline-block;font-family:var(--font-display);font-size:34px;line-height:1;
+  color:var(--bu-blue);text-decoration:none;margin:10px 0 6px;letter-spacing:.01em;
+}
+.urgentphone:hover{text-decoration:underline;text-underline-offset:4px;}
+.urgentwho{font-size:13px;color:var(--fg-muted);letter-spacing:.02em;}
+.urgentlead{font-size:14.5px;color:var(--fg);margin-top:12px;line-height:1.55;max-width:78ch;}
+.urgentafter{font-size:13.5px;color:var(--fg-muted);margin-top:8px;line-height:1.5;max-width:78ch;}
+
+/* FAQ. <details> does the work, so these are mostly about giving the summary
+   a hit area and stopping the marker from fighting the type. */
+.faqitem{border-bottom:1px solid var(--line);}
+.faqitem summary{
+  list-style:none;cursor:pointer;padding:15px 34px 15px 0;position:relative;
+  font-size:15.5px;line-height:1.45;color:var(--fg);
+}
+.faqitem summary::-webkit-details-marker{display:none;}
+.faqitem summary:hover{color:var(--bu-blue);}
+.faqitem summary::after{
+  content:"+";position:absolute;right:6px;top:14px;
+  font-family:var(--font-display);font-size:19px;color:var(--fg-faint);line-height:1;
+}
+.faqitem[open] summary::after{content:"3";}
+.faqitem[open] summary{color:var(--bu-blue);}
+.faqanswer{padding:0 34px 18px 0;}
+.faqanswer p{font-size:14.5px;color:var(--fg-muted);line-height:1.6;max-width:82ch;}
+.faqanswer p + p{margin-top:10px;}
+.faqanswer a{color:var(--bu-blue);}
+.faqsource{font-size:12.5px;color:var(--fg-faint);margin-top:10px;font-style:italic;}
+
+@media (max-width:720px){
+  .contactgrid{grid-template-columns:1fr;}
+  .urgentphone{font-size:28px;}
+}
+
 .datelist{list-style:none;margin:0 0 8px;padding:0;}
 .dateitem{
   display:flex;gap:18px;align-items:baseline;
