@@ -243,8 +243,7 @@ const CURRICULUM = {
       ],
       videos: { walkthrough: "", burnout: "" },
       materials: [
-        "Mitts & gloves",
-        "Tape to mark the two sides"
+        "Mitts & gloves"
       ],
       deliverables: [],
       documents: [
