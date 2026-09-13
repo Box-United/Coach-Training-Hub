@@ -113,8 +113,18 @@ function formatWeekDate(iso) {
     .toLocaleDateString(undefined, { day: "numeric", month: "short", timeZone: "UTC" });
 }
 
+// The burnout demonstrations a week works through, looked up in
+// CURRICULUM_EXERCISES. An unknown key is dropped rather than rendering a
+// broken player.
+function weekExercises(week) {
+  return (week.exercises || []).map((key) => CURRICULUM_EXERCISES[key]).filter(Boolean);
+}
+
+// Anything watchable on the week, which is what decides whether a coach can
+// open a week whose plan is still locked. The burnout demos count, so a week
+// with exercises but no walkthrough is still worth opening.
 function weekHasVideos(week) {
-  return weekVideoSlots(week).some((slot) => slot.video);
+  return weekVideoSlots(week).some((slot) => slot.video) || weekExercises(week).length > 0;
 }
 
 // The two gates cover the practice plan, not the videos.

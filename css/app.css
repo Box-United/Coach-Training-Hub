@@ -440,6 +440,16 @@
 /* A curriculum walkthrough. The training pages size their player by id, this
    is a plain iframe so it needs its own rule. */
 .weekvideo{aspect-ratio:16/9;width:100%;height:auto;display:block;border:0;}
+
+/* The burnout demos. Smaller than the walkthrough and side by side, since a
+   coach is checking a movement rather than watching a session through. */
+.drillgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:4px;}
+.drill .videowrap{margin:0;}
+.drilllabel{
+  font-family:var(--font-display);font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--fg-muted);margin-top:9px;
+}
+@media (max-width:720px){ .drillgrid{grid-template-columns:1fr;} }
 /* The empty-slot note carries two lines and a field name, so it needs room to
    breathe where .videolocked alone centres a single short line. */
 .videolocked code{

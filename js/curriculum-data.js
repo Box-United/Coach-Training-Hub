@@ -44,18 +44,23 @@
 // Rescue, the assessment logs and the scanned surveys; most weeks produce
 // nothing and carry an empty list.
 //
-// `videos` fills the slots defined in CURRICULUM_VIDEO_SLOTS below. Every week
-// shows the same slots in the same order, so paste a YouTube id against the
-// one it belongs to:
+// `videos` fills the slots defined in CURRICULUM_VIDEO_SLOTS below, which is
+// just the session walkthrough:
 //
-//   videos: { walkthrough: "abc123", burnout: "def456" }
+//   videos: { walkthrough: "abc123" }
 //
 // A bare id is enough. Use an object if the video needs its own title:
 //
-//   videos: { burnout: { youtubeId: "def456", title: "The five-station circuit" } }
+//   videos: { walkthrough: { youtubeId: "abc123", title: "Running week one" } }
 //
-// Unlike a training module these are not gated or tracked, so paste an id in
-// and it plays. A slot left empty shows only to admins, never to coaches.
+// `exercises` is the burnout, named from CURRICULUM_EXERCISES, in the order
+// the burnout works through them:
+//
+//   exercises: ["jumpRope", "mountainClimbers", "plank"]
+//
+// Unlike a training module none of this is gated or tracked, so paste an id in
+// and it plays. An empty walkthrough slot shows only to admins, never to
+// coaches, and a week with no exercises simply has no burnout section.
 //
 // Everything except `week`, `date` and `documents` is optional. `theme` is the
 // one-line description from the guide, `focus` is which of the three pillars
@@ -70,25 +75,48 @@
 // How far ahead of its session date a week opens. Two weeks.
 const CURRICULUM_RELEASE_LEAD_DAYS = 14;
 
-// The songs the assessments are run to. They live here rather than on each
-// week because the same song is used every time an assessment repeats, which
-// is the whole point: a fighter's Week 6 punch count only means something
-// against her Week 2 number if the song has not changed. Swap one here and it
-// changes on every week that uses it.
+// The tracks the burnouts are run to. They live here rather than on each week
+// because the same track is reused, which on the assessment weeks is the whole
+// point: a fighter's Week 6 punch count only means something against her Week
+// 2 number if the track has not changed. Swap one here and it changes on every
+// week that uses it.
+//
+// Not every week that uses a track is an assessment. Weeks 3, 7 and 9 borrow
+// one for an ordinary burnout, which is why the labels do not say assessment
+// and the notes name the weeks that are.
 //
 // Each week names the ones it needs in `songs`. The assessment log asks which
 // song was used, so a coach who swaps one has somewhere to record it.
 const CURRICULUM_SONGS = {
   jumpRope: {
-    label: "Jump rope assessment",
+    label: "Jump rope track",
     youtubeId: "ZaI2IlHwmgQ",
-    note: "Listen through before the session. This one runs a little fast, so if your fighters cannot hold the pace, pick something slower and use that same track again in Week 10."
+    note: "Listen through before the session. This one runs a little fast, so if your fighters cannot hold the pace, pick something slower. Weeks 1 and 10 are the jump rope assessment, and those two have to be the same track or the numbers cannot be compared."
   },
   punchCount: {
-    label: "Punch count assessment",
+    label: "Punch count track",
     youtubeId: "PWgvGjAhvIw",
-    note: "Around 160 BPM, which is what the practice plan asks for. Use the same track in Weeks 6 and 10, so each fighter is measured against her own number."
+    note: "Around 160 BPM, which is what the practice plan asks for. Weeks 2, 6 and 10 are the punch count assessment, and those three have to be the same track so each fighter is measured against her own number."
   }
+};
+
+// The burnout demonstrations. Exercises repeat across the season, jump rope
+// and fast feet and squats all turn up in more than one week, so they live
+// here once and weeks name the ones they need. Swap a demo here and it
+// changes on every week that uses it.
+//
+// These are demonstrations of the movement, not a video of the burnout being
+// run. A week can have any number, in the order the burnout works through
+// them.
+const CURRICULUM_EXERCISES = {
+  jumpRope:          { label: "Jump rope",           youtubeId: "u3zgHI8QnqE" },
+  mountainClimbers:  { label: "Mountain climbers",   youtubeId: "cnyTQDSE884" },
+  plank:             { label: "Plank",               youtubeId: "pvIjsG5Svck" },
+  fastFeet:          { label: "Fast feet",           youtubeId: "fz59j4a3QMQ" },
+  squats:            { label: "Squats",              youtubeId: "xqvCmoLULNY" },
+  skaters:           { label: "Skaters",             youtubeId: "5gtLC5BgN7Q" },
+  burpees:           { label: "Burpees",             youtubeId: "qLBImHhCXSw" },
+  plankShoulderTaps: { label: "Plank shoulder taps", youtubeId: "gKA5LBy7WAI" }
 };
 
 // The video slots every week's page shows, in this order. They live here
@@ -98,17 +126,14 @@ const CURRICULUM_SONGS = {
 // it plays on every week that does not name its own. Use that for anything
 // that does not change week to week, and override it on the weeks that differ.
 //
-// Adding a slot here adds it to all ten weeks at once.
+// Adding a slot here adds it to all ten weeks at once. The burnout used to
+// be a slot, but a burnout runs through several exercises, so those moved to
+// CURRICULUM_EXERCISES above and each week lists the ones it works through.
 const CURRICULUM_VIDEO_SLOTS = [
   {
     key: "walkthrough",
     label: "Session walkthrough",
     hint: "How this week's practice runs, start to finish."
-  },
-  {
-    key: "burnout",
-    label: "The burnout",
-    hint: "How to run this week's burnout."
   }
 ];
 
@@ -140,8 +165,9 @@ const CURRICULUM = {
         "Training covers stance, reinforces it with the Stance Check music game, introduces the jab, and ends with Boxing Tag. Closes with the jump rope assessment, the baseline every later week is measured against."
       ],
       alwaysOpen: true,
+      videos: { walkthrough: "OuOzPdT2J2w" },
+      exercises: ["jumpRope"],
       songs: ["jumpRope"],
-      videos: { walkthrough: "OuOzPdT2J2w", burnout: "u3zgHI8QnqE" },
       materials: [
         "Mitts & gloves",
         "Jump ropes",
@@ -169,8 +195,8 @@ const CURRICULUM = {
         "Training reviews movement and the jab, introduces the cross, and works 1 · 2 on command with mitts. Closes with the punch count assessment: 100 clean punches before one song ends."
       ],
       alwaysOpen: true,
+      videos: { walkthrough: "2JTO-I_QdYU" },
       songs: ["punchCount"],
-      videos: { walkthrough: "2JTO-I_QdYU", burnout: "" },
       materials: [
         "Mitts & gloves",
         "Speaker, for the punch count song"
@@ -194,7 +220,8 @@ const CURRICULUM = {
         "Teaches fighters to build a team SMART goal for the Show Off. The coach explains each component, then guides the team to shape one collective goal for the weeks ahead.",
         "Training introduces the slip, a reaction drill, and a no-contact slip-then-jab partner drill, then works 1 · 2 with slip-2 on the mitts and closes with Footwork Freeze."
       ],
-      videos: { walkthrough: "", burnout: "" },
+      videos: { walkthrough: "" },
+      songs: ["punchCount"],
       materials: [
         "Fighter's Mindset journal",
         "Mitts & gloves",
@@ -218,7 +245,8 @@ const CURRICULUM = {
         "Teaches fighters that preparation is the foundation of success in boxing and in life. Fighters build a personal checklist in their journals covering required gear and a personal routine, and intentions revisits the team SMART goal from last week.",
         "Training introduces the hooks, builds speed with rapid shadow rounds, works the 1 · 2 · 3 and 1 · 2 · 3 · 4 combinations on the mitts, and finishes with a partner call-out round. The burnout is a five-station circuit."
       ],
-      videos: { walkthrough: "", burnout: "" },
+      videos: { walkthrough: "" },
+      exercises: ["jumpRope", "mountainClimbers", "plank", "fastFeet"],
       materials: [
         "Fighter's Mindset journal",
         "Mitts & gloves",
@@ -241,7 +269,8 @@ const CURRICULUM = {
         "Focuses on eating as preparation for training. The coach leads a This or That activity where fighters choose between food options, then explains that whole foods give steady energy while sugary snacks cause a burst and a crash.",
         "Training introduces the uppercuts, adds 20-second speed bursts, works 5 · 6 to the body on the mitts, and builds a combination pyramid."
       ],
-      videos: { walkthrough: "", burnout: "" },
+      videos: { walkthrough: "" },
+      exercises: ["squats", "skaters", "fastFeet"],
       materials: [
         "Mitts & gloves"
       ],
@@ -262,8 +291,8 @@ const CURRICULUM = {
         "Focuses on sleep as a driver of performance and wellbeing. A True or False activity debunks common sleep myths, then fighters build a realistic three-step sleep routine for the week.",
         "Training is a Simon Says round through every punch and the slip, then combination prep on the mitts. The burnout repeats the Week 2 assessment, so each fighter compares against her own number."
       ],
+      videos: { walkthrough: "" },
       songs: ["punchCount"],
-      videos: { walkthrough: "", burnout: "" },
       materials: [
         "Fighter's Mindset journal",
         "Mitts & gloves",
@@ -288,7 +317,8 @@ const CURRICULUM = {
         "Focuses on positive thinking and applying it to effort. The coach explains that a positive mindset is mental preparation for hard work, then runs the Block That Thought activity, where teams take a scenario with a negative thinking trap and flip it into a positive thought.",
         "Training introduces the roll, a reaction drill, and a no-contact roll-then-combo partner drill, then adds the roll between combinations on the mitts."
       ],
-      videos: { walkthrough: "", burnout: "" },
+      videos: { walkthrough: "" },
+      songs: ["jumpRope"],
       materials: [
         "Mitts & gloves",
         "Jump ropes",
@@ -313,7 +343,8 @@ const CURRICULUM = {
         "Teaches fighters to give and receive feedback using the C.A.P. formula. The coach explains each part with examples of what to do and what to avoid, then runs a role-play where fighters respond to common mistakes with C.A.P. feedback.",
         "Training opens with a shuttle race, reviews every punch and defensive move, builds freestyle four-punch combinations on the mitts, and closes with a C.A.P. partner feedback round and a ladder burnout."
       ],
-      videos: { walkthrough: "", burnout: "" },
+      videos: { walkthrough: "" },
+      exercises: ["burpees", "plankShoulderTaps", "squats"],
       materials: [
         "Fighter's Mindset journal",
         "Mitts & gloves",
@@ -336,7 +367,8 @@ const CURRICULUM = {
         "The last practice before the Show Off. The coach reminds fighters this is their final chance to work toward the Week 3 team goal, then reviews how to build a strong combination.",
         "Training is given over to the 10-move combination, run for speed and form, with peer mitt-holding."
       ],
-      videos: { walkthrough: "", burnout: "" },
+      videos: { walkthrough: "" },
+      songs: ["punchCount"],
       materials: [
         "Fighter's Mindset journal",
         "Mitts & gloves",
@@ -359,8 +391,8 @@ const CURRICULUM = {
         "The Show Off, where fighters demonstrate their skills for their peers. The coach reminds them it is okay if the combination is not perfect, and encourages them to cheer on their teammates.",
         "Training reviews punches 1 through 6, adds the slip and roll, runs the basic combinations, then duos show off. The season closes with both post assessments, a group shout-out, and the post-survey as the last activity."
       ],
+      videos: { walkthrough: "" },
       songs: ["jumpRope", "punchCount"],
-      videos: { walkthrough: "", burnout: "" },
       materials: [
         "Mitts & gloves",
         "Jump ropes",

@@ -15,6 +15,37 @@ function notFoundHtml(heading, body) {
     </div>`;
 }
 
+// The burnout, as a demonstration of each exercise in the order it runs.
+// Smaller players than the walkthrough and laid out in a grid, because these
+// are looked at once to check a movement rather than watched through, and a
+// four-station circuit would otherwise push everything else off the page.
+//
+// Lazy-loaded: a week can carry four of these and there is no sense fetching
+// them all before a coach has scrolled anywhere near them.
+function burnoutHtml(week) {
+  const exercises = weekExercises(week);
+  if (!exercises.length) return "";
+  return `
+    <div class="sectiontitle" style="margin-top:32px;">
+      <h3>The Burnout</h3>
+      <span class="muted" style="font-size:12.5px">${exercises.length} ${exercises.length === 1 ? "exercise" : "exercises"}, in order</span>
+    </div>
+    <div class="drillgrid">
+      ${exercises.map((ex) => `
+        <div class="drill">
+          <div class="videowrap">
+            <iframe class="weekvideo" loading="lazy"
+              src="https://www.youtube.com/embed/${escapeAttr(ex.youtubeId)}?rel=0&amp;modestbranding=1"
+              title="${escapeAttr(ex.label)}"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+          </div>
+          <div class="drilllabel">${ex.label}</div>
+        </div>
+      `).join("")}
+    </div>`;
+}
+
 // The song an assessment is run to. A link rather than an embed, because a
 // coach is going to play this off a phone through the gym speaker rather than
 // from this page, and the note matters as much as the track.
@@ -161,6 +192,8 @@ function renderWeek(session, week, isAdmin, isLockedPreview, planOpen, lockReaso
       ${planOpen ? materialsHtml(week) : ""}
 
       ${weekVideoHtml(week, isAdmin)}
+
+      ${burnoutHtml(week)}
 
       ${planOpen ? songsHtml(week) : ""}
 
