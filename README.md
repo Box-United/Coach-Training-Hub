@@ -100,6 +100,7 @@ Until that is configured, expect to wait out the rate limit between test sign-in
 | `index.html` | Signed out, the magic-link sign-in. Signed in, the home page: welcome and the season's key dates. |
 | `training.html` | How far a coach has got, and the module list. |
 | `module.html?id=N` | One module: its videos, its quiz, and any document it asks for. |
+| `resources.html` | Training documents, handouts, and recruitment links. Open to anyone signed in. |
 | `curriculum.html` | The season's ten session weeks. Opens once training is complete. |
 | `week.html?n=N` | One week: its practice plan and what to bring. Videos here are open to every coach, gates or not. |
 | `admin.html` | Documents waiting on review, and the progress table. Admins only. |
@@ -118,7 +119,9 @@ The home page also shows a month grid for the season, built by `js/calendar.js` 
 
 All of the copy lives in `js/season-info.js`: the welcome heading and paragraphs, the `calendar` block, the `keyDates` list, and a `resources` list.
 
-`resources` is for things a coach needs occasionally rather than weekly, and shows below the key dates. Each entry takes a `label`, a `url`, and an optional `detail`. Charity Rescue and Ramp are in the top bar instead, because those are used constantly. Add, remove, or reorder dates freely, the page reads straight from that list. Each date needs an ISO `date`, a short `label` (what the page prints), and a `title`. Optionally it can also carry a `detail`, a `location`, and its own `link`:
+Resources moved off the home page to `resources.html`, which reads `js/resources-data.js`, so there is one list to keep up rather than two. The home page links across to it. Nothing there is gated: a coach part-way through training still needs the flyers and handouts. Groups render in the order they are listed, and a group with no items shows to admins only, so coaches never meet an empty heading.
+
+The old `resources` list in `js/season-info.js` is gone. It used to sit below the key dates.
 
 ```js
 link: { url: "https://calendar.google.com/...", label: "Add to Google Calendar" }

@@ -128,7 +128,7 @@ function renderWeek(session, week, isAdmin, isLockedPreview, planOpen, lockReaso
           ${week.keyPhrase ? `<div class="weekmetaitem"><span class="lbl">Key phrase</span><span>&ldquo;${week.keyPhrase}&rdquo;</span></div>` : ""}
         </div>` : ""}
 
-      ${(week.summary || []).map((para) => `<p class="editorial" style="font-size:16px;max-width:60ch;margin-bottom:12px;">${para}</p>`).join("")}
+      ${(week.summary || []).map((para) => `<p class="prose">${para}</p>`).join("")}
 
       ${planOpen && (week.journal || week.survey) ? `
         <p class="modulenote" style="margin-top:22px;">${week.journal

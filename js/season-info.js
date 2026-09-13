@@ -4,6 +4,9 @@
 // `date` is ISO, `label` is what the page prints. Add, remove, or reorder
 // freely, the page reads straight from this list.
 //
+// Resources moved to js/resources-data.js, which the resources page reads, so
+// there is one list to keep up rather than two.
+//
 // A date can also carry its own `link`, for anything a coach needs to open for
 // that specific date, a sign-up, a meeting, a calendar invite:
 //
@@ -35,17 +38,6 @@ const SEASON_INFO = {
       { from: "2026-11-22", to: "2026-11-28", label: "No session" }
     ]
   },
-
-  // Things a coach might need occasionally, rather than every week. These sit
-  // below the key dates rather than in the top bar, which is reserved for the
-  // two platforms they use constantly.
-  resources: [
-    {
-      label: "Principal Hub",
-      url: "https://principals.boxunited.org/",
-      detail: "Flyers and program materials you can print yourself."
-    }
-  ],
 
   keyDates: [
     {

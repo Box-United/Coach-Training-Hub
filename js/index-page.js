@@ -73,7 +73,7 @@ function renderHome(session) {
       <div class="infocard">
         <div class="eyebrow">${SEASON_INFO.seasonLabel} season</div>
         <h2>${SEASON_INFO.welcome.heading}</h2>
-        ${SEASON_INFO.welcome.body.map((para) => `<p class="editorial">${para}</p>`).join("")}
+        ${SEASON_INFO.welcome.body.map((para) => `<p class="prose">${para}</p>`).join("")}
         <p style="margin-top:18px;"><a class="btn btn-primary" href="training.html">Go to your training</a></p>
       </div>
 
@@ -95,19 +95,10 @@ function renderHome(session) {
         `).join("")}
       </ol>
 
-      ${(SEASON_INFO.resources || []).length ? `
-        <div class="sectiontitle">
-          <h3>Recruitment Resources</h3>
-        </div>
-        <ul class="resourcelist">
-          ${SEASON_INFO.resources.map((r) => `
-            <li class="resourceitem">
-              <a href="${escapeAttr(r.url)}" target="_blank" rel="noopener noreferrer">${r.label} &#8599;</a>
-              ${r.detail ? `<div class="resourcedetail">${r.detail}</div>` : ""}
-            </li>
-          `).join("")}
-        </ul>
-      ` : ""}
+      <p class="prose" style="margin-bottom:48px;">
+        Flyers, handouts, and training documents are on the
+        <a class="datelink" style="display:inline;" href="resources.html">resources page</a>.
+      </p>
     </div>
   `;
   document.getElementById("signoutBtn").addEventListener("click", signOut);

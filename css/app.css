@@ -233,6 +233,21 @@
 .infocard .editorial{font-size:15.5px;color:var(--fg-muted);max-width:62ch;}
 .infocard .editorial + .editorial{margin-top:10px;}
 
+/* Body copy in the serif face.
+   .editorial is a display style: text-wrap:balance evens the lines out and
+   line-height:1.15 sets them tight, which suits a one-line lead but leaves a
+   real paragraph ragged, stopping well short of the box it sits in, and
+   bunched together. Prose runs the full measure and gives the lines room. */
+.prose{
+  font-family:var(--font-serif);font-weight:300;text-transform:none;
+  font-size:16.5px;line-height:1.55;color:var(--fg-muted);margin:0;
+  text-wrap:pretty;
+}
+.prose + .prose{margin-top:16px;}
+
+/* The line under a resources heading, explaining what the group is for. */
+.groupblurb{font-size:13.5px;color:var(--fg-faint);margin:-6px 0 14px;max-width:68ch;}
+
 .datelist{list-style:none;margin:0 0 8px;padding:0;}
 .dateitem{
   display:flex;gap:18px;align-items:baseline;
@@ -245,7 +260,7 @@
 }
 .datewhat{min-width:0;}
 .datetitle{font-size:15px;line-height:1.35;}
-.datedetail{font-size:13px;color:var(--fg-muted);margin-top:4px;max-width:60ch;}
+.datedetail{font-size:13.5px;color:var(--fg-muted);margin-top:5px;max-width:82ch;line-height:1.5;}
 .datelink{display:inline-block;font-size:13px;margin-top:7px;color:var(--bu-blue);text-decoration:none;}
 .datelink:hover{text-decoration:underline;text-underline-offset:3px;}
 
@@ -326,7 +341,7 @@
 .resourceitem:last-child{border-bottom:0;}
 .resourceitem a{font-size:15px;color:var(--bu-blue);text-decoration:none;}
 .resourceitem a:hover{text-decoration:underline;text-underline-offset:3px;}
-.resourcedetail{font-size:13px;color:var(--fg-muted);margin-top:4px;max-width:60ch;}
+.resourcedetail{font-size:13.5px;color:var(--fg-muted);margin-top:5px;max-width:82ch;line-height:1.5;}
 
 /* ---------- curriculum ---------- */
 /* The week cards reuse .modcard, .badge and .modgrid from the training page,

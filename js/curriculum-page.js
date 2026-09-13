@@ -70,7 +70,7 @@ function renderCurriculum(session, access) {
       <div class="infocard">
         <div class="eyebrow">${CURRICULUM.seasonLabel} curriculum</div>
         <h2>${current ? "You are in week " + current.week : "Your session plans"}</h2>
-        <p class="editorial">${CURRICULUM.intro}</p>
+        <p class="prose">${CURRICULUM.intro}</p>
       </div>
 
       ${access.isAdmin && !access.trainingComplete

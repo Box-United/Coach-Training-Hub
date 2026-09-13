@@ -3,8 +3,8 @@
 // coaches are actually held to, attendance, assessments and getting paid, all
 // happen over there rather than in this hub.
 //
-// `current` is "home", "training", "curriculum", or omitted, and marks which
-// link to highlight.
+// `current` is "home", "training", "curriculum", "resources", or omitted, and
+// marks which link to highlight.
 //
 // The caller is responsible for wiring #signoutBtn, since the pages render
 // their own markup around this.
@@ -22,6 +22,7 @@ function topbarHtml(email, current) {
         ${link("./", "Home", "home")}
         ${link("training.html", "Training", "training")}
         ${link("curriculum.html", "Curriculum", "curriculum")}
+        ${link("resources.html", "Resources", "resources")}
         <a class="is-external" href="https://charityrescue.io" target="_blank" rel="noopener noreferrer">Charity Rescue &#8599;</a>
         <a class="is-external" href="https://app.ramp.com/sign-in" target="_blank" rel="noopener noreferrer">Ramp &#8599;</a>
       </nav>

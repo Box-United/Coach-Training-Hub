@@ -140,7 +140,7 @@ const CURRICULUM = {
         "Connects a physical moment of discomfort with the emotional experience of persistence, then asks fighters to translate that skill to real-life challenges. It opens with a Stand Your Ground debate on mental toughness, effort, and confidence.",
         "Training reviews movement and the jab, introduces the cross, and works 1 · 2 on command with mitts. Closes with the punch count assessment: 100 clean punches before one song ends."
       ],
-      videos: { walkthrough: "", burnout: "" },
+      videos: { walkthrough: "2JTO-I_QdYU", burnout: "" },
       materials: [
         "Mitts & gloves"
       ],
