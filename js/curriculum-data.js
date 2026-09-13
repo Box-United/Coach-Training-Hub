@@ -113,7 +113,7 @@ const CURRICULUM = {
         "Introduces fighters to Fight Like A Girl, sets program expectations, and builds team cohesion through introductions. The group discusses what Fighting Like A Girl means, then partners use fist bumps and questions to get to know each other.",
         "Training covers stance, reinforces it with the Stance Check music game, introduces the jab, and ends with Boxing Tag. Closes with the jump rope assessment, the baseline every later week is measured against."
       ],
-      videos: { walkthrough: "", burnout: "u3zgHI8QnqE" },
+      videos: { walkthrough: "OuOzPdT2J2w", burnout: "u3zgHI8QnqE" },
       materials: [
         "Mitts & gloves",
         "Jump ropes",
