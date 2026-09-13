@@ -217,6 +217,13 @@
 .reviewmsg{flex-basis:100%;margin:0;}
 .reviewmsg:empty{display:none;}
 
+/* Adding a name to the in-person register. The input takes the room, the
+   button stays its own size, and they stack on a narrow screen. */
+.addperson{display:flex;gap:10px;align-items:center;margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}
+.addperson .input{flex:1 1 auto;min-width:0;}
+.addperson .btn{flex:none;}
+@media (max-width:560px){ .addperson{flex-wrap:wrap;} .addperson .btn{width:100%;} }
+
 /* Season picker on the admin page. Narrow, so it reads as a control on the
    heading row rather than as a form field. */
 .seasonpick{width:auto;min-width:170px;padding-right:34px;cursor:pointer;}

@@ -77,7 +77,7 @@ function weekVideoSlots(week) {
 }
 
 // "soon"   nothing written for it yet
-// "locked" written, but still more than two weeks out
+// "locked" written, but its open date has not come round yet
 // "open"   ready to read
 //
 // "soon" wins over "locked" on purpose: telling a coach a week opens on a date

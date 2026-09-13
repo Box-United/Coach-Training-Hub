@@ -252,7 +252,7 @@ Separate from training. Training is what a coach does *before* the season; the c
 Two gates stand between a coach and a week's plan, and both have to pass:
 
 1. **Their training is complete.** Every countable module passed or approved. A module still `pending` an admin's approval is deliberately not enough: it lets a coach carry on through the remaining modules, but nobody has checked it yet, so it does not hand over the season's curriculum. The locked page says which it is, so a coach waiting on an approval is told to sit tight rather than sent back to hunt for something to do.
-2. **The week has opened.** A week opens `CURRICULUM_RELEASE_LEAD_DAYS` before its session date, currently 14, so coaches get two weeks to read ahead.
+2. **The week has opened.** A week opens `CURRICULUM_RELEASE_LEAD_DAYS` before its session date, currently 7, so coaches get a week to read ahead. **This is the whole schedule**: every open date is worked out from that week's own `date` on each page load, so nothing has to be unlocked by hand as the season runs. Changing that one number moves all ten weeks.
 
 Admins skip both, the same as the module lock, so a week can be checked before anyone is let into it. Locked weeks gain a "Preview" link and the week itself says plainly it is not open to coaches yet.
 

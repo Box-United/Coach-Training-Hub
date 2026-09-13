@@ -113,6 +113,51 @@ function reviewListHtml(pending) {
   `).join("");
 }
 
+// The in-person training register. Names rather than accounts, see
+// js/inperson.js, so somebody who has not signed up yet can still be marked.
+function inPersonRowHtml(row, i) {
+  const mark = (status, label) => `
+    <button class="btn btn-sm ${row.status === status ? "btn-primary" : "btn-outline"}"
+            data-ip="mark" data-person="${escapeAttr(row.person)}" data-status="${status}">${label}</button>`;
+  return `
+    <div class="reviewrow" data-ip-row="${i}">
+      <div class="reviewwho">
+        <div class="reviewcoach">${row.person}</div>
+        <div class="reviewmod">${row.status
+          ? `${row.status === "attended" ? "Attended" : "Excused"}, marked ${formatDate(row.updated_at)}`
+          : "Not marked yet"}</div>
+      </div>
+      <div class="reviewactions">
+        ${mark("attended", "Attended")}
+        ${mark("excused", "Excused")}
+        <button class="btn btn-ghost btn-sm" data-ip="remove" data-person="${escapeAttr(row.person)}">Remove</button>
+      </div>
+    </div>`;
+}
+
+function inPersonListHtml(rows) {
+  if (!rows.length) return '<p class="help">Nobody on the list yet. Add a name below.</p>';
+  return rows.map(inPersonRowHtml).join("");
+}
+
+function inPersonSectionHtml(rows) {
+  const c = inPersonCounts(rows);
+  return `
+    <div class="sectiontitle" style="margin-top:28px;">
+      <h3>In-Person Training</h3>
+      <span class="muted" style="font-size:12.5px">${c.attended} attended &middot; ${c.excused} excused &middot; ${c.unmarked} not marked</span>
+    </div>
+    <div class="quizcard">
+      <div id="inpersonlist">${inPersonListHtml(rows)}</div>
+      <div class="addperson">
+        <input class="input" id="inpersonName" type="text" placeholder="Add a name" autocomplete="off">
+        <button class="btn btn-outline btn-sm" id="inpersonAdd">Add</button>
+      </div>
+      <p class="help" id="inpersonMsg"></p>
+      <p class="help" style="margin-top:10px;">Anyone can go on this list, account or not. Clicking the button that is already on clears the mark.</p>
+    </div>`;
+}
+
 (async function init() {
   const session = await getCurrentSession();
   if (!session) {
@@ -136,6 +181,7 @@ function reviewListHtml(pending) {
 
   const coaches = await getAllProgressForAdmin(season);
   const pending = pendingDocuments(coaches);
+  let inPerson = await getInPersonAttendance(season);
 
   document.getElementById("app").innerHTML = `
     ${topbarHtml(session.user.email)}
@@ -157,6 +203,8 @@ function reviewListHtml(pending) {
       </div>
       <div class="quizcard" id="reviewlist">${reviewListHtml(pending)}</div>
 
+      ${inPersonSectionHtml(inPerson)}
+
       <div class="sectiontitle" style="margin-top:28px;">
         <h3>Coach Progress</h3>
         <button class="btn btn-outline btn-sm" id="exportBtn">Export CSV</button>
@@ -177,6 +225,75 @@ function reviewListHtml(pending) {
   document.getElementById("seasonPick").addEventListener("change", (e) => {
     window.location.search = "?season=" + e.target.value;
   });
+
+  // Redraw just the register, so marking somebody does not cost a page load
+  // and lose the admin's place in a long table.
+  const inPersonMsg = document.getElementById("inpersonMsg");
+  function redrawInPerson() {
+    document.getElementById("inpersonlist").innerHTML = inPersonListHtml(inPerson);
+    const c = inPersonCounts(inPerson);
+    document.querySelector("#inpersonlist").closest(".quizcard")
+      .previousElementSibling.querySelector(".muted").innerHTML =
+        `${c.attended} attended &middot; ${c.excused} excused &middot; ${c.unmarked} not marked`;
+  }
+
+  document.getElementById("inpersonlist").addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-ip]");
+    if (!btn) return;
+    const person = btn.dataset.person;
+    const row = inPerson.find((r) => r.person === person);
+    if (!row) return;
+
+    inPersonMsg.className = "help";
+    inPersonMsg.textContent = "";
+
+    if (btn.dataset.ip === "remove") {
+      if (!window.confirm(`Take ${person} off the in-person training list?`)) return;
+      try {
+        await removeInPersonPerson(season, person);
+        inPerson = inPerson.filter((r) => r.person !== person);
+        redrawInPerson();
+      } catch (err) {
+        inPersonMsg.className = "error";
+        inPersonMsg.textContent = "That did not save, so nothing changed. " + (err.message || "");
+      }
+      return;
+    }
+
+    // Clicking the mark that is already on clears it.
+    const next = row.status === btn.dataset.status ? null : btn.dataset.status;
+    const before = row.status;
+    try {
+      await setInPersonStatus(season, person, next);
+      row.status = next;
+      row.updated_at = new Date().toISOString();
+      redrawInPerson();
+    } catch (err) {
+      // Put it back, or the page would show a mark that is not in the database.
+      row.status = before;
+      redrawInPerson();
+      inPersonMsg.className = "error";
+      inPersonMsg.textContent = "That did not save, so nothing changed. " + (err.message || "");
+    }
+  });
+
+  const addName = document.getElementById("inpersonName");
+  async function addPerson() {
+    inPersonMsg.className = "help";
+    inPersonMsg.textContent = "";
+    try {
+      const name = await addInPersonPerson(season, addName.value);
+      inPerson.push({ person: name, status: null, updated_at: new Date().toISOString() });
+      inPerson.sort((a, b) => a.person.localeCompare(b.person));
+      addName.value = "";
+      redrawInPerson();
+    } catch (err) {
+      inPersonMsg.className = "error";
+      inPersonMsg.textContent = err.message || "Could not add that name.";
+    }
+  }
+  document.getElementById("inpersonAdd").addEventListener("click", addPerson);
+  addName.addEventListener("keydown", (e) => { if (e.key === "Enter") addPerson(); });
 
   document.getElementById("reviewlist").addEventListener("click", async (e) => {
     const btn = e.target.closest("button[data-act]");

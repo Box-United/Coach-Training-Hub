@@ -11,7 +11,8 @@
 //
 //   1. Their training is complete. Every module passed or approved.
 //   2. The week has opened. A week opens CURRICULUM_RELEASE_LEAD_DAYS before
-//      its session date, so coaches can read ahead and prepare.
+//      its session date, so coaches can read ahead and prepare. Nothing needs
+//      unlocking by hand, the date does it.
 //
 // Admins skip both, the same way they skip the module lock, so the curriculum
 // can be checked before anyone is let into it.
@@ -72,8 +73,14 @@
 // A week with no `title` falls back to "Session week N", so a half-filled
 // entry never breaks the page.
 
-// How far ahead of its session date a week opens. Two weeks.
-const CURRICULUM_RELEASE_LEAD_DAYS = 14;
+// How far ahead of its session date a week opens. One week.
+//
+// This is the whole schedule. Every week's open date is worked out from its
+// own `date` minus this, every time the page loads, so nothing has to be
+// unlocked by hand as the season runs. Changing this one number moves all ten.
+//
+// Weeks carrying `alwaysOpen` ignore it and are open from the start.
+const CURRICULUM_RELEASE_LEAD_DAYS = 7;
 
 // The tracks the burnouts are run to. They live here rather than on each week
 // because the same track is reused, which on the assessment weeks is the whole
@@ -140,7 +147,7 @@ const CURRICULUM_VIDEO_SLOTS = [
 const CURRICULUM = {
   seasonLabel: "Fall 2026",
 
-  intro: "The Fighter's Mindset, season one. Each week's practice plan opens two weeks before you run it, so there is always time to read ahead and get what you need together.",
+  intro: "The Fighter's Mindset, season one. Each week's practice plan opens the week before you run it, so there is always time to read ahead and get what you need together.",
 
   // Season-wide reference, not tied to any one week.
   guides: [
