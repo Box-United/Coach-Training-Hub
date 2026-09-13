@@ -34,7 +34,7 @@ function renderFaq(session) {
     <div class="wrap">
       <div class="infocard">
         <div class="eyebrow">${SEASON_INFO.seasonLabel} season</div>
-        <h2>Questions</h2>
+        <h2>FAQ</h2>
         <p class="prose">${FAQ.intro}</p>
       </div>
 

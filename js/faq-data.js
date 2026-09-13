@@ -58,13 +58,6 @@ const FAQ = {
       heading: "Benchmarks and Gear",
       items: [
         {
-          q: "What happened to the skill levels?",
-          a: [
-            "They are paused for both the fall and spring seasons, and come back in a later spring cycle. Nothing is expected of you on L1 to L4 this year: no level assessment at any point, no certificates, no patches. Attendance benchmarks take their place."
-          ],
-          source: "Curriculum update, Fall 2026"
-        },
-        {
           q: "A girl joined late. Can she still earn the gear?",
           a: [
             "Yes. The thresholds count sessions attended, not a percentage and not a start date. A girl who joins at session three can still reach four sessions by week eight. Get her onto the attendance sheet the day she arrives so her count is right."
@@ -99,7 +92,8 @@ const FAQ = {
         {
           q: "How do sizes work, and what if something does not fit?",
           a: [
-            "Collect sizes in week one, using the sizing sheet on the collateral site, and email them to <a href=\"mailto:programs@boxunited.org\">programs@boxunited.org</a>. Exchanges are fine, just ask and we will send a replacement."
+            "Most parents filled sizing in for their girls when they signed up, so there is nothing for you to collect. If we are missing sizes for your school, we will reach out and ask you for them.",
+            "Exchanges are fine. If something does not fit, email <a href=\"mailto:programs@boxunited.org\">programs@boxunited.org</a> and we will send a replacement."
           ]
         },
         {
@@ -117,7 +111,8 @@ const FAQ = {
         {
           q: "What if I have to miss a session, or the school cancels one?",
           a: [
-            "Tell Box United as soon as you know, and work with your school contact to reschedule. Sessions cancelled by the school, or for anything outside your control, are not held against you. Rescheduling keeps the program whole and protects your sessions."
+            "Tell Box United as soon as you know, and work with your school contact to reschedule. Sessions cancelled by the school, or for anything outside your control, are not held against you. Rescheduling keeps the program whole and protects your sessions.",
+            "Adjust the schedule in Charity Rescue yourself. Any make-up or missed session has to be moved there by you, nobody does it for you, and your attendance and your pay both follow what that schedule says."
           ],
           source: "School Coach Contract"
         },

@@ -23,7 +23,7 @@ function topbarHtml(email, current) {
         ${link("training.html", "Training", "training")}
         ${link("curriculum.html", "Curriculum", "curriculum")}
         ${link("resources.html", "Resources", "resources")}
-        ${link("faq.html", "Questions", "faq")}
+        ${link("faq.html", "FAQ", "faq")}
         <a class="is-external" href="https://charityrescue.io" target="_blank" rel="noopener noreferrer">Charity Rescue &#8599;</a>
         <a class="is-external" href="https://app.ramp.com/sign-in" target="_blank" rel="noopener noreferrer">Ramp &#8599;</a>
       </nav>
