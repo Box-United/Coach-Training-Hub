@@ -18,6 +18,9 @@ function notFoundHtml(heading, body) {
 // The song an assessment is run to. A link rather than an embed, because a
 // coach is going to play this off a phone through the gym speaker rather than
 // from this page, and the note matters as much as the track.
+//
+// Sits below the videos, so it reads in the order the session runs: watch the
+// burnout being demonstrated, then pick up the track it is run to.
 function songsHtml(week) {
   const songs = weekSongs(week);
   if (!songs.length) return "";
@@ -157,9 +160,9 @@ function renderWeek(session, week, isAdmin, isLockedPreview, planOpen, lockReaso
 
       ${planOpen ? materialsHtml(week) : ""}
 
-      ${planOpen ? songsHtml(week) : ""}
-
       ${weekVideoHtml(week, isAdmin)}
+
+      ${planOpen ? songsHtml(week) : ""}
 
       ${planOpen ? `
         <div class="sectiontitle" style="margin-top:28px;">
