@@ -140,6 +140,26 @@ function inPersonListHtml(rows) {
   return rows.map(inPersonRowHtml).join("");
 }
 
+// A missing table means migration 006 has not been run. That is a setup step
+// rather than a fault, so it says so and names the file, instead of showing
+// an admin a Postgres error they cannot act on.
+function inPersonUnavailableHtml(err) {
+  const message = (err && err.message) || "";
+  const notSetUp = /does not exist|schema cache|relation|42P01|PGRST205/i.test(message);
+  return `
+    <div class="sectiontitle" style="margin-top:28px;">
+      <h3>In-Person Training</h3>
+    </div>
+    <div class="quizcard">
+      ${notSetUp
+        ? `<p>The register is not set up yet. Run <strong>supabase/migrations/006-inperson-attendance.sql</strong>
+           in the Supabase SQL editor, then reload this page.</p>
+           <p class="help" style="margin-top:10px;">Everything else on this page works without it.</p>`
+        : `<p>The register could not be loaded.</p>`}
+      ${message ? `<p class="help" style="margin-top:10px;">${message}</p>` : ""}
+    </div>`;
+}
+
 function inPersonSectionHtml(rows) {
   const c = inPersonCounts(rows);
   return `
@@ -171,6 +191,10 @@ function inPersonSectionHtml(rows) {
     return;
   }
 
+  // Everything past this point talks to Supabase. Without a catch, any one of
+  // those failing renders nothing at all, which is what a missing table used
+  // to do here. An admin should be told what broke, not handed a blank page.
+  try {
   const currentSeason = await getCurrentSeason();
   const seasons = await getSeasonsWithProgress();
   // Always offer the running season, even before anyone has started it.
@@ -181,7 +205,17 @@ function inPersonSectionHtml(rows) {
 
   const coaches = await getAllProgressForAdmin(season);
   const pending = pendingDocuments(coaches);
-  let inPerson = await getInPersonAttendance(season);
+  // The register is one section of this page, so it must not be able to take
+  // the whole thing down. Before migration 006 has been run the table is not
+  // there at all, and an uncaught throw here left admins looking at a blank
+  // page with no clue which part failed.
+  let inPerson = [];
+  let inPersonError = null;
+  try {
+    inPerson = await getInPersonAttendance(season);
+  } catch (err) {
+    inPersonError = err;
+  }
 
   document.getElementById("app").innerHTML = `
     ${topbarHtml(session.user.email)}
@@ -203,7 +237,7 @@ function inPersonSectionHtml(rows) {
       </div>
       <div class="quizcard" id="reviewlist">${reviewListHtml(pending)}</div>
 
-      ${inPersonSectionHtml(inPerson)}
+      ${inPersonError ? inPersonUnavailableHtml(inPersonError) : inPersonSectionHtml(inPerson)}
 
       <div class="sectiontitle" style="margin-top:28px;">
         <h3>Coach Progress</h3>
@@ -229,6 +263,7 @@ function inPersonSectionHtml(rows) {
   // Redraw just the register, so marking somebody does not cost a page load
   // and lose the admin's place in a long table.
   const inPersonMsg = document.getElementById("inpersonMsg");
+  if (inPersonMsg) {
   function redrawInPerson() {
     document.getElementById("inpersonlist").innerHTML = inPersonListHtml(inPerson);
     const c = inPersonCounts(inPerson);
@@ -294,6 +329,7 @@ function inPersonSectionHtml(rows) {
   }
   document.getElementById("inpersonAdd").addEventListener("click", addPerson);
   addName.addEventListener("keydown", (e) => { if (e.key === "Enter") addPerson(); });
+  }
 
   document.getElementById("reviewlist").addEventListener("click", async (e) => {
     const btn = e.target.closest("button[data-act]");
@@ -337,6 +373,19 @@ function inPersonSectionHtml(rows) {
       msg.textContent = "That did not save, so nothing changed. " + (err.message || "");
     }
   });
+
+  } catch (err) {
+    document.getElementById("app").innerHTML = topbarHtml(session.user.email) + `
+      <div class="centernote">
+        <h2>Could not load the admin page</h2>
+        <p>Something this page needs did not come back from the database, so none of it is showing.</p>
+        <p class="help">${(err && err.message) || "No error message was given."}</p>
+        <a class="btn btn-primary" href="training.html">Back to Training</a>
+      </div>`;
+    const out = document.getElementById("signoutBtn");
+    if (out) out.addEventListener("click", signOut);
+    throw err;
+  }
 })();
 
 function adminRowHtml(coach) {
