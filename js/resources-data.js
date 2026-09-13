@@ -21,8 +21,20 @@ const RESOURCES = {
 
   groups: [
     {
+      key: "recruitment",
+      heading: "Recruitment Resources",
+      blurb: "For bringing fighters into the program.",
+      items: [
+        {
+          label: "Principal Hub",
+          url: "https://principals.boxunited.org/",
+          detail: "Flyers and program materials you can print yourself."
+        }
+      ]
+    },
+    {
       key: "training",
-      heading: "Training Documents",
+      heading: "Planning Documents",
       blurb: "Policies, guides, and anything you may need to refer back to after your training.",
       items: [
         {
@@ -93,18 +105,6 @@ const RESOURCES = {
           label: "Scenario cards, Week 7",
           url: "assets/curriculum/scenario-cards.pdf",
           detail: "Print and cut along the dashed lines, one card per round of Block That Thought."
-        }
-      ]
-    },
-    {
-      key: "recruitment",
-      heading: "Recruitment Resources",
-      blurb: "For bringing fighters into the program.",
-      items: [
-        {
-          label: "Principal Hub",
-          url: "https://principals.boxunited.org/",
-          detail: "Flyers and program materials you can print yourself."
         }
       ]
     }

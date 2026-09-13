@@ -17,7 +17,7 @@ function weekCardHtml(week, today, access) {
   const hasVideos = weekHasVideos(week);
 
   // What a coach would see, so an admin is never told a locked week is open.
-  const coachPlanOpen = access.trainingComplete && status === "open";
+  const coachPlanOpen = isPlanOpenForCoach(week, access, today);
   const planOpen = isPlanUnlocked(week, access, today);
 
   let badge;
@@ -61,7 +61,7 @@ function weekCardHtml(week, today, access) {
 function renderCurriculum(session, access) {
   const today = todayIso();
   const weeks = CURRICULUM.weeks;
-  const openCount = weeks.filter((w) => access.trainingComplete && weekStatus(w, today) === "open").length;
+  const openCount = weeks.filter((w) => isPlanOpenForCoach(w, access, today)).length;
   const current = weeks.find((w) => isCurrentWeek(w, today));
 
   document.getElementById("app").innerHTML = `

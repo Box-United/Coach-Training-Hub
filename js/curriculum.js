@@ -127,7 +127,26 @@ function weekHasVideos(week) {
 //
 // Admins see the plan everywhere, so a week can be checked before it opens.
 function isPlanUnlocked(week, access, today) {
-  return access.isAdmin || (access.trainingComplete && weekStatus(week, today) === "open");
+  return access.isAdmin || isPlanOpenForCoach(week, access, today);
+}
+
+// What a coach sees, admin rights aside. Kept separate so an admin previewing
+// a locked week is never told it is open.
+//
+// `alwaysOpen` on a week skips both gates for that week alone, for the first
+// weeks of the season that a coach has to be able to run whatever else is
+// outstanding. A week with nothing written is still not open, since there
+// would be nothing to show.
+function isPlanOpenForCoach(week, access, today) {
+  if (weekStatus(week, today) === "soon") return false;
+  if (week.alwaysOpen) return true;
+  return access.trainingComplete && weekStatus(week, today) === "open";
+}
+
+// The assessment songs a week needs, looked up in CURRICULUM_SONGS. An unknown
+// key is dropped rather than rendering a broken row.
+function weekSongs(week) {
+  return (week.songs || []).map((key) => CURRICULUM_SONGS[key]).filter(Boolean);
 }
 
 // One sentence naming what is still outstanding, for the banners that explain
@@ -179,12 +198,22 @@ async function getCurriculumAccess(session) {
 // and the videos still play, only the plans are held back.
 function trainingLockedBannerHtml(remaining) {
   const detail = trainingRemainingText(remaining);
+
+  // Naming the weeks that are open anyway matters more than the lock does: a
+  // coach reading this the week before the season starts needs to know the
+  // first sessions are already there.
+  const open = (CURRICULUM.weeks || []).filter((w) => w.alwaysOpen && weekHasContent(w));
+  const openList = open.length === 1
+    ? `Week ${open[0].week} is`
+    : `Weeks ${open.slice(0, -1).map((w) => w.week).join(", ")} and ${open[open.length - 1].week} are`;
+
   return `
     <div class="lockbanner">
       <div>
-        <strong>The practice plans open once your training is complete.</strong>
+        <strong>The rest of the practice plans open once your training is complete.</strong>
         ${detail ? " " + detail : ""}
-        You can still watch the videos for any week while you finish.
+        ${open.length ? ` ${openList} open already, so you can run the start of the season either way.` : ""}
+        You can watch the videos for any week while you finish.
         ${remaining.pending && !remaining.outstanding
           ? " Approvals are done by hand, so this can take a day or two. Nothing more is needed from you."
           : ""}

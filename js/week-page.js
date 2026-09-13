@@ -15,6 +15,26 @@ function notFoundHtml(heading, body) {
     </div>`;
 }
 
+// The song an assessment is run to. A link rather than an embed, because a
+// coach is going to play this off a phone through the gym speaker rather than
+// from this page, and the note matters as much as the track.
+function songsHtml(week) {
+  const songs = weekSongs(week);
+  if (!songs.length) return "";
+  return `
+    <div class="sectiontitle" style="margin-top:32px;">
+      <h3>Music</h3>
+    </div>
+    <ul class="resourcelist">
+      ${songs.map((song) => `
+        <li class="resourceitem">
+          <a href="https://www.youtube.com/watch?v=${escapeAttr(song.youtubeId)}" target="_blank" rel="noopener noreferrer">${song.label} &#8599;</a>
+          ${song.note ? `<div class="resourcedetail">${song.note}</div>` : ""}
+        </li>
+      `).join("")}
+    </ul>`;
+}
+
 // What the coach brings. Sits above the plan because it is the one thing that
 // has to be sorted before leaving for the gym, not while standing in it.
 function materialsHtml(week) {
@@ -136,6 +156,8 @@ function renderWeek(session, week, isAdmin, isLockedPreview, planOpen, lockReaso
           : "Bring the Fighter&rsquo;s Mindset journals. Fighters complete the printed survey during this session."}</p>` : ""}
 
       ${planOpen ? materialsHtml(week) : ""}
+
+      ${planOpen ? songsHtml(week) : ""}
 
       ${weekVideoHtml(week, isAdmin)}
 

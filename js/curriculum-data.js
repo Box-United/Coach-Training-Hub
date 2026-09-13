@@ -16,6 +16,11 @@
 // Admins skip both, the same way they skip the module lock, so the curriculum
 // can be checked before anyone is let into it.
 //
+// A single week can be opened to everyone with `alwaysOpen: true`, which
+// skips both gates for that week alone. Weeks 1 and 2 carry it, so a coach
+// still finishing their training can run the first two sessions of the season
+// rather than turning up to week 1 with no plan.
+//
 // The VIDEOS sit outside both gates. Any coach can watch any week's videos at
 // any time, including weeks that have not opened and before their own training
 // is done, because watching is how they prepare and there is nothing in it to
@@ -65,6 +70,27 @@
 // How far ahead of its session date a week opens. Two weeks.
 const CURRICULUM_RELEASE_LEAD_DAYS = 14;
 
+// The songs the assessments are run to. They live here rather than on each
+// week because the same song is used every time an assessment repeats, which
+// is the whole point: a fighter's Week 6 punch count only means something
+// against her Week 2 number if the song has not changed. Swap one here and it
+// changes on every week that uses it.
+//
+// Each week names the ones it needs in `songs`. The assessment log asks which
+// song was used, so a coach who swaps one has somewhere to record it.
+const CURRICULUM_SONGS = {
+  jumpRope: {
+    label: "Jump rope assessment",
+    youtubeId: "ZaI2IlHwmgQ",
+    note: "Listen through before the session. This one runs a little fast, so if your fighters cannot hold the pace, pick something slower and use that same track again in Week 10."
+  },
+  punchCount: {
+    label: "Punch count assessment",
+    youtubeId: "PWgvGjAhvIw",
+    note: "Around 160 BPM, which is what the practice plan asks for. Use the same track in Weeks 6 and 10, so each fighter is measured against her own number."
+  }
+};
+
 // The video slots every week's page shows, in this order. They live here
 // rather than on each week so the labels cannot drift apart between weeks.
 //
@@ -113,6 +139,8 @@ const CURRICULUM = {
         "Introduces fighters to Fight Like A Girl, sets program expectations, and builds team cohesion through introductions. The group discusses what Fighting Like A Girl means, then partners use fist bumps and questions to get to know each other.",
         "Training covers stance, reinforces it with the Stance Check music game, introduces the jab, and ends with Boxing Tag. Closes with the jump rope assessment, the baseline every later week is measured against."
       ],
+      alwaysOpen: true,
+      songs: ["jumpRope"],
       videos: { walkthrough: "OuOzPdT2J2w", burnout: "u3zgHI8QnqE" },
       materials: [
         "Mitts & gloves",
@@ -140,9 +168,12 @@ const CURRICULUM = {
         "Connects a physical moment of discomfort with the emotional experience of persistence, then asks fighters to translate that skill to real-life challenges. It opens with a Stand Your Ground debate on mental toughness, effort, and confidence.",
         "Training reviews movement and the jab, introduces the cross, and works 1 · 2 on command with mitts. Closes with the punch count assessment: 100 clean punches before one song ends."
       ],
+      alwaysOpen: true,
+      songs: ["punchCount"],
       videos: { walkthrough: "2JTO-I_QdYU", burnout: "" },
       materials: [
-        "Mitts & gloves"
+        "Mitts & gloves",
+        "Speaker, for the punch count song"
       ],
       deliverables: [
         "Punch count assessment log"
@@ -167,7 +198,6 @@ const CURRICULUM = {
       materials: [
         "Fighter's Mindset journal",
         "Mitts & gloves",
-        "Cones",
         "Chart paper or poster board",
         "Writing utensils"
       ],
@@ -214,7 +244,7 @@ const CURRICULUM = {
       videos: { walkthrough: "", burnout: "" },
       materials: [
         "Mitts & gloves",
-        "Cones or tape to mark the two sides"
+        "Tape to mark the two sides"
       ],
       deliverables: [],
       documents: [
@@ -233,6 +263,7 @@ const CURRICULUM = {
         "Focuses on sleep as a driver of performance and wellbeing. A True or False activity debunks common sleep myths, then fighters build a realistic three-step sleep routine for the week.",
         "Training is a Simon Says round through every punch and the slip, then combination prep on the mitts. The burnout repeats the Week 2 assessment, so each fighter compares against her own number."
       ],
+      songs: ["punchCount"],
       videos: { walkthrough: "", burnout: "" },
       materials: [
         "Fighter's Mindset journal",
@@ -263,7 +294,6 @@ const CURRICULUM = {
         "Mitts & gloves",
         "Jump ropes",
         "Scenario cards",
-        "Cones",
         "Writing utensils, for the scenario cards"
       ],
       deliverables: [],
@@ -330,6 +360,7 @@ const CURRICULUM = {
         "The Show Off, where fighters demonstrate their skills for their peers. The coach reminds them it is okay if the combination is not perfect, and encourages them to cheer on their teammates.",
         "Training reviews punches 1 through 6, adds the slip and roll, runs the basic combinations, then duos show off. The season closes with both post assessments, a group shout-out, and the post-survey as the last activity."
       ],
+      songs: ["jumpRope", "punchCount"],
       videos: { walkthrough: "", burnout: "" },
       materials: [
         "Mitts & gloves",
