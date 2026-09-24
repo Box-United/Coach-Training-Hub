@@ -45,10 +45,10 @@
 // Rescue, the assessment logs and the scanned surveys; most weeks produce
 // nothing and carry an empty list.
 //
-// `videos` fills the slots defined in CURRICULUM_VIDEO_SLOTS below, which is
-// just the session walkthrough:
+// `videos` fills the slots defined in CURRICULUM_VIDEO_SLOTS below, the
+// session walkthrough and holding the mitts:
 //
-//   videos: { walkthrough: "abc123" }
+//   videos: { walkthrough: "abc123", mittHolding: "def456" }
 //
 // A bare id is enough. Use an object if the video needs its own title:
 //
@@ -141,6 +141,11 @@ const CURRICULUM_VIDEO_SLOTS = [
     key: "walkthrough",
     label: "Session walkthrough",
     hint: "How this week's practice runs, start to finish."
+  },
+  {
+    key: "mittHolding",
+    label: "Holding the mitts",
+    hint: "How to hold for a fighter, and what to call."
   }
 ];
 
@@ -202,7 +207,7 @@ const CURRICULUM = {
         "Training reviews movement and the jab, introduces the cross, and works 1 · 2 on command with mitts. Closes with the punch count assessment: 100 clean punches before one song ends."
       ],
       alwaysOpen: true,
-      videos: { walkthrough: "2JTO-I_QdYU" },
+      videos: { walkthrough: "2JTO-I_QdYU", mittHolding: "iDJ0VZxpPxc" },
       songs: ["punchCount"],
       materials: [
         "Mitts & gloves",
@@ -227,7 +232,7 @@ const CURRICULUM = {
         "Teaches fighters to build a team SMART goal for the Show Off. The coach explains each component, then guides the team to shape one collective goal for the weeks ahead.",
         "Training introduces the slip, a reaction drill, and a no-contact slip-then-jab partner drill, then works 1 · 2 with slip-2 on the mitts and closes with Footwork Freeze."
       ],
-      videos: { walkthrough: "" },
+      videos: { walkthrough: "DtDyYB1nfxw" },
       songs: ["punchCount"],
       materials: [
         "Fighter's Mindset journal",
