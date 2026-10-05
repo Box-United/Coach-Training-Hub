@@ -57,23 +57,29 @@ function normaliseVideo(value) {
 // used on every week that does not name its own, so a video that never
 // changes is pasted in one place instead of ten.
 //
+// A slot naming `weeks` is dropped from every week outside that list, so it
+// is absent rather than empty: an admin is not shown a slot to fill on a week
+// it was never meant to appear on.
+//
 // Unlike a training module these are not gated or tracked. A coach watching a
 // walkthrough is preparing, not proving anything, so there is no seek-blocking
 // and nothing is written to the database.
 function weekVideoSlots(week) {
   const chosen = week.videos || {};
-  return CURRICULUM_VIDEO_SLOTS.map((slot) => {
-    const video = normaliseVideo(chosen[slot.key]) || normaliseVideo(slot.youtubeId);
-    return {
-      key: slot.key,
-      label: slot.label,
-      hint: slot.hint,
-      // A season-wide default is worth flagging, so an admin editing one week
-      // can see at a glance that the video is not coming from this week.
-      isDefault: !normaliseVideo(chosen[slot.key]) && !!video,
-      video: video
-    };
-  });
+  return CURRICULUM_VIDEO_SLOTS
+    .filter((slot) => !slot.weeks || slot.weeks.includes(week.week))
+    .map((slot) => {
+      const video = normaliseVideo(chosen[slot.key]) || normaliseVideo(slot.youtubeId);
+      return {
+        key: slot.key,
+        label: slot.label,
+        hint: slot.hint,
+        // A season-wide default is worth flagging, so an admin editing one
+        // week can see at a glance that the video is not coming from this week.
+        isDefault: !normaliseVideo(chosen[slot.key]) && !!video,
+        video: video
+      };
+    });
 }
 
 // "soon"   nothing written for it yet

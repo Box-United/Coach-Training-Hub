@@ -133,9 +133,15 @@ const CURRICULUM_EXERCISES = {
 // it plays on every week that does not name its own. Use that for anything
 // that does not change week to week, and override it on the weeks that differ.
 //
-// Adding a slot here adds it to all ten weeks at once. The burnout used to
-// be a slot, but a burnout runs through several exercises, so those moved to
-// CURRICULUM_EXERCISES above and each week lists the ones it works through.
+// Adding a slot here adds it to all ten weeks at once, unless it names the
+// weeks it belongs to in `weeks`. A slot with `weeks` does not exist on any
+// other week: no player, and no empty slot for an admin either, so a slot
+// that only makes sense early in the season does not sit blank on the eight
+// weeks that will never fill it.
+//
+// The burnout used to be a slot, but a burnout runs through several
+// exercises, so those moved to CURRICULUM_EXERCISES above and each week lists
+// the ones it works through.
 const CURRICULUM_VIDEO_SLOTS = [
   {
     key: "walkthrough",
@@ -145,7 +151,10 @@ const CURRICULUM_VIDEO_SLOTS = [
   {
     key: "mittHolding",
     label: "Holding the mitts",
-    hint: "How to hold for a fighter, and what to call."
+    hint: "How to hold for a fighter, and what to call.",
+    // Mitt holding is taught at the start of the season and not returned to,
+    // so it is shown on the two weeks that introduce it and nowhere after.
+    weeks: [1, 2]
   }
 ];
 
@@ -177,7 +186,7 @@ const CURRICULUM = {
         "Training covers stance, reinforces it with the Stance Check music game, introduces the jab, and ends with Boxing Tag. Closes with the jump rope assessment, the baseline every later week is measured against."
       ],
       alwaysOpen: true,
-      videos: { walkthrough: "OuOzPdT2J2w" },
+      videos: { walkthrough: "OuOzPdT2J2w", mittHolding: "iDJ0VZxpPxc" },
       exercises: ["jumpRope"],
       songs: ["jumpRope"],
       materials: [
@@ -257,7 +266,7 @@ const CURRICULUM = {
         "Teaches fighters that preparation is the foundation of success in boxing and in life. Fighters build a personal checklist in their journals covering required gear and a personal routine, and intentions revisits the team SMART goal from last week.",
         "Training introduces the hooks, builds speed with rapid shadow rounds, works the 1 · 2 · 3 and 1 · 2 · 3 · 4 combinations on the mitts, and finishes with a partner call-out round. The burnout is a five-station circuit."
       ],
-      videos: { walkthrough: "" },
+      videos: { walkthrough: "mYqO7R7kwAc" },
       exercises: ["jumpRope", "mountainClimbers", "plank", "fastFeet"],
       materials: [
         "Fighter's Mindset journal",
@@ -281,7 +290,7 @@ const CURRICULUM = {
         "Focuses on eating as preparation for training. The coach leads a This or That activity where fighters choose between food options, then explains that whole foods give steady energy while sugary snacks cause a burst and a crash.",
         "Training introduces the uppercuts, adds 20-second speed bursts, works 5 · 6 to the body on the mitts, and builds a combination pyramid."
       ],
-      videos: { walkthrough: "" },
+      videos: { walkthrough: "Ix9LqMQRHx4" },
       exercises: ["squats", "skaters", "fastFeet"],
       materials: [
         "Mitts & gloves"
