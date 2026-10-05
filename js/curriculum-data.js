@@ -7,21 +7,29 @@
 // has everything for that session. The scenario cards are their own file
 // because week 7 needs them printed and cut up rather than read.
 //
-// Two gates stand between a coach and a week's PLAN, and both have to pass:
+// Two dates stand between a coach and a week's PLAN, and nothing needs
+// unlocking by hand. Both are worked out from the week's own `date` every
+// time the page loads, so the season rolls forward on its own:
 //
-//   1. Their training is complete. Every module passed or approved.
-//   2. The week has opened. A week opens CURRICULUM_RELEASE_LEAD_DAYS before
-//      its session date, so coaches can read ahead and prepare. Nothing needs
-//      unlocking by hand, the date does it.
+//   1. The week opens, CURRICULUM_RELEASE_LEAD_DAYS before its session. From
+//      here a coach whose training is complete can read ahead and prepare.
+//   2. The session comes round. From the day of the session the plan is open
+//      to every coach, training finished or not, and stays open.
 //
-// Admins skip both, the same way they skip the module lock, so the curriculum
-// can be checked before anyone is let into it.
+// So training buys the week of reading ahead. It cannot cost a coach the plan
+// for a session she is running that day, which is the one thing the old rule
+// got wrong: it held the plan until training was complete full stop, and
+// coaches turned up to sessions with nothing in front of them.
 //
-// A single week can be opened to everyone with `alwaysOpen: true`, which
-// skips both gates for that week alone. Weeks 1 to 5 carry it, so a coach
-// still finishing their training can run the sessions that have already come
-// round rather than turning up to one with no plan. Add it to a week as the
-// season reaches it, or take the training gate off that week for good.
+// Admins skip both dates, the same way they skip the module lock, so the
+// curriculum can be checked before anyone is let into it.
+//
+// `alwaysOpen: true` on a week skips both dates for that week alone. Nothing
+// needs it now, since the session date opens every week on its own, but it is
+// still how a week is opened EARLY, ahead of its own date. Weeks 1 to 5 carry
+// it from when opening a week was a manual job; they can come off at the end
+// of the season, and removing one now would shut weeks 4 and 5 again for any
+// coach still in training.
 //
 // The VIDEOS sit outside both gates. Any coach can watch any week's videos at
 // any time, including weeks that have not opened and before their own training

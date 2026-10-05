@@ -149,13 +149,40 @@ function isPlanUnlocked(week, access, today) {
 // What a coach sees, admin rights aside. Kept separate so an admin previewing
 // a locked week is never told it is open.
 //
-// `alwaysOpen` on a week skips both gates for that week alone, for the weeks
-// a coach has to be able to run whatever else is outstanding. A week with
-// nothing written is still not open, since there would be nothing to show.
+// The training gate holds back READING AHEAD, not running the session.
+//
+// A week opens to every coach on the day of its session, finished training or
+// not. Before that, through the week of read-ahead the date gate allows, it
+// opens only to a coach whose training is done.
+//
+// It works this way because the other way round was worse. The gate used to
+// hold the plan until training was complete full stop, which meant a coach
+// part-way through her modules turned up to a session she was running that
+// day with no plan in front of her. Holding back next week's reading is a
+// nudge to finish; holding back today's practice just leaves a gym full of
+// girls and a coach with nothing to run.
+//
+// `alwaysOpen` on a week skips every gate, the date included. Nothing needs
+// it now that the session date lifts the training gate on its own, but the
+// weeks carrying it keep working and it is still how a week opens early.
+//
+// A week with nothing written is never open, since there would be nothing to
+// show.
 function isPlanOpenForCoach(week, access, today) {
   if (weekStatus(week, today) === "soon") return false;
+  // Before the date check, not after: skipping the date is the whole point of
+  // the flag, and a week carrying it opens early or it does nothing at all.
   if (week.alwaysOpen) return true;
-  return access.trainingComplete && weekStatus(week, today) === "open";
+  if (weekStatus(week, today) !== "open") return false;
+  if (hasSessionArrived(week, today)) return true;
+  return access.trainingComplete;
+}
+
+// Whether the session this plan is for has come round. True from the day of
+// the session onward, so a week stays open for the rest of the season rather
+// than shutting again the day after.
+function hasSessionArrived(week, today) {
+  return today >= week.date;
 }
 
 // The assessment songs a week needs, looked up in CURRICULUM_SONGS. An unknown
@@ -210,14 +237,18 @@ async function getCurriculumAccess(session) {
 // told that instead of being sent back to the training page to hunt for it.
 //
 // This is a banner rather than a wall: the weeks are still listed underneath
-// and the videos still play, only the plans are held back.
-function trainingLockedBannerHtml(remaining) {
+// and the videos still play, only the reading ahead is held back.
+//
+// It leads with what is open rather than what is not. Every session this
+// coach has to actually run is in front of her; what finishing her training
+// buys is the week of reading ahead, and that is what the banner asks for.
+function trainingLockedBannerHtml(remaining, today) {
   const detail = trainingRemainingText(remaining);
 
-  // Naming the weeks that are open anyway matters more than the lock does: a
-  // coach reading this the week before the season starts needs to know the
-  // first sessions are already there.
-  const open = (CURRICULUM.weeks || []).filter((w) => w.alwaysOpen && weekHasContent(w));
+  // Worked out from the real rule rather than listed by hand, so the banner
+  // cannot drift out of step with the weeks the page is actually opening.
+  const open = (CURRICULUM.weeks || [])
+    .filter((w) => isPlanOpenForCoach(w, { trainingComplete: false }, today));
   const openList = open.length === 1
     ? `Week ${open[0].week} is`
     : `Weeks ${open.slice(0, -1).map((w) => w.week).join(", ")} and ${open[open.length - 1].week} are`;
@@ -225,10 +256,11 @@ function trainingLockedBannerHtml(remaining) {
   return `
     <div class="lockbanner">
       <div>
-        <strong>The rest of the practice plans open once your training is complete.</strong>
+        <strong>Every week's plan opens on the day of its session, whether or not your training is finished.</strong>
+        ${open.length ? ` ${openList} open now.` : ""}
+        Finishing your training opens each week a week early, so you can read ahead and prepare.
         ${detail ? " " + detail : ""}
-        ${open.length ? ` ${openList} open already, so you can run the start of the season either way.` : ""}
-        You can watch the videos for any week while you finish.
+        You can watch the videos for any week either way.
         ${remaining.pending && !remaining.outstanding
           ? " Approvals are done by hand, so this can take a day or two. Nothing more is needed from you."
           : ""}

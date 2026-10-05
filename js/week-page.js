@@ -256,11 +256,15 @@ function renderWeek(session, week, isAdmin, isLockedPreview, planOpen, lockReaso
     lockReason = access.isAdmin
       ? "Nothing has been written for this week yet. Add a document in js/curriculum-data.js to publish it."
       : "The plan for this week has not been published yet.";
-  } else if (!access.trainingComplete) {
-    lockReason = "The practice plans open once your training is complete. "
-      + trainingRemainingText(access.remaining);
-  } else {
+  } else if (status === "locked") {
+    // Shut to everyone on the date, so training does not come into it.
     lockReason = `This week's plan opens on ${formatWeekDate(weekOpensOn(week))}.`;
+  } else {
+    // Open by date and held only by the training gate, which the session day
+    // lifts on its own. Say that date, so this does not read as a dead end.
+    lockReason = `This week's plan opens on ${formatWeekDate(week.date)}, the day of the session, `
+      + "and sooner than that if you finish your training first. "
+      + trainingRemainingText(access.remaining);
   }
 
   // An admin always has the plan, except on a week nobody has written.

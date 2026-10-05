@@ -33,10 +33,13 @@ function weekCardHtml(week, today, access) {
     note = `<span class="score">${count === 1 ? "1 document" : count + " documents"}</span>`;
   } else if (status === "soon") {
     note = '<span class="lockrow">Not written yet</span>';
-  } else if (!access.trainingComplete) {
-    note = '<span class="lockrow">Plan opens when training is done</span>';
-  } else {
+  } else if (status === "locked") {
+    // Shut to everyone on the date, so training does not come into it.
     note = `<span class="lockrow">Plan opens ${formatWeekDate(weekOpensOn(week))}</span>`;
+  } else {
+    // Open by date, held only by the training gate, which the session day
+    // lifts on its own.
+    note = `<span class="lockrow">Plan opens ${formatWeekDate(week.date)}, or now once training is done</span>`;
   }
 
   // An admin gets in everywhere. Everyone else gets in when the plan is open,
@@ -74,11 +77,11 @@ function renderCurriculum(session, access) {
       </div>
 
       ${access.isAdmin && !access.trainingComplete
-        ? '<div class="adminnote">Viewing as an admin, so every plan is open even though your own training is not complete. A coach would see the plans locked here, though the videos stay open to them.</div>'
+        ? '<div class="adminnote">Viewing as an admin, so every plan is open even though your own training is not complete. A coach would have the weeks whose sessions have come round, and nothing further ahead until her training is done. The videos stay open to her either way.</div>'
         : ""}
 
       ${!access.trainingComplete && !access.isAdmin
-        ? trainingLockedBannerHtml(access.remaining)
+        ? trainingLockedBannerHtml(access.remaining, today)
         : ""}
 
       <div class="sectiontitle">
