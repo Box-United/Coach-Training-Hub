@@ -149,10 +149,9 @@ function isPlanUnlocked(week, access, today) {
 // What a coach sees, admin rights aside. Kept separate so an admin previewing
 // a locked week is never told it is open.
 //
-// `alwaysOpen` on a week skips both gates for that week alone, for the first
-// weeks of the season that a coach has to be able to run whatever else is
-// outstanding. A week with nothing written is still not open, since there
-// would be nothing to show.
+// `alwaysOpen` on a week skips both gates for that week alone, for the weeks
+// a coach has to be able to run whatever else is outstanding. A week with
+// nothing written is still not open, since there would be nothing to show.
 function isPlanOpenForCoach(week, access, today) {
   if (weekStatus(week, today) === "soon") return false;
   if (week.alwaysOpen) return true;

@@ -18,9 +18,10 @@
 // can be checked before anyone is let into it.
 //
 // A single week can be opened to everyone with `alwaysOpen: true`, which
-// skips both gates for that week alone. Weeks 1 and 2 carry it, so a coach
-// still finishing their training can run the first two sessions of the season
-// rather than turning up to week 1 with no plan.
+// skips both gates for that week alone. Weeks 1 to 4 carry it, so a coach
+// still finishing their training can run the sessions that have already come
+// round rather than turning up to one with no plan. Add it to a week as the
+// season reaches it, or take the training gate off that week for good.
 //
 // The VIDEOS sit outside both gates. Any coach can watch any week's videos at
 // any time, including weeks that have not opened and before their own training
@@ -241,6 +242,7 @@ const CURRICULUM = {
         "Teaches fighters to build a team SMART goal for the Show Off. The coach explains each component, then guides the team to shape one collective goal for the weeks ahead.",
         "Training introduces the slip, a reaction drill, and a no-contact slip-then-jab partner drill, then works 1 · 2 with slip-2 on the mitts and closes with Footwork Freeze."
       ],
+      alwaysOpen: true,
       videos: { walkthrough: "DtDyYB1nfxw" },
       songs: ["punchCount"],
       materials: [
@@ -266,6 +268,7 @@ const CURRICULUM = {
         "Teaches fighters that preparation is the foundation of success in boxing and in life. Fighters build a personal checklist in their journals covering required gear and a personal routine, and intentions revisits the team SMART goal from last week.",
         "Training introduces the hooks, builds speed with rapid shadow rounds, works the 1 · 2 · 3 and 1 · 2 · 3 · 4 combinations on the mitts, and finishes with a partner call-out round. The burnout is a five-station circuit."
       ],
+      alwaysOpen: true,
       videos: { walkthrough: "mYqO7R7kwAc" },
       exercises: ["jumpRope", "mountainClimbers", "plank", "fastFeet"],
       materials: [
