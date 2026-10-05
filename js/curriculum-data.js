@@ -18,7 +18,7 @@
 // can be checked before anyone is let into it.
 //
 // A single week can be opened to everyone with `alwaysOpen: true`, which
-// skips both gates for that week alone. Weeks 1 to 4 carry it, so a coach
+// skips both gates for that week alone. Weeks 1 to 5 carry it, so a coach
 // still finishing their training can run the sessions that have already come
 // round rather than turning up to one with no plan. Add it to a week as the
 // season reaches it, or take the training gate off that week for good.
@@ -293,6 +293,7 @@ const CURRICULUM = {
         "Focuses on eating as preparation for training. The coach leads a This or That activity where fighters choose between food options, then explains that whole foods give steady energy while sugary snacks cause a burst and a crash.",
         "Training introduces the uppercuts, adds 20-second speed bursts, works 5 · 6 to the body on the mitts, and builds a combination pyramid."
       ],
+      alwaysOpen: true,
       videos: { walkthrough: "Ix9LqMQRHx4" },
       exercises: ["squats", "skaters", "fastFeet"],
       materials: [
