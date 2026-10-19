@@ -324,7 +324,7 @@ const CURRICULUM = {
         "Focuses on sleep as a driver of performance and wellbeing. A True or False activity debunks common sleep myths, then fighters build a realistic three-step sleep routine for the week.",
         "Training is a Simon Says round through every punch and the slip, then combination prep on the mitts. The burnout repeats the Week 2 assessment, so each fighter compares against her own number."
       ],
-      videos: { walkthrough: "" },
+      videos: { walkthrough: "RAH-Pow01Oo" },
       songs: ["punchCount"],
       materials: [
         "Fighter's Mindset journal",
