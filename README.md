@@ -47,7 +47,11 @@ Then visit the printed local address.
 6. Open `js/config.js` and paste those two values in. Never paste the `service_role` key anywhere in this repo, only the `anon` key belongs in client code.
 7. **Create the admin accounts before anyone else signs in.** In **Authentication -> Users -> Add user**, add `alexandra@boxunited.org` and `programs@boxunited.org` with the admin codeword, and tick auto-confirm. This is not optional: a coach signing in for the first time has their account created with whatever codeword they typed, so if an admin address has no account yet, anyone knowing the coach codeword could create it and inherit admin rights over every coach's records and uploaded documents.
 
-8. Admins are named in the `admin_emails` table, created by `supabase/migrations/004-admin-emails.sql`. `alexandra@boxunited.org`, `programs@boxunited.org`, `marykate@boxunited.org` (added by `005-add-marykate-admin.sql`) and `dorothy@boxunited.org` (added by `007-add-dorothy-admin.sql`) are in it already, and anyone on that list becomes an admin the first time they sign in, no manual step. **Create the Supabase account before adding the address**, for the reason in step 7: until the account exists, anyone with the coach codeword can create it and inherit admin rights. To add another:
+8. Admins are named in the `admin_emails` table, created by `supabase/migrations/004-admin-emails.sql`. It holds `alexandra@boxunited.org` and `programs@boxunited.org` from that migration, plus `dorothy@boxunited.org` from `007-add-dorothy-admin.sql`. Anyone on that list becomes an admin the first time they sign in, no manual step.
+
+   `005-add-marykate-admin.sql` is written but has never been run, so `marykate@boxunited.org` is on neither the list nor `auth.users`. She is not an admin, and making her one means the step below, in that order.
+
+   **Create the Supabase account before adding the address**, for the reason in step 7: until the account exists, anyone with the coach codeword can create it and inherit admin rights. To add another:
    ```sql
    insert into public.admin_emails (email) values ('someone@boxunited.org');
    -- only needed if they have already signed in at least once:
