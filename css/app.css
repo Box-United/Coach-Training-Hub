@@ -175,8 +175,22 @@
 .resultactions{display:flex;justify-content:flex-end;gap:10px;}
 
 /* ---------- admin.html ---------- */
-.admintable{width:100%;border-collapse:collapse;margin:24px 0 48px;font-size:13.5px;}
-.admintable th,.admintable td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);}
+.admintable{width:100%;border-collapse:collapse;margin:24px 0 48px;font-size:12.5px;}
+.admintable th,.admintable td{text-align:left;padding:11px 4px;border-bottom:1px solid var(--line);}
+/* Twelve columns have to fit 952px without a sideways scroll, so the layout is
+   fixed and the module columns get only what a mark needs. The wrapper keeps
+   its overflow for a phone, where nothing makes twelve columns fit. */
+/* Fixed, with a floor: below this the columns would squeeze until the marks
+   sat on top of each other, so the wrapper scrolls instead. That only happens
+   on a phone, where twelve columns were never going to fit. */
+.admintable{table-layout:fixed;min-width:800px;}
+.admintable th:first-child,.admintable td:first-child{width:27%;padding-left:2px;overflow-wrap:anywhere;}
+.admintable th:nth-child(2),.admintable td:nth-child(2){width:76px;}
+.admintable th:nth-child(n+2),.admintable td:nth-child(n+2){text-align:center;}
+.modcell{white-space:nowrap;}
+.modcell.ok{color:var(--bu-blue);}
+.modcell.wait{color:var(--bu-stone-deep);}
+.modcell.bad{color:var(--bu-red,#e5484d);}
 .admintable th{font-family:var(--font-display);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);}
 .admintable tr:hover td{background:var(--bg-card);}
 .tablewrap{overflow-x:auto;}
@@ -223,7 +237,7 @@
    colour and only the dotted underline says it can be clicked. */
 .celldocs{
   font:inherit;color:inherit;background:none;border:0;padding:0;
-  cursor:pointer;text-align:left;
+  cursor:pointer;text-align:center;
   border-bottom:1px dotted var(--line-strong);
 }
 .celldocs:hover{color:var(--bu-blue);border-bottom-color:var(--bu-blue);}
@@ -232,7 +246,7 @@
 /* The panel opens in a row of its own, spanning the table. tr:hover paints
    every cell on the admin table, which would flicker the panel's background
    as the mouse crosses it. */
-.docsrow td{padding:0 14px 16px;background:transparent;}
+.docsrow td{padding:0 2px 16px;background:transparent;text-align:left;}
 .admintable tr.docsrow:hover td{background:transparent;}
 .docspanel{
   background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
@@ -267,8 +281,8 @@
    of a coach's row rather than as a list somewhere else on the page. */
 .ipcell{white-space:nowrap;}
 .ipmark{
-  font:inherit;font-size:13px;line-height:1;cursor:pointer;
-  width:27px;height:27px;padding:0;margin-right:5px;
+  font:inherit;font-size:12.5px;line-height:1;cursor:pointer;
+  width:25px;height:25px;padding:0;margin:0 2px;
   border:1.5px solid var(--line-strong);border-radius:7px;
   background:transparent;color:var(--fg-faint);
 }
@@ -285,7 +299,10 @@
    48px bottom margin would leave it floating a long way from what it
    explains, so the gap moves below the note instead. */
 .admintable{margin-bottom:14px;}
-.tablenote{margin:0 0 6px;max-width:72ch;}
+.tablenote{margin:0 0 6px;line-height:1.7;}
+.tablenote .ok{color:var(--bu-blue);}
+.tablenote .wait{color:var(--bu-stone-deep);}
+.tablenote .bad{color:var(--bu-red,#e5484d);}
 .tablemsg{margin:0 0 40px;}
 
 /* For the half of a toggle that only a screen reader needs. */

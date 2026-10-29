@@ -57,24 +57,6 @@ async function addInPersonPerson(season, person, status) {
   return name;
 }
 
-async function removeInPersonPerson(season, person) {
-  const { error } = await supabaseClient
-    .from("inperson_attendance")
-    .delete()
-    .eq("season", season)
-    .eq("person", person);
-  if (error) throw error;
-}
-
-function inPersonCounts(rows) {
-  return {
-    attended: rows.filter((r) => r.status === "attended").length,
-    excused: rows.filter((r) => r.status === "excused").length,
-    unmarked: rows.filter((r) => !r.status).length,
-    total: rows.length
-  };
-}
-
 // The register is plain text and the coaches table has accounts, so matching
 // the two is guesswork rather than a join: see the note at the top of
 // supabase/migrations/006-inperson-attendance.sql. The seeded names are of the
@@ -104,15 +86,4 @@ function findInPersonRowForCoach(rows, coach) {
 // readable, and their email local part if we do not.
 function inPersonNameForCoach(coach) {
   return normalisePerson(coach.name || String(coach.email || "").split("@")[0]);
-}
-
-// Everybody on the register who matches no account. They are the ones the
-// register still has to list on its own.
-function inPersonWithoutAccount(rows, coaches) {
-  const claimed = new Set();
-  coaches.forEach((coach) => {
-    const row = findInPersonRowForCoach(rows, coach);
-    if (row) claimed.add(row.person);
-  });
-  return rows.filter((row) => !claimed.has(row.person));
 }

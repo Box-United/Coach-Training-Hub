@@ -107,7 +107,7 @@ Until that is configured, expect to wait out the rate limit between test sign-in
 | `resources.html` | Training documents, handouts, and recruitment links. Open to anyone signed in. |
 | `curriculum.html` | The season's ten session weeks. Opens once training is complete. |
 | `week.html?n=N` | One week: its practice plan and what to bring. Videos here are open to every coach, gates or not. |
-| `admin.html` | Documents waiting on review, the progress table with in-person attendance, and the register of people with no account. Admins only. |
+| `admin.html` | Documents waiting on review, and the progress table, which carries in-person attendance too. Admins only. |
 
 The magic link lands on `index.html`, so that is the page that redraws itself once a session appears. The top bar comes from `js/nav.js` so the navigation cannot drift between pages. It carries a link out to Charity Rescue, because attendance and the assessment results are required every season and both are done there rather than here, and `admin.html` is not linked from it, you reach it by URL or from the note on the training page.
 
@@ -222,11 +222,19 @@ Unlocking is per season too, so last year's pass does not open this year's Modul
 
 The admin page has a season picker, and the CSV export is named and stamped by season.
 
+The progress table is **marks rather than sentences**, so twelve columns fit a screen without scrolling sideways: a tick for a module that is complete, with the quiz score where there is one, an ellipsis for something waiting on an admin, a cross for rejected or failed. Hovering a cell gives the full wording, and the CSV export keeps it in full, which is where anybody reading closely ends up.
+
 ### In-person training attendance
 
 Attendance for the in-person session is a column of the progress table on `admin.html`, before Module 1: a tick for attended and an E for excused, each its own toggle, and clicking the mark that is already on clears it. It is in the table because in-person training is part of a coach's training, and reading one row should answer whether they are done.
 
-The register itself (`supabase/migrations/006-inperson-attendance.sql`) is **not** joined to the coaches table, because people turn up before they have an account and a few never make one. So the names and the accounts are matched in the browser, on a coach's name or the local part of their email, and ticking a coach who is not on the register yet puts them on it. Anyone who matches no account stays in the list below the table, where names can still be added, marked and removed. Two spellings of one person are therefore possible; deleting the spare row is the fix.
+The register itself (`supabase/migrations/006-inperson-attendance.sql`) is **not** joined to the coaches table, because people turn up before they have an account and a few never make one. So the names and the accounts are matched in the browser, on a coach's name or the local part of their email, and ticking a coach who is not on the register yet puts them on it under that name.
+
+The page shows attendance for coaches with accounts and nobody else. A register row matching no account, a seeded name whose coach never signed up or a second spelling of somebody already there, is still in the table in Supabase but is not on screen and cannot be marked or deleted from here. There used to be a list under the table for exactly those, with an add-a-name box; it was removed as clutter. If one of those rows needs changing, it is a query in the SQL editor:
+
+```sql
+select person, status from public.inperson_attendance where season = 2026 order by person;
+```
 
 Without migration 006 the column shows dashes and the page says the register is not set up. Everything else on it works regardless.
 

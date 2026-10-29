@@ -35,6 +35,30 @@ function moduleCellLabel(p, mod) {
   return "in progress";
 }
 
+// The same answer as moduleCellLabel, as a mark rather than a sentence. Ten
+// sentences do not fit across a screen, and an admin reading the table is
+// scanning for the module that is not done rather than reading every cell.
+// The full wording stays on the cell's title, in the panel it opens, and in
+// the CSV, which is where anyone reading closely ends up.
+function moduleCellMark(p, mod) {
+  if (!p) return { text: "&mdash;", cls: "faint" };
+  if (p.passed) {
+    const scored = p.quiz_score !== null && p.quiz_score !== undefined;
+    return { text: scored ? `&check; ${p.quiz_score}%` : "&check;", cls: "ok" };
+  }
+
+  const quizPassed = quizPassedForModule(p, mod);
+  const quizFailed = p.quiz_attempts > 0 && !quizPassed
+    && p.quiz_score !== null && p.quiz_score !== undefined;
+
+  if (p.document_status === "pending") return { text: "&hellip;", cls: "wait" };
+  if (p.document_status === "rejected") return { text: "&times;", cls: "bad" };
+  // Half done: the quiz is passed and the document has not arrived.
+  if (quizPassed) return { text: `${p.quiz_score}% &hellip;`, cls: "wait" };
+  if (quizFailed) return { text: `&times; ${p.quiz_score}%`, cls: "bad" };
+  return { text: "&middot;", cls: "faint" };
+}
+
 function progressToCsv(coaches, season, inPerson) {
   const header = ["Season", "Email", "Name", "In person", ...MODULES.map((m) => `Module ${m.id}`)];
   const rows = coaches.map((c) => {
@@ -74,10 +98,18 @@ function pendingDocuments(coaches) {
   return out;
 }
 
-// The whole register in a line, for the heading over the progress table.
-function inPersonCountsLabel(rows) {
-  const c = inPersonCounts(rows || []);
-  return `in person: ${c.attended} attended &middot; ${c.excused} excused &middot; ${c.unmarked} not marked`;
+// The in-person column in a line, for the heading over the progress table.
+// Counted over the coaches in the table rather than over the register, so the
+// numbers add up to what is on screen. A register row matching no account is
+// not counted, and is not shown anywhere: see the note in js/inperson.js.
+function inPersonCountsLabel(coaches, rows) {
+  const marks = coaches.map((coach) => {
+    const row = findInPersonRowForCoach(rows || [], coach);
+    return row ? row.status : null;
+  });
+  const attended = marks.filter((m) => m === "attended").length;
+  const excused = marks.filter((m) => m === "excused").length;
+  return `in person: ${attended} attended &middot; ${excused} excused &middot; ${marks.length - attended - excused} not marked`;
 }
 
 // Season 2026 runs Sept 2026 to Aug 2027, which everyone calls "2026-27".
@@ -119,33 +151,6 @@ function reviewListHtml(pending) {
   `).join("");
 }
 
-// The in-person training register. Names rather than accounts, see
-// js/inperson.js, so somebody who has not signed up yet can still be marked.
-function inPersonRowHtml(row, i) {
-  const mark = (status, label) => `
-    <button class="btn btn-sm ${row.status === status ? "btn-primary" : "btn-outline"}"
-            data-ip="mark" data-person="${escapeAttr(row.person)}" data-status="${status}">${label}</button>`;
-  return `
-    <div class="reviewrow" data-ip-row="${i}">
-      <div class="reviewwho">
-        <div class="reviewcoach">${row.person}</div>
-        <div class="reviewmod">${row.status
-          ? `${row.status === "attended" ? "Attended" : "Excused"}, marked ${formatDate(row.updated_at)}`
-          : "Not marked yet"}</div>
-      </div>
-      <div class="reviewactions">
-        ${mark("attended", "Attended")}
-        ${mark("excused", "Excused")}
-        <button class="btn btn-ghost btn-sm" data-ip="remove" data-person="${escapeAttr(row.person)}">Remove</button>
-      </div>
-    </div>`;
-}
-
-function inPersonListHtml(rows) {
-  if (!rows.length) return inPersonListHtmlEmpty();
-  return rows.map(inPersonRowHtml).join("");
-}
-
 // A missing table means migration 006 has not been run. That is a setup step
 // rather than a fault, so it says so and names the file, instead of showing
 // an admin a Postgres error they cannot act on.
@@ -166,32 +171,6 @@ function inPersonUnavailableHtml(err) {
     </div>`;
 }
 
-// Attendance for anybody with an account is a column of the progress table,
-// because a coach's training is one row and in-person training is part of it.
-// This section is what is left: people on the register who match no account,
-// which is most of the register early in a season and the reason it is a list
-// of names rather than a join onto coaches.
-function inPersonSectionHtml(rows) {
-  return `
-    <div class="sectiontitle" style="margin-top:28px;">
-      <h3>In-Person Register, No Account Yet</h3>
-      <span class="muted" style="font-size:12.5px">${rows.length} not in the table above</span>
-    </div>
-    <div class="quizcard">
-      <div id="inpersonlist">${inPersonListHtml(rows)}</div>
-      <div class="addperson">
-        <input class="input" id="inpersonName" type="text" placeholder="Add a name" autocomplete="off">
-        <button class="btn btn-outline btn-sm" id="inpersonAdd">Add</button>
-      </div>
-      <p class="help" id="inpersonMsg"></p>
-      <p class="help" style="margin-top:10px;">Anyone can go on the register, account or not. A name that matches a coach's
-      account moves up into the table above. Clicking the button that is already on clears the mark.</p>
-    </div>`;
-}
-
-function inPersonListHtmlEmpty() {
-  return '<p class="help">Everybody on the register has an account, so they are all in the table above.</p>';
-}
 
 // The screen an admin gets when something did not load. Deliberately does not
 // assume the rest of the site is working: if nav.js is what failed, calling
@@ -291,7 +270,7 @@ function wireSignout() {
 
       <div class="sectiontitle" style="margin-top:28px;">
         <h3>Coach Progress</h3>
-        <span class="muted" id="ipcounts" style="font-size:12.5px">${inPersonError ? "in person: register not set up" : inPersonCountsLabel(inPerson)}</span>
+        <span class="muted" id="ipcounts" style="font-size:12.5px">${inPersonError ? "in person: register not set up" : inPersonCountsLabel(coaches, inPerson)}</span>
         <button class="btn btn-outline btn-sm" id="exportBtn">Export CSV</button>
       </div>
       <div class="tablewrap">
@@ -302,13 +281,18 @@ function wireSignout() {
           </tbody>
         </table>
       </div>
-      <p class="help tablenote">${inPersonError ? "" : `In Person: <strong>&check;</strong> attended,
-      <strong>E</strong> excused. Clicking the mark that is already on clears it, and ticking a coach who is
-      not on the register yet puts them on it.`}
-      A module cell with an underline has documents behind it and opens what that coach uploaded.</p>
+      <p class="help tablenote">
+        ${inPersonError ? "" : `<strong>In Person</strong> &check; attended, <strong>E</strong> excused;
+        clicking the mark that is already on clears it.`}
+        <strong>Modules</strong> <span class="ok">&check;</span> complete, with the quiz score where there is one;
+        <span class="wait">&hellip;</span> waiting on an admin; <span class="wait">90% &hellip;</span> quiz passed,
+        document still to come; <span class="bad">&times;</span> rejected or failed;
+        <span class="faint">&middot;</span> started; <span class="faint">&mdash;</span> nothing yet.
+        Hovering a cell spells it out, and an underlined one opens the documents that coach uploaded.
+      </p>
       <p class="help tablemsg" id="tableMsg"></p>
 
-      ${inPersonError ? inPersonUnavailableHtml(inPersonError) : inPersonSectionHtml(inPersonWithoutAccount(inPerson, coaches))}
+      ${inPersonError ? inPersonUnavailableHtml(inPersonError) : ""}
     </div>
   `;
 
@@ -320,20 +304,15 @@ function wireSignout() {
 
   const tableMsg = document.getElementById("tableMsg");
 
-  // Redraw the register wherever it shows, so marking somebody does not cost a
-  // page load and lose the admin's place in a long table. The marks in the
-  // table and the list of people with no account are two views of the same
-  // rows, and a name that gains an account moves between them, so both are
-  // redrawn together rather than whichever one was clicked.
+  // Redraw the marks in place, so ticking somebody does not cost a page load
+  // and lose the admin's place in a long table.
   function redrawInPerson() {
     coaches.forEach((coach, i) => {
       const cell = document.querySelector(`td.ipcell[data-ip-cell="${i}"]`);
       if (cell) cell.innerHTML = inPersonMarksHtml(i, findInPersonRowForCoach(inPerson, coach));
     });
     const counts = document.getElementById("ipcounts");
-    if (counts) counts.innerHTML = inPersonCountsLabel(inPerson);
-    const list = document.getElementById("inpersonlist");
-    if (list) list.innerHTML = inPersonListHtml(inPersonWithoutAccount(inPerson, coaches));
+    if (counts) counts.innerHTML = inPersonCountsLabel(coaches, inPerson);
   }
 
   // Ticking a coach in the table. Somebody who is not on the register yet goes
@@ -368,68 +347,6 @@ function wireSignout() {
       tableMsg.className = "error tablemsg";
       tableMsg.textContent = "That did not save, so nothing changed. " + (err.message || "");
     }
-  }
-
-  const inPersonMsg = document.getElementById("inpersonMsg");
-  if (inPersonMsg) {
-
-  document.getElementById("inpersonlist").addEventListener("click", async (e) => {
-    const btn = e.target.closest("button[data-ip]");
-    if (!btn) return;
-    const person = btn.dataset.person;
-    const row = inPerson.find((r) => r.person === person);
-    if (!row) return;
-
-    inPersonMsg.className = "help";
-    inPersonMsg.textContent = "";
-
-    if (btn.dataset.ip === "remove") {
-      if (!window.confirm(`Take ${person} off the in-person training list?`)) return;
-      try {
-        await removeInPersonPerson(season, person);
-        inPerson = inPerson.filter((r) => r.person !== person);
-        redrawInPerson();
-      } catch (err) {
-        inPersonMsg.className = "error";
-        inPersonMsg.textContent = "That did not save, so nothing changed. " + (err.message || "");
-      }
-      return;
-    }
-
-    // Clicking the mark that is already on clears it.
-    const next = row.status === btn.dataset.status ? null : btn.dataset.status;
-    const before = row.status;
-    try {
-      await setInPersonStatus(season, person, next);
-      row.status = next;
-      row.updated_at = new Date().toISOString();
-      redrawInPerson();
-    } catch (err) {
-      // Put it back, or the page would show a mark that is not in the database.
-      row.status = before;
-      redrawInPerson();
-      inPersonMsg.className = "error";
-      inPersonMsg.textContent = "That did not save, so nothing changed. " + (err.message || "");
-    }
-  });
-
-  const addName = document.getElementById("inpersonName");
-  async function addPerson() {
-    inPersonMsg.className = "help";
-    inPersonMsg.textContent = "";
-    try {
-      const name = await addInPersonPerson(season, addName.value);
-      inPerson.push({ person: name, status: null, updated_at: new Date().toISOString() });
-      inPerson.sort((a, b) => a.person.localeCompare(b.person));
-      addName.value = "";
-      redrawInPerson();
-    } catch (err) {
-      inPersonMsg.className = "error";
-      inPersonMsg.textContent = err.message || "Could not add that name.";
-    }
-  }
-  document.getElementById("inpersonAdd").addEventListener("click", addPerson);
-  addName.addEventListener("keydown", (e) => { if (e.key === "Enter") addPerson(); });
   }
 
   document.getElementById("reviewlist").addEventListener("click", async (e) => {
@@ -615,15 +532,22 @@ function adminRowHtml(coach, coachIndex, inPerson) {
   (coach.progress || []).forEach((p) => { byModule[p.module_id] = p; });
   const cells = MODULES.map((m) => {
     const p = byModule[m.id];
-    if (!p) return '<td class="faint">&mdash;</td>';
-    const label = moduleCellLabel(p, m);
+    const mark = moduleCellMark(p, m);
+    const full = moduleCellLabel(p, m);
     // A module proved by uploading something (SafeSport, Ramp) keeps every
     // file the coach sent. Once there is one, the cell opens that trail, which
     // otherwise can only be seen while the document is still awaiting review.
-    if (!p.document_path) return `<td class="${p.passed ? "" : "faint"}">${label}</td>`;
-    return `<td class="${p.passed ? "" : "faint"}">
+    if (!p || !p.document_path) {
+      return `<td class="modcell ${mark.cls}" title="${escapeAttr(full)}">${mark.text}</td>`;
+    }
+    // The mark is hidden from screen readers and the full wording given
+    // instead, because a tick on its own tells somebody who cannot see the
+    // colour nothing at all.
+    return `<td class="modcell ${mark.cls}">
       <button class="celldocs" type="button" aria-expanded="false"
-              data-docs="${coachIndex}-${m.id}">${label}</button>
+              data-docs="${coachIndex}-${m.id}" title="${escapeAttr(full)}">
+        <span aria-hidden="true">${mark.text}</span><span class="sronly">${full}, see the documents</span>
+      </button>
     </td>`;
   });
   // The panel opens into a row of its own rather than inside the cell, so a
