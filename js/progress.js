@@ -60,7 +60,7 @@ async function getAllProgressForAdmin(season) {
     supabaseClient.from("coaches").select("id, email, name"),
     supabaseClient
       .from("progress")
-      .select("coach_id, module_id, season, quiz_score, quiz_attempts, passed, completed_at, video_furthest_seconds, document_path, document_status, document_uploaded_at")
+      .select("coach_id, module_id, season, quiz_score, quiz_attempts, passed, completed_at, video_furthest_seconds, document_path, document_status, document_uploaded_at, document_reviewed_at, document_reviewed_by")
       .eq("season", season)
   ]);
   if (coachesResult.error) throw coachesResult.error;

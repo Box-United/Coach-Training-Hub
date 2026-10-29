@@ -107,7 +107,7 @@ Until that is configured, expect to wait out the rate limit between test sign-in
 | `resources.html` | Training documents, handouts, and recruitment links. Open to anyone signed in. |
 | `curriculum.html` | The season's ten session weeks. Opens once training is complete. |
 | `week.html?n=N` | One week: its practice plan and what to bring. Videos here are open to every coach, gates or not. |
-| `admin.html` | Documents waiting on review, and the progress table. Admins only. |
+| `admin.html` | Documents waiting on review, the progress table with in-person attendance, and the register of people with no account. Admins only. |
 
 The magic link lands on `index.html`, so that is the page that redraws itself once a session appears. The top bar comes from `js/nav.js` so the navigation cannot drift between pages. It carries a link out to Charity Rescue, because attendance and the assessment results are required every season and both are done there rather than here, and `admin.html` is not linked from it, you reach it by URL or from the note on the training page.
 
@@ -201,6 +201,8 @@ Rejecting a document blocks the modules after it again, until the coach uploads 
 
 A coach cannot approve their own document. Row Level Security lets them write their own progress row, so the database triggers in `supabase/schema.sql` downgrade any attempt to set `approved` back to `pending`, on both insert and update. Only `is_admin` accounts can actually approve.
 
+**Every file a coach sends is kept.** Nothing deletes an old upload, deliberately: a coach who sends the wrong file sends another one, and the progress row points at the newest. On `admin.html` a module cell with a document behind it is a button, and clicking it lists everything in that coach's folder for that module, newest first, with the current submission tagged and each file openable. That works after the module is complete, which is when somebody usually asks what was actually submitted, and the review queue above only ever shows what is still waiting.
+
 Files go to a private `coach-documents` bucket at `<coach_id>/module-<n>/<timestamp>-<filename>`. That path shape is not cosmetic: the storage policies key on the first segment to decide who can read what. A coach can only read their own files, admins can read all, and nothing is reachable without a short-lived signed URL. The bucket caps size and MIME type server-side, so the browser-side checks are just a friendlier error.
 
 ### Training seasons, and the September reset
@@ -219,6 +221,14 @@ Two things in that function are worth knowing before you change it:
 Unlocking is per season too, so last year's pass does not open this year's Module 2. A coach cannot write into any season but the running one, enforced by database trigger, so they can neither rewrite history nor pre-pass a year that has not started.
 
 The admin page has a season picker, and the CSV export is named and stamped by season.
+
+### In-person training attendance
+
+Attendance for the in-person session is a column of the progress table on `admin.html`, before Module 1: a tick for attended and an E for excused, each its own toggle, and clicking the mark that is already on clears it. It is in the table because in-person training is part of a coach's training, and reading one row should answer whether they are done.
+
+The register itself (`supabase/migrations/006-inperson-attendance.sql`) is **not** joined to the coaches table, because people turn up before they have an account and a few never make one. So the names and the accounts are matched in the browser, on a coach's name or the local part of their email, and ticking a coach who is not on the register yet puts them on it. Anyone who matches no account stays in the list below the table, where names can still be added, marked and removed. Two spellings of one person are therefore possible; deleting the spare row is the fix.
+
+Without migration 006 the column shows dashes and the page says the register is not set up. Everything else on it works regardless.
 
 ### Swapping a video out later
 

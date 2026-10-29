@@ -88,3 +88,49 @@ async function reviewModuleDocument({ coachId, moduleId, season, approved, admin
     .eq("season", season);
   if (error) throw error;
 }
+
+// The folder a stored document sits in. Taken from the path rather than
+// rebuilt by buildDocumentPath, because anything uploaded before seasons
+// existed lives at <coach_id>/module-<n>/ instead, and rebuilding the path
+// would look in a folder that has never held that coach's file.
+function documentFolder(path) {
+  const parts = String(path).split("/");
+  parts.pop();
+  return parts.join("/");
+}
+
+// Everything a coach has ever submitted for one module, newest first.
+//
+// A coach who uploads the wrong file uploads another one, and nothing deletes
+// the first: the storage policies grant no delete at all, deliberately. So
+// the folder holding the current document is the full record of what was sent
+// and when, which is more than the single `document_path` on the progress row
+// can say. Admins can read any coach's folder, coaches only their own, both
+// enforced by those policies rather than here.
+async function listModuleDocuments(currentPath) {
+  const folder = documentFolder(currentPath);
+  const { data, error } = await supabaseClient.storage
+    .from(DOCUMENTS_BUCKET)
+    .list(folder, { limit: 100, sortBy: { column: "name", order: "desc" } });
+  if (error) throw error;
+  return (data || [])
+    // A nested folder comes back in the same list with no id. There should
+    // not be one here, but it would render as a file that will not open.
+    .filter((entry) => entry.id)
+    .map((entry) => ({
+      path: `${folder}/${entry.name}`,
+      // buildDocumentPath put the upload time on the front of the name to keep
+      // two files a second apart from colliding. The coach's own file name is
+      // the half worth showing.
+      name: String(entry.name).replace(/^\d+-/, ""),
+      // Storage records its own timestamp; the one in the name is the fallback
+      // for a file whose metadata did not come back.
+      uploadedAt: entry.created_at || timestampFromName(entry.name),
+      size: entry.metadata ? entry.metadata.size : null
+    }));
+}
+
+function timestampFromName(name) {
+  const ms = Number(String(name).split("-")[0]);
+  return Number.isFinite(ms) && ms > 0 ? new Date(ms).toISOString() : null;
+}

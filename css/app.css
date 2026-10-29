@@ -217,6 +217,83 @@
 .reviewmsg{flex-basis:100%;margin:0;}
 .reviewmsg:empty{display:none;}
 
+/* ---- the documents behind a cell of the progress table ---- */
+/* A cell for a module proved by uploading something opens the files the coach
+   sent. It has to still read as a table cell, so it borrows the cell's own
+   colour and only the dotted underline says it can be clicked. */
+.celldocs{
+  font:inherit;color:inherit;background:none;border:0;padding:0;
+  cursor:pointer;text-align:left;
+  border-bottom:1px dotted var(--line-strong);
+}
+.celldocs:hover{color:var(--bu-blue);border-bottom-color:var(--bu-blue);}
+.celldocs:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:3px;}
+
+/* The panel opens in a row of its own, spanning the table. tr:hover paints
+   every cell on the admin table, which would flicker the panel's background
+   as the mouse crosses it. */
+.docsrow td{padding:0 14px 16px;background:transparent;}
+.admintable tr.docsrow:hover td{background:transparent;}
+.docspanel{
+  background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
+  padding:16px 18px;
+  /* The row it sits in is as wide as the whole table, which is wider than the
+     screen. Without a width of its own, Close and Open land off to the right
+     where an admin has to scroll sideways to find them. */
+  width:min(720px, calc(100vw - 48px));
+}
+.docshead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.docstitle{font-size:14px;}
+.docswho{font-size:12.5px;color:var(--fg-faint);margin-top:3px;}
+
+.doclist{list-style:none;margin:14px 0 0;padding:0;}
+.docfile{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:11px 0;border-top:1px solid var(--line);
+}
+.docfilewho{min-width:0;}
+/* A coach's own file name, which can be long and has no spaces to break on. */
+.docname{font-size:13.5px;overflow-wrap:anywhere;}
+.docmeta{font-size:12px;color:var(--fg-faint);margin-top:3px;}
+.doctag{
+  display:inline-block;margin-left:8px;padding:1px 7px;border-radius:999px;
+  background:var(--bu-blue-tint);color:var(--bu-navy);font-size:11px;
+}
+.docsmsg{margin:12px 0 0;}
+.docsmsg:empty{display:none;}
+
+/* ---- in-person attendance, a column of the progress table ---- */
+/* Two small toggles per coach, a tick and an E, so attendance reads as part
+   of a coach's row rather than as a list somewhere else on the page. */
+.ipcell{white-space:nowrap;}
+.ipmark{
+  font:inherit;font-size:13px;line-height:1;cursor:pointer;
+  width:27px;height:27px;padding:0;margin-right:5px;
+  border:1.5px solid var(--line-strong);border-radius:7px;
+  background:transparent;color:var(--fg-faint);
+}
+.ipmark:hover{border-color:var(--bu-blue);color:var(--fg);}
+.ipmark:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.ipmark.is-on{background:var(--bu-blue);border-color:var(--bu-blue);color:var(--bu-white);}
+/* Excused is not the same thing as turning up, so it does not get the colour
+   that means attended. */
+.ipmark.is-on[data-ip-mark="excused"]{
+  background:var(--bu-stone-deep);border-color:var(--bu-stone-deep);color:var(--bu-navy);
+}
+
+/* The note explaining the marks sits under the table, and the table's own
+   48px bottom margin would leave it floating a long way from what it
+   explains, so the gap moves below the note instead. */
+.admintable{margin-bottom:14px;}
+.tablenote{margin:0 0 6px;max-width:72ch;}
+.tablemsg{margin:0 0 40px;}
+
+/* For the half of a toggle that only a screen reader needs. */
+.sronly{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
 /* Adding a name to the in-person register. The input takes the room, the
    button stays its own size, and they stack on a narrow screen. */
 .addperson{display:flex;gap:10px;align-items:center;margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}

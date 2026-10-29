@@ -35,13 +35,13 @@ function moduleCellLabel(p, mod) {
   return "in progress";
 }
 
-function progressToCsv(coaches, season) {
-  const header = ["Season", "Email", "Name", ...MODULES.map((m) => `Module ${m.id}`)];
+function progressToCsv(coaches, season, inPerson) {
+  const header = ["Season", "Email", "Name", "In person", ...MODULES.map((m) => `Module ${m.id}`)];
   const rows = coaches.map((c) => {
     const byModule = {};
     (c.progress || []).forEach((p) => { byModule[p.module_id] = p; });
     const cells = MODULES.map((m) => moduleCellLabel(byModule[m.id], m));
-    return [seasonLabel(season), c.email, c.name || "", ...cells];
+    return [seasonLabel(season), c.email, c.name || "", inPersonLabel(findInPersonRowForCoach(inPerson || [], c)), ...cells];
   });
   const escape = (v) => `"${String(v).replace(/"/g, '""')}"`;
   return [header, ...rows].map((row) => row.map(escape).join(",")).join("\n");
@@ -72,6 +72,12 @@ function pendingDocuments(coaches) {
   // Oldest first, so nobody waits longest by accident.
   out.sort((a, b) => String(a.row.document_uploaded_at).localeCompare(String(b.row.document_uploaded_at)));
   return out;
+}
+
+// The whole register in a line, for the heading over the progress table.
+function inPersonCountsLabel(rows) {
+  const c = inPersonCounts(rows || []);
+  return `in person: ${c.attended} attended &middot; ${c.excused} excused &middot; ${c.unmarked} not marked`;
 }
 
 // Season 2026 runs Sept 2026 to Aug 2027, which everyone calls "2026-27".
@@ -136,7 +142,7 @@ function inPersonRowHtml(row, i) {
 }
 
 function inPersonListHtml(rows) {
-  if (!rows.length) return '<p class="help">Nobody on the list yet. Add a name below.</p>';
+  if (!rows.length) return inPersonListHtmlEmpty();
   return rows.map(inPersonRowHtml).join("");
 }
 
@@ -160,12 +166,16 @@ function inPersonUnavailableHtml(err) {
     </div>`;
 }
 
+// Attendance for anybody with an account is a column of the progress table,
+// because a coach's training is one row and in-person training is part of it.
+// This section is what is left: people on the register who match no account,
+// which is most of the register early in a season and the reason it is a list
+// of names rather than a join onto coaches.
 function inPersonSectionHtml(rows) {
-  const c = inPersonCounts(rows);
   return `
     <div class="sectiontitle" style="margin-top:28px;">
-      <h3>In-Person Training</h3>
-      <span class="muted" style="font-size:12.5px">${c.attended} attended &middot; ${c.excused} excused &middot; ${c.unmarked} not marked</span>
+      <h3>In-Person Register, No Account Yet</h3>
+      <span class="muted" style="font-size:12.5px">${rows.length} not in the table above</span>
     </div>
     <div class="quizcard">
       <div id="inpersonlist">${inPersonListHtml(rows)}</div>
@@ -174,8 +184,13 @@ function inPersonSectionHtml(rows) {
         <button class="btn btn-outline btn-sm" id="inpersonAdd">Add</button>
       </div>
       <p class="help" id="inpersonMsg"></p>
-      <p class="help" style="margin-top:10px;">Anyone can go on this list, account or not. Clicking the button that is already on clears the mark.</p>
+      <p class="help" style="margin-top:10px;">Anyone can go on the register, account or not. A name that matches a coach's
+      account moves up into the table above. Clicking the button that is already on clears the mark.</p>
     </div>`;
+}
+
+function inPersonListHtmlEmpty() {
+  return '<p class="help">Everybody on the register has an account, so they are all in the table above.</p>';
 }
 
 // The screen an admin gets when something did not load. Deliberately does not
@@ -274,40 +289,89 @@ function wireSignout() {
       </div>
       <div class="quizcard" id="reviewlist">${reviewListHtml(pending)}</div>
 
-      ${inPersonError ? inPersonUnavailableHtml(inPersonError) : inPersonSectionHtml(inPerson)}
-
       <div class="sectiontitle" style="margin-top:28px;">
         <h3>Coach Progress</h3>
+        <span class="muted" id="ipcounts" style="font-size:12.5px">${inPersonError ? "in person: register not set up" : inPersonCountsLabel(inPerson)}</span>
         <button class="btn btn-outline btn-sm" id="exportBtn">Export CSV</button>
       </div>
       <div class="tablewrap">
         <table class="admintable">
-          <thead><tr><th>Coach</th>${MODULES.map((m) => `<th>M${m.id}</th>`).join("")}</tr></thead>
+          <thead><tr><th>Coach</th><th>In Person</th>${MODULES.map((m) => `<th>M${m.id}</th>`).join("")}</tr></thead>
           <tbody>
-            ${coaches.map((c) => adminRowHtml(c)).join("")}
+            ${coaches.map((c, i) => adminRowHtml(c, i, inPersonError ? null : inPerson)).join("")}
           </tbody>
         </table>
       </div>
+      <p class="help tablenote">${inPersonError ? "" : `In Person: <strong>&check;</strong> attended,
+      <strong>E</strong> excused. Clicking the mark that is already on clears it, and ticking a coach who is
+      not on the register yet puts them on it.`}
+      A module cell with an underline has documents behind it and opens what that coach uploaded.</p>
+      <p class="help tablemsg" id="tableMsg"></p>
+
+      ${inPersonError ? inPersonUnavailableHtml(inPersonError) : inPersonSectionHtml(inPersonWithoutAccount(inPerson, coaches))}
     </div>
   `;
 
   document.getElementById("signoutBtn").addEventListener("click", signOut);
-  document.getElementById("exportBtn").addEventListener("click", () => downloadCsv(progressToCsv(coaches, season), season));
+  document.getElementById("exportBtn").addEventListener("click", () => downloadCsv(progressToCsv(coaches, season, inPersonError ? [] : inPerson), season));
   document.getElementById("seasonPick").addEventListener("change", (e) => {
     window.location.search = "?season=" + e.target.value;
   });
 
-  // Redraw just the register, so marking somebody does not cost a page load
-  // and lose the admin's place in a long table.
+  const tableMsg = document.getElementById("tableMsg");
+
+  // Redraw the register wherever it shows, so marking somebody does not cost a
+  // page load and lose the admin's place in a long table. The marks in the
+  // table and the list of people with no account are two views of the same
+  // rows, and a name that gains an account moves between them, so both are
+  // redrawn together rather than whichever one was clicked.
+  function redrawInPerson() {
+    coaches.forEach((coach, i) => {
+      const cell = document.querySelector(`td.ipcell[data-ip-cell="${i}"]`);
+      if (cell) cell.innerHTML = inPersonMarksHtml(i, findInPersonRowForCoach(inPerson, coach));
+    });
+    const counts = document.getElementById("ipcounts");
+    if (counts) counts.innerHTML = inPersonCountsLabel(inPerson);
+    const list = document.getElementById("inpersonlist");
+    if (list) list.innerHTML = inPersonListHtml(inPersonWithoutAccount(inPerson, coaches));
+  }
+
+  // Ticking a coach in the table. Somebody who is not on the register yet goes
+  // on it with the mark in one call, so an admin never has to add a coach who
+  // already has an account by hand.
+  async function markCoachInPerson(btn) {
+    const coach = coaches[Number(btn.dataset.ipCoach)];
+    const wanted = btn.dataset.ipMark;
+    const row = findInPersonRowForCoach(inPerson, coach);
+    // Clicking the mark that is already on clears it, same as the list below.
+    const next = row && row.status === wanted ? null : wanted;
+
+    tableMsg.className = "help tablemsg";
+    tableMsg.textContent = "";
+    const before = row ? row.status : null;
+    try {
+      if (row) {
+        await setInPersonStatus(season, row.person, next);
+        row.status = next;
+        row.updated_at = new Date().toISOString();
+      } else {
+        const name = await addInPersonPerson(season, inPersonNameForCoach(coach), next);
+        inPerson.push({ person: name, status: next, updated_at: new Date().toISOString() });
+        inPerson.sort((a, b) => a.person.localeCompare(b.person));
+      }
+      redrawInPerson();
+    } catch (err) {
+      // Put it back, or the table would show a mark that is not in the
+      // database. A failed insert added nothing, so there is nothing to undo.
+      if (row) row.status = before;
+      redrawInPerson();
+      tableMsg.className = "error tablemsg";
+      tableMsg.textContent = "That did not save, so nothing changed. " + (err.message || "");
+    }
+  }
+
   const inPersonMsg = document.getElementById("inpersonMsg");
   if (inPersonMsg) {
-  function redrawInPerson() {
-    document.getElementById("inpersonlist").innerHTML = inPersonListHtml(inPerson);
-    const c = inPersonCounts(inPerson);
-    document.querySelector("#inpersonlist").closest(".quizcard")
-      .previousElementSibling.querySelector(".muted").innerHTML =
-        `${c.attended} attended &middot; ${c.excused} excused &middot; ${c.unmarked} not marked`;
-  }
 
   document.getElementById("inpersonlist").addEventListener("click", async (e) => {
     const btn = e.target.closest("button[data-ip]");
@@ -411,6 +475,102 @@ function wireSignout() {
     }
   });
 
+  // Clicking a cell that has a document behind it opens what the coach
+  // actually uploaded. Reviewing happens in the section above; this is for
+  // looking at a module that has already been dealt with, which is most of
+  // them by the time anybody asks what a coach sent in.
+  const emailById = {};
+  coaches.forEach((c) => { emailById[c.id] = c.email; });
+  // Storage is asked once per module and the answer kept, so opening and
+  // closing the same panel does not hit it again.
+  const docsCache = {};
+  let openDocs = null;
+
+  function closeDocs() {
+    if (openDocs === null) return;
+    const prevBtn = document.querySelector(`button[data-docs="${openDocs}"]`);
+    if (prevBtn) prevBtn.setAttribute("aria-expanded", "false");
+    const prevRow = document.getElementById("docsrow-" + openDocs.split("-")[0]);
+    if (prevRow) {
+      prevRow.hidden = true;
+      prevRow.firstElementChild.innerHTML = "";
+    }
+    openDocs = null;
+  }
+
+  document.querySelector(".admintable tbody").addEventListener("click", async (e) => {
+    const markBtn = e.target.closest("button[data-ip-mark]");
+    if (markBtn) {
+      await markCoachInPerson(markBtn);
+      return;
+    }
+
+    if (e.target.closest("button[data-docs-close]")) {
+      closeDocs();
+      return;
+    }
+
+    const openBtn = e.target.closest("button[data-doc-open]");
+    if (openBtn) {
+      const note = openBtn.closest(".docspanel").querySelector(".docsmsg");
+      note.className = "help docsmsg";
+      note.textContent = "";
+      try {
+        window.open(await getDocumentUrl(openBtn.dataset.docOpen, 300), "_blank", "noopener");
+      } catch (err) {
+        note.className = "error docsmsg";
+        note.textContent = "Could not open that file. " + (err.message || "");
+      }
+      return;
+    }
+
+    const btn = e.target.closest("button[data-docs]");
+    if (!btn) return;
+
+    const key = btn.dataset.docs;
+    // The same cell again closes the panel.
+    if (openDocs === key) {
+      closeDocs();
+      return;
+    }
+    closeDocs();
+
+    const coachIndex = Number(key.split("-")[0]);
+    const moduleId = Number(key.split("-")[1]);
+    const coach = coaches[coachIndex];
+    const row = (coach.progress || []).find((p) => p.module_id === moduleId);
+    if (!row) return;
+    const mod = MODULES.find((m) => m.id === moduleId);
+    const reviewer = emailById[row.document_reviewed_by];
+
+    const detailRow = document.getElementById("docsrow-" + coachIndex);
+    const detailCell = detailRow.firstElementChild;
+    openDocs = key;
+    btn.setAttribute("aria-expanded", "true");
+    detailRow.hidden = false;
+    detailCell.innerHTML = docsPanelHtml(coach, mod, row, reviewer,
+      '<p class="help">Looking up the files...</p>');
+
+    let body;
+    if (docsCache[row.document_path]) {
+      body = docFilesHtml(docsCache[row.document_path], row.document_path);
+    } else {
+      try {
+        const files = await listModuleDocuments(row.document_path);
+        docsCache[row.document_path] = files;
+        body = docFilesHtml(files, row.document_path);
+      } catch (err) {
+        // Listing the folder is the extra; the document on the progress row is
+        // the thing an admin came for, so a failure here still shows that.
+        body = docsFallbackHtml(row, err);
+      }
+    }
+    // An admin can click another cell while storage is still answering, and
+    // the panel they are looking at now must not be overwritten by this one.
+    if (openDocs !== key) return;
+    detailCell.innerHTML = docsPanelHtml(coach, mod, row, reviewer, body);
+  });
+
   } catch (err) {
     document.getElementById("app").innerHTML = adminErrorHtml(session, err,
       "Something this page needs did not come back from the database, so none of it is showing.");
@@ -419,13 +579,130 @@ function wireSignout() {
   }
 })();
 
-function adminRowHtml(coach) {
+// How a coach's in-person attendance reads, shared with the CSV export.
+function inPersonLabel(row) {
+  if (!row) return "not on the register";
+  if (row.status === "attended") return "attended";
+  if (row.status === "excused") return "excused";
+  return "not marked";
+}
+
+// Two marks, a tick and an E, each its own toggle. A coach who is not on the
+// register yet has no mark on either, and clicking one puts them on it.
+function inPersonMarksHtml(coachIndex, row) {
+  const status = row ? row.status : null;
+  const mark = (value, glyph, label) => `
+    <button class="ipmark${status === value ? " is-on" : ""}" type="button"
+            data-ip-mark="${value}" data-ip-coach="${coachIndex}"
+            aria-pressed="${status === value}">
+      <span aria-hidden="true">${glyph}</span><span class="sronly">${label}</span>
+    </button>`;
+  return mark("attended", "&check;", "Attended in person") + mark("excused", "E", "Excused from in-person training");
+}
+
+function inPersonCellHtml(coachIndex, row) {
+  return `<td class="ipcell" data-ip-cell="${coachIndex}">${inPersonMarksHtml(coachIndex, row)}</td>`;
+}
+
+function adminRowHtml(coach, coachIndex, inPerson) {
+  // Without the register (migration 006 not run yet) the column is still
+  // there, so no other column shifts, but marks that could only fail to save
+  // would be worse than no marks at all.
+  const inPersonCell = inPerson
+    ? inPersonCellHtml(coachIndex, findInPersonRowForCoach(inPerson, coach))
+    : '<td class="faint">&mdash;</td>';
   const byModule = {};
   (coach.progress || []).forEach((p) => { byModule[p.module_id] = p; });
   const cells = MODULES.map((m) => {
     const p = byModule[m.id];
     if (!p) return '<td class="faint">&mdash;</td>';
-    return `<td class="${p.passed ? "" : "faint"}">${moduleCellLabel(p, m)}</td>`;
+    const label = moduleCellLabel(p, m);
+    // A module proved by uploading something (SafeSport, Ramp) keeps every
+    // file the coach sent. Once there is one, the cell opens that trail, which
+    // otherwise can only be seen while the document is still awaiting review.
+    if (!p.document_path) return `<td class="${p.passed ? "" : "faint"}">${label}</td>`;
+    return `<td class="${p.passed ? "" : "faint"}">
+      <button class="celldocs" type="button" aria-expanded="false"
+              data-docs="${coachIndex}-${m.id}">${label}</button>
+    </td>`;
   });
-  return `<tr><td>${coach.email}</td>${cells.join("")}</tr>`;
+  // The panel opens into a row of its own rather than inside the cell, so a
+  // list of file names cannot stretch one column of an already wide table.
+  return `<tr><td>${coach.email}</td>${inPersonCell}${cells.join("")}</tr>
+    <tr class="docsrow" id="docsrow-${coachIndex}" hidden><td colspan="${MODULES.length + 2}"></td></tr>`;
+}
+
+
+// ---- the documents behind a cell in the progress table ----
+
+function formatFileSize(bytes) {
+  if (bytes === null || bytes === undefined) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+// What has happened to the current document, in a line. The reviewer is a
+// coach id on the row, which only means something next to the coaches the page
+// has already loaded, so it is passed in rather than looked up here.
+function documentStatusLine(row, reviewerEmail) {
+  const when = row.document_reviewed_at ? " " + formatDate(row.document_reviewed_at) : "";
+  const by = reviewerEmail ? ` by ${reviewerEmail}` : "";
+  if (row.document_status === "approved") return `approved${when}${by}`;
+  if (row.document_status === "rejected") return `rejected${when}${by}, waiting on a replacement`;
+  if (row.document_status === "pending") return "waiting on review";
+  return "no document recorded";
+}
+
+function docsPanelHtml(coach, mod, row, reviewerEmail, body) {
+  return `
+    <div class="docspanel">
+      <div class="docshead">
+        <div>
+          <div class="docstitle">${mod ? mod.title : "Module " + row.module_id}</div>
+          <div class="docswho">${coach.email} &middot; ${documentStatusLine(row, reviewerEmail)}</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" type="button" data-docs-close="1">Close</button>
+      </div>
+      ${body}
+      <p class="help docsmsg"></p>
+    </div>`;
+}
+
+function docFileHtml(name, meta, path, isCurrent) {
+  return `
+    <li class="docfile">
+      <div class="docfilewho">
+        <div class="docname">${name}</div>
+        <div class="docmeta">${meta}${isCurrent ? '<span class="doctag">current submission</span>' : ""}</div>
+      </div>
+      <button class="btn btn-outline btn-sm" type="button" data-doc-open="${escapeAttr(path)}">Open</button>
+    </li>`;
+}
+
+function docFilesHtml(files, currentPath) {
+  if (!files.length) {
+    return '<p class="help">The progress row points at a document, but the folder holding it is empty.</p>';
+  }
+  const items = files.map((f) => {
+    const meta = [f.uploadedAt ? "uploaded " + formatDate(f.uploadedAt) : "", formatFileSize(f.size)]
+      .filter(Boolean).join(" &middot; ");
+    return docFileHtml(f.name, meta, f.path, f.path === currentPath);
+  }).join("");
+  // Nothing deletes an old file, so more than one here is a coach who replaced
+  // what they first sent. Worth saying, because the extra files are not a
+  // fault and the newest is the one that was reviewed.
+  const note = files.length > 1
+    ? `<p class="help">${files.length} files, newest first. A coach who uploads again does not erase what they sent before.</p>`
+    : "";
+  return `<ul class="doclist">${items}</ul>${note}`;
+}
+
+// Storage would not list the folder. The document named on the progress row
+// can still be opened, which is the one an admin most often wants.
+function docsFallbackHtml(row, err) {
+  const name = String(row.document_path).split("/").pop().replace(/^\d+-/, "");
+  const meta = row.document_uploaded_at ? "uploaded " + formatDate(row.document_uploaded_at) : "";
+  return `<ul class="doclist">${docFileHtml(name, meta, row.document_path, true)}</ul>
+    <p class="help">Earlier files could not be listed, so only the current document is shown here. ${err.message || ""}</p>`;
 }

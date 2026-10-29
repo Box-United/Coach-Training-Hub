@@ -39,12 +39,15 @@ async function setInPersonStatus(season, person, status) {
   if (error) throw error;
 }
 
-async function addInPersonPerson(season, person) {
+// `status` is for marking somebody who is not on the register yet, which is
+// what happens when an admin ticks a coach on the progress table: they go on
+// the register and get their mark in one go rather than in two steps.
+async function addInPersonPerson(season, person, status) {
   const name = normalisePerson(person);
   if (!name) throw new Error("Type a name first.");
   const { error } = await supabaseClient
     .from("inperson_attendance")
-    .insert({ season, person: name });
+    .insert({ season, person: name, status: status || null });
   if (error) {
     // 23505 is the primary key, so this is a name already on the list rather
     // than anything the admin needs to debug.
@@ -70,4 +73,46 @@ function inPersonCounts(rows) {
     unmarked: rows.filter((r) => !r.status).length,
     total: rows.length
   };
+}
+
+// The register is plain text and the coaches table has accounts, so matching
+// the two is guesswork rather than a join: see the note at the top of
+// supabase/migrations/006-inperson-attendance.sql. The seeded names are of the
+// form "pacanty", which is what an email local part looks like with the
+// punctuation taken out, so that is tried as well as the coach's own name.
+//
+// A name nobody matches is not a fault. It is somebody with no account, which
+// is the whole reason this table is not joined to coaches.
+function inPersonKeysForCoach(coach) {
+  const keys = [];
+  if (coach.name) keys.push(normalisePerson(coach.name));
+  const local = String(coach.email || "").split("@")[0];
+  if (local) {
+    keys.push(normalisePerson(local));
+    keys.push(normalisePerson(local).replace(/[._-]/g, ""));
+  }
+  return keys.filter(Boolean);
+}
+
+function findInPersonRowForCoach(rows, coach) {
+  const keys = inPersonKeysForCoach(coach);
+  return rows.find((row) => keys.indexOf(normalisePerson(row.person)) !== -1) || null;
+}
+
+// The name a coach goes on the register under when an admin ticks them in the
+// progress table. Their own name if we have one, so the register stays
+// readable, and their email local part if we do not.
+function inPersonNameForCoach(coach) {
+  return normalisePerson(coach.name || String(coach.email || "").split("@")[0]);
+}
+
+// Everybody on the register who matches no account. They are the ones the
+// register still has to list on its own.
+function inPersonWithoutAccount(rows, coaches) {
+  const claimed = new Set();
+  coaches.forEach((coach) => {
+    const row = findInPersonRowForCoach(rows, coach);
+    if (row) claimed.add(row.person);
+  });
+  return rows.filter((row) => !claimed.has(row.person));
 }
