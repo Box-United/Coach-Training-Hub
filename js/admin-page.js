@@ -275,7 +275,7 @@ function wireSignout() {
       </div>
       <div class="tablewrap">
         <table class="admintable">
-          <thead><tr><th>Coach</th><th>In Person</th>${MODULES.map((m) => `<th>M${m.id}</th>`).join("")}</tr></thead>
+          <thead><tr><th>Coach</th><th>In Person</th>${MODULES.map(moduleHeaderHtml).join("")}</tr></thead>
           <tbody>
             ${coaches.map((c, i) => adminRowHtml(c, i, inPersonError ? null : inPerson)).join("")}
           </tbody>
@@ -495,6 +495,15 @@ function wireSignout() {
     throw err;
   }
 })();
+
+// The module number is what an admin says out loud ("module 3 is not done"),
+// and the short name is what makes a column findable without counting across
+// ten of them. The full title is on the heading for a hover.
+function moduleHeaderHtml(mod) {
+  return `<th class="modhead" title="${escapeAttr(mod.title)}">
+    <span class="modnum">M${mod.id}</span>${mod.short ? `<span class="modname">${mod.short}</span>` : ""}
+  </th>`;
+}
 
 // How a coach's in-person attendance reads, shared with the CSV export.
 function inPersonLabel(row) {

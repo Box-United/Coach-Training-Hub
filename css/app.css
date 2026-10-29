@@ -188,6 +188,18 @@
 .admintable th:nth-child(2),.admintable td:nth-child(2){width:76px;}
 .admintable th:nth-child(n+2),.admintable td:nth-child(n+2){text-align:center;}
 .modcell{white-space:nowrap;}
+/* The number above the name: the number is what people say, the name is what
+   makes the column findable without counting across ten of them. */
+.modhead{vertical-align:bottom;}
+.modhead .modnum{display:block;}
+.modhead .modname{
+  display:block;margin-top:3px;font-size:9px;letter-spacing:0;
+  color:var(--fg-faint);text-transform:none;font-family:var(--font-body);
+  /* One word that does not fit a narrow window is cut rather than broken
+     across two lines; the number above it still says which module, and the
+     heading's title has the whole name. */
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 .modcell.ok{color:var(--bu-blue);}
 .modcell.wait{color:var(--bu-stone-deep);}
 .modcell.bad{color:var(--bu-red,#e5484d);}

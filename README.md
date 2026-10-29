@@ -153,6 +153,7 @@ Everything about a module lives in one place: `js/modules-data.js`. To fill one 
 2. Set `youtubeId` to the video's ID (the part after `v=` in a YouTube URL). Upload it to YouTube as **unlisted**, not Private, Private videos cannot be embedded and will not load for coaches. Check that "Allow embedding" is ticked under Show more.
 3. Add questions to the `quiz` array. Each question needs a `question`, an `options` array, and a `correctIndex` (0 for the first option, 1 for the second, and so on).
 4. Adjust `passThreshold` if 80% shouldn't be the bar for that module.
+5. Give it a `short`, the module in a word or two. It heads that module's column on the admin page, where ten full titles will not fit across a screen; without one the column is headed `M7` and nobody can tell which module that is.
 
 Modules unlock in the order they appear in that array, a coach must pass one before the next becomes available.
 
@@ -222,7 +223,7 @@ Unlocking is per season too, so last year's pass does not open this year's Modul
 
 The admin page has a season picker, and the CSV export is named and stamped by season.
 
-The progress table is **marks rather than sentences**, so twelve columns fit a screen without scrolling sideways: a tick for a module that is complete, with the quiz score where there is one, an ellipsis for something waiting on an admin, a cross for rejected or failed. Hovering a cell gives the full wording, and the CSV export keeps it in full, which is where anybody reading closely ends up.
+The progress table is **marks rather than sentences**, with each module's `short` name under its number, so twelve columns fit a screen without scrolling sideways: a tick for a module that is complete, with the quiz score where there is one, an ellipsis for something waiting on an admin, a cross for rejected or failed. Hovering a cell gives the full wording, and the CSV export keeps it in full, which is where anybody reading closely ends up.
 
 ### In-person training attendance
 

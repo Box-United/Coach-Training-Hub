@@ -22,6 +22,10 @@
 // nothing is gated behind it and it does not count toward completion, so
 // coaches can still reach 100 percent. Delete the line when it is ready.
 //
+// Short name: `short` is the module in a word or two, for the column heading
+// on admin.html, where ten full titles will not fit across a screen. Without
+// one the column is headed "M3" and nobody can tell which module that is.
+//
 // Note: any module can carry a `note`, a short line shown under the video and
 // above the quiz, for something a coach has to do that the hub itself does
 // not handle:
@@ -52,6 +56,7 @@ const MODULES = [
   {
     id: 1,
     title: "Welcome to Box United, Our Why",
+    short: "Welcome",
     description: "The mission, the gym rules, and what makes Box United different.",
     videos: [
       { youtubeId: "nMWrlm9056g", title: "Part 1 — Who We Are" },
@@ -134,6 +139,7 @@ const MODULES = [
   {
     id: 2,
     title: "Agreement and Pay",
+    short: "Agreement",
     description: "What your agreement covers, how hours are logged, and when you get paid.",
     youtubeId: "pcf13lFykBU",
     note: "Two kinds of coach sign two different agreements. Paid coaches sign a contract with Box United, school-paid coaches sign an MOU. The pay section of the video splits, so follow the part that applies to you. Your agreement will be in Charity Rescue for you to sign by September 8.",
@@ -214,6 +220,7 @@ const MODULES = [
   {
     id: 3,
     title: "Ramp Set Up",
+    short: "Ramp",
     description: "Setting up your Ramp payment account, and sending us proof it is done.",
     youtubeId: "Xp1lpQ-Z8gg",
     note: "Ramp will email you a secure link asking for your payment details. That message is your invite. If you cannot find it, check your spam folder first, then ask us to resend it.",
@@ -267,6 +274,7 @@ const MODULES = [
   {
     id: 4,
     title: "Child Protection Policy",
+    short: "Protection",
     description: "Keeping every girl safe, what the policy asks of you, and when to escalate.",
     youtubeId: "vvCS1KZQVVw",
     note: "The Child Protection Policy Acknowledgment will be in Charity Rescue for you to sign by September 8.",
@@ -325,6 +333,7 @@ const MODULES = [
   {
     id: 5,
     title: "Attendance System, Charity Rescue",
+    short: "Attendance",
     description: "Taking attendance in Charity Rescue, and what to record each session.",
     youtubeId: "qaB8wG07aik",
     note: "You should receive an email invite to Charity Rescue. Open it and follow the link to set your own password. If it has not arrived, check your spam folder first, then contact programs@boxunited.org.",
@@ -385,6 +394,7 @@ const MODULES = [
   {
     id: 6,
     title: "2026-27 Schedule",
+    short: "Schedule",
     description: "Term dates, session times, and how the year runs.",
     youtubeId: "MqW9l5pXYlM",
     passThreshold: 80,
@@ -444,6 +454,7 @@ const MODULES = [
   {
     id: 7,
     title: "Equipment",
+    short: "Equipment",
     description: "The kit, how to look after it, and what to check before every session.",
     youtubeId: "2e8OAbL1Hug",
     passThreshold: 80,
@@ -503,6 +514,7 @@ const MODULES = [
   {
     id: 8,
     title: "SafeSport Training",
+    short: "SafeSport",
     description: "Complete SafeSport training on their site, then upload your certificate.",
     youtubeId: "",
     passThreshold: 80,
@@ -530,6 +542,7 @@ const MODULES = [
   {
     id: 9,
     title: "Magic Moments in Fight Like a Girl",
+    short: "Magic",
     description: "The moments that keep the girls coming back and enjoying.",
     videos: [
       { youtubeId: "bwcyXcOpWVs", title: "Part 1 — Great Hospitality" },
@@ -602,6 +615,7 @@ const MODULES = [
   {
     id: 10,
     title: "Behavior Management",
+    short: "Behavior",
     description: "Holding the standard without losing the room, and what to do when it slips.",
     // Listed so coaches know it is coming, but not built yet. `comingSoon`
     // keeps it out of the unlock chain and out of the completion count, so
