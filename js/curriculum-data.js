@@ -350,7 +350,7 @@ const CURRICULUM = {
         "Focuses on positive thinking and applying it to effort. The coach explains that a positive mindset is mental preparation for hard work, then runs the Block That Thought activity, where teams take a scenario with a negative thinking trap and flip it into a positive thought.",
         "Training introduces the roll, a reaction drill, and a no-contact roll-then-combo partner drill, then adds the roll between combinations on the mitts."
       ],
-      videos: { walkthrough: "" },
+      videos: { walkthrough: "ULC9loY9e60" },
       songs: ["jumpRope"],
       materials: [
         "Mitts & gloves",
@@ -376,7 +376,7 @@ const CURRICULUM = {
         "Teaches fighters to give and receive feedback using the C.A.P. formula. The coach explains each part with examples of what to do and what to avoid, then runs a role-play where fighters respond to common mistakes with C.A.P. feedback.",
         "Training opens with a shuttle race, reviews every punch and defensive move, builds freestyle four-punch combinations on the mitts, and closes with a C.A.P. partner feedback round and a ladder burnout."
       ],
-      videos: { walkthrough: "" },
+      videos: { walkthrough: "We7kG_iFMiE" },
       exercises: ["burpees", "plankShoulderTaps", "squats"],
       materials: [
         "Fighter's Mindset journal",
@@ -400,7 +400,7 @@ const CURRICULUM = {
         "The last practice before the Show Off. The coach reminds fighters this is their final chance to work toward the Week 3 team goal, then reviews how to build a strong combination.",
         "Training is given over to the 10-move combination, run for speed and form, with peer mitt-holding."
       ],
-      videos: { walkthrough: "" },
+      videos: { walkthrough: "hVKlyQnG6oM" },
       songs: ["punchCount"],
       materials: [
         "Fighter's Mindset journal",
