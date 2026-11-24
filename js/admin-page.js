@@ -59,14 +59,97 @@ function moduleCellMark(p, mod) {
   return { text: "&middot;", cls: "faint" };
 }
 
+// What this coach still has to do on one module, in a few words, or null if
+// there is nothing left. moduleCellLabel above says where a module stands;
+// this says what would move it, which is the thing an admin chasing somebody
+// actually needs to put in an email.
+function moduleOutstandingPhrase(row, mod, runs) {
+  if (row && row.passed) return null;
+  const name = `M${mod.id} ${mod.short || mod.title}`;
+  if (!row) return `${name}: not started`;
+
+  const needs = [];
+
+  // A video left part way through. Counted first because the quiz is locked
+  // until it is finished, so telling somebody to retake a quiz they cannot
+  // reach yet would send them in a circle.
+  const run = runs[mod.id];
+  const watched = Math.min(row.video_furthest_seconds || 0, run || 0);
+  if (run && watched < run - 5) {
+    needs.push(`finish the video (${Math.round(watched / 60)} of ${Math.round(run / 60)} min watched)`);
+  }
+
+  if (mod.quiz.length && !quizPassedForModule(row, mod)) {
+    needs.push(row.quiz_attempts > 0
+      ? `retake the quiz (best ${row.quiz_score}%, needs ${mod.passThreshold}%)`
+      : "take the quiz");
+  }
+
+  if (mod.upload) {
+    if (row.document_status === "pending") needs.push("document waiting on admin approval");
+    else if (row.document_status === "rejected") needs.push("re-upload the document (rejected)");
+    else if (row.document_status !== "approved") needs.push("upload the document");
+  }
+
+  // Everything the module asks for is done, so the only thing left is an
+  // admin looking at it.
+  if (!needs.length) needs.push("waiting on admin approval");
+  return `${name}: ${needs.join(", ")}`;
+}
+
+// The export an admin actually does something with: who finished what, what
+// each person is owed for it, and what the ones who have not finished are
+// still missing. The hours rules live in js/training-hours.js.
+//
+// Every module keeps a column of its own as well. The hours are the summary,
+// and the module columns are the evidence behind it, which is what anybody
+// querying a figure will ask to see.
 function progressToCsv(coaches, season, inPerson) {
-  const header = ["Season", "Email", "Name", "In person", ...MODULES.map((m) => `Module ${m.id}`)];
+  const runs = videoRunSeconds(coaches);
+  const countable = countableModules(MODULES);
+
+  const header = [
+    "Season", "Email", "Name", "Role",
+    "Training complete", "Modules complete", "Outstanding",
+    "In person", "In-person hours",
+    "SafeSport", "SafeSport hours",
+    "Video run watched", "Video minutes watched", "Video hours credited",
+    "TOTAL PAYABLE HOURS",
+    "Still to do",
+    ...MODULES.map((m) => `M${m.id} ${m.short || m.title}`)
+  ];
+
   const rows = coaches.map((c) => {
     const byModule = {};
     (c.progress || []).forEach((p) => { byModule[p.module_id] = p; });
-    const cells = MODULES.map((m) => moduleCellLabel(byModule[m.id], m));
-    return [seasonLabel(season), c.email, c.name || "", inPersonLabel(findInPersonRowForCoach(inPerson || [], c)), ...cells];
+
+    const inPersonRow = findInPersonRowForCoach(inPerson || [], c);
+    const hours = trainingHoursForCoach(c, inPersonRow, runs);
+
+    const done = countable.filter((m) => byModule[m.id] && byModule[m.id].passed);
+    const outstanding = countable
+      .map((m) => moduleOutstandingPhrase(byModule[m.id], m, runs))
+      .filter(Boolean);
+
+    const safeSportMod = MODULES.find((m) => m.id === SAFESPORT_MODULE_ID);
+
+    return [
+      seasonLabel(season), c.email, c.name || "", c.is_admin ? "admin" : "coach",
+      done.length === countable.length ? "yes" : "no",
+      `${done.length} of ${countable.length}`,
+      countable.length - done.length,
+      inPersonLabel(inPersonRow), hours.inPerson.toFixed(2),
+      safeSportMod ? moduleCellLabel(byModule[SAFESPORT_MODULE_ID], safeSportMod) : "",
+      hours.safeSport.toFixed(2),
+      `${Math.round(hours.videoShare * 100)}%`,
+      (hours.videoSecondsWatched / 60).toFixed(1),
+      hours.video.toFixed(2),
+      hours.total.toFixed(2),
+      outstanding.join("; "),
+      ...MODULES.map((m) => moduleCellLabel(byModule[m.id], m))
+    ];
   });
+
   const escape = (v) => `"${String(v).replace(/"/g, '""')}"`;
   return [header, ...rows].map((row) => row.map(escape).join(",")).join("\n");
 }

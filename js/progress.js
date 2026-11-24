@@ -57,7 +57,9 @@ async function getSeasonsWithProgress() {
 // needs to see in September.
 async function getAllProgressForAdmin(season) {
   const [coachesResult, progressResult] = await Promise.all([
-    supabaseClient.from("coaches").select("id, email, name"),
+    // is_admin comes along so the CSV can mark which rows are staff accounts
+    // rather than coaches to be paid.
+    supabaseClient.from("coaches").select("id, email, name, is_admin"),
     supabaseClient
       .from("progress")
       .select("coach_id, module_id, season, quiz_score, quiz_attempts, passed, completed_at, video_furthest_seconds, document_path, document_status, document_uploaded_at, document_reviewed_at, document_reviewed_by")
