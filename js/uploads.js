@@ -89,6 +89,36 @@ async function reviewModuleDocument({ coachId, moduleId, season, approved, admin
   if (error) throw error;
 }
 
+// Called by an admin from admin.html, after uploadModuleDocument has put a file
+// a coach emailed in into that coach's folder. Points the coach's progress row
+// at it, as their own upload would, and can approve it in the same step, since
+// the admin recording it has usually just looked at it.
+//
+// A coach who emails proof before opening the module has no row yet, so this
+// inserts one; otherwise it updates the row for this season only. Not
+// approving leaves the document 'pending', which is what a coach's own upload
+// does: the next module opens, and it waits in "Documents to Review".
+async function recordDocumentForCoach({ coachId, moduleId, season, path, approve, adminId, quizSatisfied, existingRow }) {
+  const now = new Date().toISOString();
+  const complete = approve && quizSatisfied !== false;
+  const fields = {
+    document_path: path,
+    document_uploaded_at: now,
+    document_status: approve ? "approved" : "pending",
+    document_reviewed_at: approve ? now : null,
+    document_reviewed_by: approve ? adminId : null,
+    passed: complete,
+    completed_at: complete ? ((existingRow && existingRow.completed_at) || now) : null,
+    updated_at: now
+  };
+  const query = existingRow
+    ? supabaseClient.from("progress").update(fields)
+        .eq("coach_id", coachId).eq("module_id", moduleId).eq("season", season)
+    : supabaseClient.from("progress").insert({ coach_id: coachId, module_id: moduleId, season, ...fields });
+  const { error } = await query;
+  if (error) throw error;
+}
+
 // The folder a stored document sits in. Taken from the path rather than
 // rebuilt by buildDocumentPath, because anything uploaded before seasons
 // existed lives at <coach_id>/module-<n>/ instead, and rebuilding the path

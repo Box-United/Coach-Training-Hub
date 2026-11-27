@@ -319,6 +319,9 @@ function wireSignout() {
 
   const coaches = await getAllProgressForAdmin(season);
   const pending = pendingDocuments(coaches);
+  // Adding a document for a coach writes into the running season, the same as
+  // their own upload would, so it is offered only while viewing that season.
+  const canAddDocs = season === currentSeason;
   // The register is one section of this page, so it must not be able to take
   // the whole thing down. Before migration 006 has been run the table is not
   // there at all, and an uncaught throw here left admins looking at a blank
@@ -360,7 +363,7 @@ function wireSignout() {
         <table class="admintable">
           <thead><tr><th>Coach</th><th>In Person</th>${MODULES.map(moduleHeaderHtml).join("")}</tr></thead>
           <tbody>
-            ${coaches.map((c, i) => adminRowHtml(c, i, inPersonError ? null : inPerson)).join("")}
+            ${coaches.map((c, i) => adminRowHtml(c, i, inPersonError ? null : inPerson, canAddDocs)).join("")}
           </tbody>
         </table>
       </div>
@@ -371,7 +374,8 @@ function wireSignout() {
         <span class="wait">&hellip;</span> waiting on an admin; <span class="wait">90% &hellip;</span> quiz passed,
         document still to come; <span class="bad">&times;</span> rejected or failed;
         <span class="faint">&middot;</span> started; <span class="faint">&mdash;</span> nothing yet.
-        Hovering a cell spells it out, and an underlined one opens the documents that coach uploaded.
+        Hovering a cell spells it out, and an underlined one opens the documents that coach uploaded,
+        where you can also add one they sent you some other way.
       </p>
       <p class="help tablemsg" id="tableMsg"></p>
 
@@ -510,6 +514,12 @@ function wireSignout() {
       return;
     }
 
+    const uploadBtn = e.target.closest("button[data-doc-upload]");
+    if (uploadBtn) {
+      await uploadForCoach(uploadBtn);
+      return;
+    }
+
     const openBtn = e.target.closest("button[data-doc-open]");
     if (openBtn) {
       const note = openBtn.closest(".docspanel").querySelector(".docsmsg");
@@ -538,18 +548,27 @@ function wireSignout() {
     const coachIndex = Number(key.split("-")[0]);
     const moduleId = Number(key.split("-")[1]);
     const coach = coaches[coachIndex];
-    const row = (coach.progress || []).find((p) => p.module_id === moduleId);
-    if (!row) return;
     const mod = MODULES.find((m) => m.id === moduleId);
+    // A cell with nothing behind it opens too, when the panel is there to add
+    // a document, so it gets a stand-in row that says "no document recorded".
+    const row = (coach.progress || []).find((p) => p.module_id === moduleId)
+      || { module_id: moduleId, document_status: "none" };
     const reviewer = emailById[row.document_reviewed_by];
+    const addForm = canAddDocs && mod && mod.upload ? adminUploadFormHtml(key, mod, row) : "";
 
     const detailRow = document.getElementById("docsrow-" + coachIndex);
     const detailCell = detailRow.firstElementChild;
     openDocs = key;
     btn.setAttribute("aria-expanded", "true");
     detailRow.hidden = false;
+    if (!row.document_path) {
+      // Nothing to list, and nothing to wait for.
+      detailCell.innerHTML = docsPanelHtml(coach, mod, row, reviewer,
+        '<p class="help">Nothing uploaded for this module yet.</p>' + addForm);
+      return;
+    }
     detailCell.innerHTML = docsPanelHtml(coach, mod, row, reviewer,
-      '<p class="help">Looking up the files...</p>');
+      '<p class="help">Looking up the files...</p>' + addForm);
 
     let body;
     if (docsCache[row.document_path]) {
@@ -568,8 +587,70 @@ function wireSignout() {
     // An admin can click another cell while storage is still answering, and
     // the panel they are looking at now must not be overwritten by this one.
     if (openDocs !== key) return;
-    detailCell.innerHTML = docsPanelHtml(coach, mod, row, reviewer, body);
+    detailCell.innerHTML = docsPanelHtml(coach, mod, row, reviewer, body + addForm);
   });
+
+  // An admin adding a document a coach sent some other way, usually by email.
+  // It goes into the coach's own folder through the same path a coach upload
+  // takes, so it shows in their trail like anything else they sent, and the
+  // progress row then points at it, approved or left for review.
+  async function uploadForCoach(btn) {
+    const panel = btn.closest(".docspanel");
+    const note = panel.querySelector(".docsmsg");
+    const input = panel.querySelector("input[data-doc-file]");
+    const approve = panel.querySelector("input[data-doc-approve]").checked;
+    const coachIndex = Number(btn.dataset.docUpload.split("-")[0]);
+    const moduleId = Number(btn.dataset.docUpload.split("-")[1]);
+    const coach = coaches[coachIndex];
+    const mod = MODULES.find((m) => m.id === moduleId);
+    const row = (coach.progress || []).find((p) => p.module_id === moduleId) || null;
+    const file = input.files && input.files[0];
+
+    note.className = "help docsmsg";
+    if (!file) {
+      note.textContent = "Choose a file first.";
+      return;
+    }
+    const problem = checkFileAgainstRules(file, mod.upload);
+    if (problem) {
+      note.className = "error docsmsg";
+      note.textContent = problem;
+      return;
+    }
+
+    btn.disabled = true;
+    note.textContent = "Uploading...";
+    let path;
+    try {
+      path = await uploadModuleDocument(coach.id, moduleId, file);
+    } catch (err) {
+      btn.disabled = false;
+      note.className = "error docsmsg";
+      note.textContent = "The file did not upload, so nothing changed. " + adminUploadHint(err);
+      return;
+    }
+
+    try {
+      await recordDocumentForCoach({
+        coachId: coach.id,
+        moduleId,
+        season: currentSeason,
+        path,
+        approve,
+        adminId: session.user.id,
+        quizSatisfied: quizSatisfiedFor({ module: mod, row }),
+        existingRow: row
+      });
+      window.location.reload();
+    } catch (err) {
+      // The file is in their folder by now and nothing deletes it, so say so:
+      // trying again adds a second copy, which is harmless, not a fault.
+      btn.disabled = false;
+      note.className = "error docsmsg";
+      note.textContent = "The file uploaded, but their progress was not updated, so the module has not moved. "
+        + "Trying again is safe. " + adminUploadHint(err);
+    }
+  }
 
   } catch (err) {
     document.getElementById("app").innerHTML = adminErrorHtml(session, err,
@@ -613,7 +694,7 @@ function inPersonCellHtml(coachIndex, row) {
   return `<td class="ipcell" data-ip-cell="${coachIndex}">${inPersonMarksHtml(coachIndex, row)}</td>`;
 }
 
-function adminRowHtml(coach, coachIndex, inPerson) {
+function adminRowHtml(coach, coachIndex, inPerson, canAddDocs) {
   // Without the register (migration 006 not run yet) the column is still
   // there, so no other column shifts, but marks that could only fail to save
   // would be worse than no marks at all.
@@ -629,7 +710,10 @@ function adminRowHtml(coach, coachIndex, inPerson) {
     // A module proved by uploading something (SafeSport, Ramp) keeps every
     // file the coach sent. Once there is one, the cell opens that trail, which
     // otherwise can only be seen while the document is still awaiting review.
-    if (!p || !p.document_path) {
+    // A module with an upload opens even before the coach has sent anything,
+    // so an admin can add what they emailed in instead.
+    const hasDoc = Boolean(p && p.document_path);
+    if (!hasDoc && !(canAddDocs && m.upload)) {
       return `<td class="modcell ${mark.cls}" title="${escapeAttr(full)}">${mark.text}</td>`;
     }
     // The mark is hidden from screen readers and the full wording given
@@ -638,7 +722,7 @@ function adminRowHtml(coach, coachIndex, inPerson) {
     return `<td class="modcell ${mark.cls}">
       <button class="celldocs" type="button" aria-expanded="false"
               data-docs="${coachIndex}-${m.id}" title="${escapeAttr(full)}">
-        <span aria-hidden="true">${mark.text}</span><span class="sronly">${full}, see the documents</span>
+        <span aria-hidden="true">${mark.text}</span><span class="sronly">${full}, ${hasDoc ? "see the documents" : "add a document"}</span>
       </button>
     </td>`;
   });
@@ -721,4 +805,35 @@ function docsFallbackHtml(row, err) {
   const meta = row.document_uploaded_at ? "uploaded " + formatDate(row.document_uploaded_at) : "";
   return `<ul class="doclist">${docFileHtml(name, meta, row.document_path, true)}</ul>
     <p class="help">Earlier files could not be listed, so only the current document is shown here. ${err.message || ""}</p>`;
+}
+
+
+// ---- adding a document on a coach's behalf ----
+
+function adminUploadFormHtml(key, mod, row) {
+  const quizNote = mod.quiz.length && !quizPassedForModule(row, mod)
+    ? '<p class="reviewwarn">Quiz not passed yet, so approving this will not complete the module. It still opens the next one.</p>'
+    : "";
+  return `
+    <div class="adminupload">
+      <div class="docstitle">Add a document for this coach</div>
+      <p class="help">For proof they sent you some other way. It goes into their folder as if they had uploaded it, and anything already there stays.</p>
+      <div class="uploadrow">
+        <input type="file" data-doc-file="1" accept="${escapeAttr(mod.upload.accept || "")}" aria-label="Document to add">
+        <label class="checkrow"><input type="checkbox" data-doc-approve="1" checked> Approve it now</label>
+        <button class="btn btn-primary btn-sm" type="button" data-doc-upload="${key}">Upload</button>
+      </div>
+      ${quizNote}
+    </div>`;
+}
+
+// Before migration 008 the storage and progress policies refuse an admin
+// writing for somebody else, and the error says only "row-level security".
+// That is a setup step, so it names the file to run.
+function adminUploadHint(err) {
+  const message = (err && err.message) || "";
+  if (/row-level security|row level security|violates|unauthorized|403/i.test(message)) {
+    return "Run supabase/migrations/008-admin-uploads.sql in the Supabase SQL editor first, then try again.";
+  }
+  return message;
 }

@@ -584,3 +584,9 @@
 .lockbanner strong{color:var(--fg);font-weight:500;}
 .lockbanner > div{flex:1 1 320px;min-width:0;}
 .lockbanner .btn{flex:none;}
+
+/* ---- an admin adding a document for a coach, inside the documents panel ---- */
+.adminupload{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
+.adminupload .help{margin:4px 0 0;}
+.adminupload .uploadrow{margin:12px 0 0;padding-top:0;border-top:0;}
+.checkrow{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--fg-muted);cursor:pointer;}

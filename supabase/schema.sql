@@ -135,6 +135,10 @@ create policy "Admins read all progress" on public.progress
 create policy "Admins update all progress" on public.progress
   for update using (public.is_admin())
   with check (public.is_admin());
+-- An admin recording a document a coach emailed in (admin.html) may be the
+-- first write to that module, so there is no row yet to update.
+create policy "Admins insert progress" on public.progress
+  for insert with check (public.is_admin());
 
 -- A completion record should only ever move forward. Enforcing this in the
 -- database, not the browser, means stale JavaScript or a hand-written API
@@ -305,6 +309,15 @@ create policy "Coaches upload own documents" on storage.objects
   with check (
     bucket_id = 'coach-documents'
     and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- For a coach who emailed their proof instead of uploading it: an admin puts
+-- it into that coach's folder from admin.html.
+create policy "Admins upload coach documents" on storage.objects
+  for insert to authenticated
+  with check (
+    bucket_id = 'coach-documents'
+    and public.is_admin()
   );
 
 create policy "Coaches read own documents" on storage.objects
